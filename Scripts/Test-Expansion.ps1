@@ -1,0 +1,11 @@
+$ErrorActionPreference='Stop'
+$projectRoot=Split-Path $PSScriptRoot -Parent
+if(-not $env:INCLUDE){
+    $compilerDir=Split-Path (Get-Command cl.exe).Source -Parent
+    while($compilerDir){$candidate=Join-Path $compilerDir 'Auxiliary\Build\vcvars64.bat';if(Test-Path -LiteralPath $candidate){$vcvars=$candidate;break};$compilerDir=Split-Path $compilerDir -Parent}
+    if(-not $vcvars){throw 'Visual Studio C++ toolchain required'}
+    & $env:ComSpec /d /c ('"'+$vcvars+'" >nul && set') | ForEach-Object {if($_ -match '^(INCLUDE|LIB|LIBPATH|PATH)=(.*)$'){[Environment]::SetEnvironmentVariable($matches[1],$matches[2],'Process')}}
+}
+$outDir=Join-Path $projectRoot 'Saved\ExpansionTests';New-Item -ItemType Directory -Force -Path $outDir|Out-Null
+Push-Location $outDir
+try{& cl.exe /nologo /std:c++20 /EHsc /O2 /W4 (Join-Path $projectRoot 'Tests\ArenaExpansionTests.cpp') /Fe:ArenaExpansionTests.exe;if($LASTEXITCODE -ne 0){throw 'Expansion test compilation failed'};& .\ArenaExpansionTests.exe;if($LASTEXITCODE -ne 0){throw 'Expansion tests failed'}}finally{Pop-Location}

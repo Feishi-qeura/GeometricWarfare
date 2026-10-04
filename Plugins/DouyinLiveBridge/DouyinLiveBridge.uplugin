@@ -1,0 +1,10 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.0",
+  "FriendlyName": "Douyin Live Bridge",
+  "Description": "Viewer event boundary, simulator and optional adapter transport. Official LiveOpenSDK adapter requires a separately supplied authorized SDK.",
+  "Category": "Live Interaction",
+  "CanContainContent": false,
+  "Modules": [{ "Name": "DouyinLiveBridge", "Type": "Runtime", "LoadingPhase": "Default" }]
+}

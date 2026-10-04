@@ -1,0 +1,39 @@
+# Unreal Engine generated files (including plugins)
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# IDE and generated project files
+.vs/
+.vscode/
+*.sln
+*.slnx
+*.suo
+*.user
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+
+# Local working files and agent settings
+/tmp/
+.codex/
+.agents/
+.DS_Store
+Thumbs.db
+~$*
+*.tmp
+*.bak
+
+# Local credentials and environment overrides
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
