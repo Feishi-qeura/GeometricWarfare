@@ -142,6 +142,10 @@ inline void Match::tickBoss(double dt) {
     const auto complete=[&](){++boss.attacksCompleted;boss.targetId=-1;const uint32_t choice=boss_detail::random(boss)%3;changeAttack(choice==0?BossAttack::Bullet:(choice==1?BossAttack::LaserWindup:BossAttack::StompJump));};
     const auto initialize=[&](){
         boss.attackInitialized=true;findTarget();
+        if(boss.attack==BossAttack::LaserWindup)audio.emit(boss.rage?AudioKind::BossLaserRage:AudioKind::BossLaserWindup);
+        if(boss.attack==BossAttack::LaserActive)audio.emit(AudioKind::BossLaserBeam);
+        if(boss.attack==BossAttack::StompJump)audio.emit(AudioKind::BossStompJump);
+        if(boss.attack==BossAttack::StompWave)audio.emit(AudioKind::BossStompImpact);
         if(boss.attack==BossAttack::LaserWindup){boss.laserDirection=boss.targetId>=0?boss_detail::direction(world.bodies[indices.at(boss.targetId)].position-boss.position):Vec{1,0};boss_detail::laserBounds(boss);}
         if(boss.attack==BossAttack::LaserActive){boss.laserTicks=0;boss_detail::laserBounds(boss);
             if(boss.rage){auto& scorch=boss.scorches[boss.scorchCursor];boss.scorchCursor=(boss.scorchCursor+1)%boss.scorches.size();
@@ -183,6 +187,7 @@ inline void Match::tickBoss(double dt) {
         if(boss.attackRemaining>1e-8)break;
         switch(boss.attack){
         case BossAttack::Bullet:{findTarget();if(boss.targetId>=0){
+            audio.emit(AudioKind::BossBullet);
             const auto fire=[&](Vec direction){auto& projectile=boss.projectiles[boss.projectileCursor];boss.projectileCursor=(boss.projectileCursor+1)%boss.projectiles.size();
                 projectile={boss.position,direction*BossBulletSpeed,BossBulletRadius,0,100*damageScale,true};++boss.projectilesFired;};
             fire(boss_detail::direction(world.bodies[indices.at(boss.targetId)].position-boss.position));

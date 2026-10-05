@@ -1,5 +1,6 @@
 inline bool Match::collectEvolutionPack(int id,int index) {
     auto* f=findFighter(id);if(!f||!f->alive||f->isHost||phase==Phase::Results||index<0||index>=static_cast<int>(evolutionPacks.size())||!evolutionPacks[index].active)return false;
+    audio.emit(evolutionPacks[index].hp<=1e-8?AudioKind::EvolutionBreak:AudioKind::EvolutionPickup,id);
     evolutionPacks[index].active=false;evolutionPacks[index].hp=0;
     return grantEvolution(id);
 }

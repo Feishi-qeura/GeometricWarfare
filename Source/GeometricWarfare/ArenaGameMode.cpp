@@ -1,5 +1,8 @@
 #include "ArenaGameMode.h"
 #include "ArenaHUD.h"
+#include "ArenaAudioSubsystem.h"
+#include "AudioMixerBlueprintLibrary.h"
+#include "ArenaLiveRounds.h"
 #include "ArenaPlayerController.h"
 #include "Engine/Texture2D.h"
 #include "Engine/GameInstance.h"
@@ -14,22 +17,36 @@ AArenaGameMode::AArenaGameMode() {
     PrimaryActorTick.bCanEverTick=true;
     HUDClass=AArenaHUD::StaticClass(); PlayerControllerClass=AArenaPlayerController::StaticClass(); DefaultPawnClass=nullptr;
 }
-UDouyinLiveSubsystem* AArenaGameMode::GetBridge() const { return GetGameInstance()->GetSubsystem<UDouyinLiveSubsystem>(); }
+ULiveInteractionSubsystem* AArenaGameMode::GetBridge() const { return GetGameInstance()->GetSubsystem<ULiveInteractionSubsystem>(); }
 void AArenaGameMode::BeginPlay() {
     Super::BeginPlay(); LastWall=RecordingStartWall=FPlatformTime::Seconds();
+    GameAudio=GetWorld()->GetSubsystem<UArenaAudioSubsystem>();GameAudio->PrepareAudio();
     auto* Bridge=GetBridge(); Bridge->OnComment.AddDynamic(this,&AArenaGameMode::HandleComment);
     Bridge->OnLike.AddDynamic(this,&AArenaGameMode::HandleLike);
     Bridge->OnShare.AddDynamic(this,&AArenaGameMode::HandleShare);
     Bridge->OnGift.AddDynamic(this,&AArenaGameMode::HandleGift);
+    Bridge->OnFollow.AddDynamic(this,&AArenaGameMode::HandleFollow);
+    Bridge->OnPresence.AddDynamic(this,&AArenaGameMode::HandlePresence);
+    Bridge->OnTeamSelection.AddDynamic(this,&AArenaGameMode::HandleTeamSelection);
     Bridge->OnAvatarReady.AddDynamic(this,&AArenaGameMode::HandleAvatar);
+    Bridge->OnSessionChanged.AddDynamic(this,&AArenaGameMode::HandleSessionChanged);
+    LiveAckResultHandle=Bridge->OnCommandResult.AddUObject(this,&AArenaGameMode::HandleLiveAckResult);
+    LoadProgress();
+    if(!Bridge->IsLocalTestMode()) {
+        bShowControls=false;
+        LastEvent=TEXT("等待平台 SDK 连接；当前没有模拟观众");
+        return;
+    }
     bVisualTest=FParse::Param(FCommandLine::Get(),TEXT("GWVisualTest"));
     bStressTest=FParse::Param(FCommandLine::Get(),TEXT("GWStressTest"));
+    bAudioStress=FParse::Param(FCommandLine::Get(),TEXT("GWAudioStress"));
+    bAudioDisabled=FParse::Param(FCommandLine::Get(),TEXT("GWAudioDisabled"));
+    if(bAudioStress)FMath::RandInit(1052026);
     bCombatStress=FParse::Param(FCommandLine::Get(),TEXT("GWCombatStress"));
     bRecording=FParse::Param(FCommandLine::Get(),TEXT("GWRecordDemo"));
     bShowControls=!bRecording;
-    LoadProgress();
-    if(!Bridge->IsRelayMode()) { AddMockUsers(bStressTest?5000:96); PumpMockUsers(bStressTest?128:96); }
-    if(!bStressTest && !Bridge->IsRelayMode()) {
+    if(Bridge->IsLocalTestMode()) { AddMockUsers(bStressTest?5000:96); PumpMockUsers(bStressTest?128:96); }
+    if(!bStressTest && Bridge->IsLocalTestMode()) {
         int32 i=0; for(auto& B:Match.world.bodies) { B.position={3200.0+(i%12)*145,3350.0+(i/12)*145}; ++i; }
         Match.world.rebuildSpatial(); CameraZoom=4.2f;
     }
@@ -76,10 +93,14 @@ void AArenaGameMode::BeginPlay() {
         PrepareGiftVisualTest();
         FParse::Value(FCommandLine::Get(),TEXT("GWCaptureAt="),VisualCaptureAt);
     }
+#if !UE_BUILD_SHIPPING
+    if(FParse::Param(FCommandLine::Get(),TEXT("GWHostAssistPreview")))HostAssist(1);
+#endif
 }
 void AArenaGameMode::EndPlay(const EEndPlayReason::Type Reason) {
+    ResetLiveRound();if(GameAudio)GameAudio->ResetAudio();
     if(bProgressDirty) SaveProgress();
-    if(auto* Bridge=GetBridge()) { Bridge->OnComment.RemoveAll(this); Bridge->OnLike.RemoveAll(this); Bridge->OnShare.RemoveAll(this); Bridge->OnGift.RemoveAll(this); Bridge->OnAvatarReady.RemoveAll(this); }
+    if(auto* Bridge=GetBridge()) { Bridge->OnComment.RemoveAll(this); Bridge->OnLike.RemoveAll(this); Bridge->OnShare.RemoveAll(this); Bridge->OnGift.RemoveAll(this); Bridge->OnFollow.RemoveAll(this); Bridge->OnPresence.RemoveAll(this); Bridge->OnTeamSelection.RemoveAll(this); Bridge->OnAvatarReady.RemoveAll(this); Bridge->OnSessionChanged.RemoveAll(this); Bridge->OnCommandResult.Remove(LiveAckResultHandle); }
     Super::EndPlay(Reason);
 }
 void AArenaGameMode::Tick(float DeltaSeconds) {
@@ -90,18 +111,25 @@ void AArenaGameMode::Tick(float DeltaSeconds) {
     RunningTime+=DisplayDt; Feed.step(DisplayDt); DamageNumbers.step(DisplayDt); PumpMockUsers(64);
     TickGiftNotice(DisplayDt);
     TickProgressSave(DisplayDt);
+    if(!GetBridge()->IsLocalTestMode() && !GetBridge()->IsConnected()){GameAudio->TickAudio(Match,FocusBodyId,HostBodyId,false);return;}
+    if(!GetBridge()->IsLocalTestMode()) {TickLiveRound();if(LiveRoundId<=0){GameAudio->TickAudio(Match,FocusBodyId,HostBodyId,false);return;}}
     if(bCombatStress && bStressTest && !bCombatStressPrepared && Viewers.Num()==5000) {
         bCombatStressPrepared=true;Match.elapsed=gw::BossSpawnSeconds;Match.step(.001);HostAssist(1);
-        for(size_t i=0;i<Match.fighters.size();++i)if(!Match.fighters[i].isHost && i%10==0)Match.grantShotgun(Match.fighters[i].id);
+        for(size_t i=0;i<Match.fighters.size();++i)if(!Match.fighters[i].isHost){
+            if(bAudioStress&&i%10==0)Match.grantWeapon(Match.fighters[i].id,static_cast<gw::WeaponKind>((i/10)%6));
+            else if(i%10==0)Match.grantShotgun(Match.fighters[i].id);
+        }
         for(size_t i=0;i<5 && i<Match.evolutionPacks.size() && i<Match.fighters.size();++i)Match.collectEvolutionPack(Match.fighters[i].id,static_cast<int>(i));
         FocusBodyId=-1;Overview();
     }
+    Match.audio.focusId=FocusBodyId;Match.audio.hostId=HostBodyId;
     const double Start=FPlatformTime::Seconds();
     if(!bSimulationPaused) {
         double Remaining=DisplayDt*DemoSpeed;
         while(Remaining>1e-7) { const double Slice=FMath::Min(Remaining,1.0/30); Match.step(Slice); ConsumeDamage(); Remaining-=Slice; }
     }
     SimulationMs=(FPlatformTime::Seconds()-Start)*1000; ConsumeEvents();
+    if(bAudioDisabled){Match.audio.clear();GameAudio->ResetAudio();GameAudio->SchedulingMs=0;}else GameAudio->TickAudio(Match,FocusBodyId,HostBodyId,true);
     if(FocusBodyId>=0) if(const auto* B=Match.world.find(FocusBodyId)) CameraCenter=FVector2D(B->position.x,B->position.y);
     if(bRecording) TickRecording();
     if(bVisualTest && RunningTime>VisualCaptureAt && !bScreenshotTaken) {
@@ -115,11 +143,13 @@ void AArenaGameMode::Tick(float DeltaSeconds) {
     if(bStressTest && Viewers.Num()==5000) {
         if(StressStart==0) StressStart=Wall;
         if(Wall-StressStart>5) {
-            StressFrames.Add(FrameMs); StressSimulation.Add(SimulationMs); StressRender.Add(RenderMs);
+            if(bAudioStress&&!bAudioDisabled&&StressFrames.IsEmpty())UAudioMixerBlueprintLibrary::StartRecordingOutput(this,30);
+            StressFrames.Add(FrameMs); StressSimulation.Add(SimulationMs); StressRender.Add(RenderMs);StressAudio.Add(GameAudio->SchedulingMs);
             StressBossFrames+=Match.boss.active?1:0;StressMaxShots=FMath::Max(StressMaxShots,static_cast<int32>(Match.shots.size()));StressMaxSwords=FMath::Max(StressMaxSwords,static_cast<int32>(Match.swordWaves.size()));
             if(StressFrames.Num()%30==1) { int32 Alive=0; for(const auto& F:Match.fighters)Alive+=F.alive&&!F.isHost?1:0; StressMinAlive=FMath::Min(StressMinAlive,Alive);StressMaxAlive=FMath::Max(StressMaxAlive,Alive); }
         }
-        if(Wall-StressStart>25) {
+        if(Wall-StressStart>(bAudioStress?35:25)) {
+            if(bAudioStress&&!bAudioDisabled)UAudioMixerBlueprintLibrary::StopRecordingOutput(this,EAudioRecordingExportType::WavFile,TEXT("AudioStress-Rendered"),FPaths::ConvertRelativePathToFull(FPaths::ProjectSavedDir()));
             SaveStressReport();
             FScreenshotRequest::RequestScreenshot(FPaths::ProjectSavedDir()/(bCombatStress?TEXT("Screenshots/Combat-5000.png"):TEXT("Screenshots/Stress5000.png")),true,false);
             bStressTest=false; bVisualTest=true; bScreenshotTaken=true; RunningTime=8;
@@ -151,7 +181,13 @@ void AArenaGameMode::ConsumeDamage() {
 }
 const FViewerState* AArenaGameMode::FindViewer(int32 BodyId) const { const FString* Key=Identities.Find(BodyId); return Key?Viewers.Find(*Key):nullptr; }
 FString AArenaGameMode::ViewerName(int32 BodyId) const { const auto* V=FindViewer(BodyId);if(V)return V->Name;const auto* F=Match.findFighter(BodyId);return F&&F->isHost?TEXT("主播 · 助战"):TEXT("暂无获奖者"); }
-void AArenaGameMode::HandleComment(const FDouyinComment& Comment) {
+void AArenaGameMode::HandleComment(const FLiveComment& Comment) {
+    if(!GetBridge()->IsEventFromCurrentSession(Comment.Session))return;
+    ApplyComment(Comment);
+    QueueHandledLiveEvent(Comment.Session,Comment.MessageId,TEXT("live_comment"));
+}
+void AArenaGameMode::ApplyComment(const FLiveComment& Comment) {
+    if(!GetBridge()->IsEventFromCurrentSession(Comment.Session)) return;
     const FString Command=Comment.Content.TrimStartAndEnd(); auto* Viewer=Viewers.Find(Comment.UserId);
     if(Command==TEXT("加入") || (!Viewer && (Command==TEXT("1") || Command==TEXT("2")))) {
         if(Viewer) { Viewer->HighlightUntil=RunningTime+3; FocusViewer(Viewer->BodyId); LastEvent=Viewer->Name+TEXT(" 已在场中，镜头已定位"); return; }
@@ -166,6 +202,8 @@ void AArenaGameMode::HandleComment(const FDouyinComment& Comment) {
         State.BodyId=Id; State.Team=Team; State.Avatar=MakePlaceholder(Id); State.HighlightUntil=RunningTime+3;
         Viewers.Add(State.UserId,State); Identities.Add(Id,State.UserId);
         RestoreWeapons(State);
+        UpdateLiveViewer(State.UserId);
+        ApplyFollowQualification(State.UserId);
         Feed.enqueue(State.Name+TEXT(" 加入了竞技场"));
         if(!Comment.AvatarUrl.IsEmpty()) GetBridge()->RequestAvatar(Comment.UserId,Comment.AvatarUrl);
         LastEvent=State.Name+TEXT(" 加入了竞技场"); return;
@@ -182,18 +220,31 @@ void AArenaGameMode::HandleComment(const FDouyinComment& Comment) {
         } else LastEvent=TEXT("先选择阵营：1 红方 / 2 蓝方");
         return;
     }
-    if(Command.Len()==1 && Command[0]>=TEXT('1') && Command[0]<=TEXT('4')) {
-        if(Match.changeShape(Viewer->BodyId,static_cast<gw::Shape>(Command[0]-TEXT('1')))) { Viewer->HighlightUntil=RunningTime+2; LastEvent=Viewer->Name+TEXT(" 更换了形状"); }
+    int32 ShapeIndex=INDEX_NONE;
+    if(Command.Len()==1) {
+        const TCHAR Letter=FChar::ToLower(Command[0]);
+        if(Letter>=TEXT('1') && Letter<=TEXT('4'))ShapeIndex=Letter-TEXT('1');
+        else if(Letter==TEXT('y'))ShapeIndex=0;
+        else if(Letter==TEXT('z'))ShapeIndex=1;
+        else if(Letter==TEXT('c'))ShapeIndex=2;
+        else if(Letter==TEXT('s'))ShapeIndex=3;
+    }
+    if(ShapeIndex!=INDEX_NONE) {
+        if(Match.changeShape(Viewer->BodyId,static_cast<gw::Shape>(ShapeIndex))) { Viewer->HighlightUntil=RunningTime+2; LastEvent=Viewer->Name+TEXT(" 更换了形状"); }
         else LastEvent=TEXT("换形需要间隔 2 秒，生命比例与武器状态保留");
     }
 }
-void AArenaGameMode::HandleLike(const FDouyinLike& Like) {
+void AArenaGameMode::HandleLike(const FLiveLike& Like) {
+    if(!GetBridge()->IsEventFromCurrentSession(Like.Session)) return;
+    QueueHandledLiveEvent(Like.Session,Like.MessageId,TEXT("live_like"));
     const auto* V=Viewers.Find(Like.UserId);
     if(!V){LastEvent=TEXT("点赞已收到；先加入战局才能恢复生命");return;}
-    LastEvent=Match.healLike(V->BodyId,Like.Count)?V->Name+FString::Printf(TEXT(" 点赞 ×%d，恢复生命"),Like.Count):TEXT("点赞不能复活阵亡角色，结算期间不恢复生命");
+    LastEvent=Match.healLike(V->BodyId,FMath::Min<int64>(Like.Count,20))?V->Name+FString::Printf(TEXT(" 点赞 ×%lld，恢复生命"),Like.Count):TEXT("点赞不能复活阵亡角色，结算期间不恢复生命");
     ConsumeDamage();
 }
-void AArenaGameMode::HandleShare(const FDouyinShare& Share) {
+void AArenaGameMode::HandleShare(const FLiveShare& Share) {
+    if(!GetBridge()->IsEventFromCurrentSession(Share.Session)) return;
+    if(!GetBridge()->IsLocalTestMode()) {LastEvent=TEXT("分享召集资格待确认，当前不授予武器");return;}
     const auto* V=Viewers.Find(Share.UserId);
     if(!V){LastEvent=TEXT("分享已收到；先加入战局才能领取霰弹枪");return;}
     const auto* F=Match.findFighter(V->BodyId);const bool Had=F&&(F->unlockedWeapons&gw::weaponBit(gw::WeaponKind::Shotgun));
@@ -203,20 +254,32 @@ void AArenaGameMode::HandleShare(const FDouyinShare& Share) {
         LastEvent=V->Name+(Had?TEXT(" 已解锁霰弹枪，可用武器+2切换"):TEXT(" 分享直播间，永久解锁霰弹枪"));
     }
 }
+bool AArenaGameMode::CanHostAssist() const {
+    const auto* Bridge=GetBridge();
+    return Match.phase!=gw::Phase::Results && Bridge && (Bridge->IsLocalTestMode()
+        || (Bridge->IsConnected() && LiveRoundReporter.IsValid() && LiveRoundReporter->IsCurrentRoundActive()));
+}
+int32 AArenaGameMode::GetHostTeam() const {const auto* F=Match.findFighter(HostBodyId);return F && F->isHost?F->team:-1;}
 void AArenaGameMode::HostAssist(int32 Team) {
+    if(!CanHostAssist()){LastEvent=Match.phase==gw::Phase::Results?TEXT("结算期间无法调整主播阵营"):TEXT("等待直播对局就绪后可助战");return;}
     if(Team<0||Team>2||Match.phase==gw::Phase::Results){LastEvent=TEXT("结算期间无法调整主播阵营");return;}
+    const int32 PreviousTeam=GetHostTeam();
     if(HostBodyId<0){const int32 Id=NextBodyId;if(!Match.addHost(Id,Team))return;++NextBodyId;HostBodyId=Id;Feed.enqueue(TEXT("主播以五角星身份进入竞技场"));}
     else if(!Match.setHostTeam(HostBodyId,Team))return;
+    if(PreviousTeam!=Team&&GameAudio)GameAudio->HostAssist();
     FocusViewer(HostBodyId);
     LastEvent=Team==1?TEXT("主播加入红方助战 · 不获取积分或奖项"):Team==2?TEXT("主播加入蓝方助战 · 不获取积分或奖项"):TEXT("主播以中立身份下场 · 不获取积分或奖项");
 }
-void AArenaGameMode::HandleAvatar(const FString& UserId,UTexture2D* Texture) { if(auto* V=Viewers.Find(UserId)) V->Avatar=Texture; }
+void AArenaGameMode::HandleAvatar(const FString& UserId,UTexture2D* Texture) {
+    if(auto* State=LiveViewerStates.Find(UserId))State->Avatar=Texture;
+    if(auto* V=Viewers.Find(UserId)) V->Avatar=Texture;
+}
 void AArenaGameMode::AddMockUsers(int32 Count) {
-    if(GetBridge()->IsRelayMode()) { LastEvent=TEXT("连接平台适配服务时不可添加模拟观众"); return; }
+    if(!GetBridge()->IsLocalTestMode()) { LastEvent=TEXT("正式平台模式不可添加模拟观众"); return; }
     PendingMockUsers=FMath::Clamp(PendingMockUsers+FMath::Max(0,Count),0,gw::Match::ViewerCapacity-Viewers.Num());
 }
 void AArenaGameMode::PumpMockUsers(int32 Budget) {
-    if(GetBridge()->IsRelayMode()) { PendingMockUsers=0; return; }
+    if(!GetBridge()->IsLocalTestMode()) { PendingMockUsers=0; return; }
     static const TCHAR* Names[]={TEXT("小橘"),TEXT("阿白"),TEXT("月亮"),TEXT("小雨"),TEXT("星河"),TEXT("北风"),TEXT("团子"),TEXT("青柠"),TEXT("栗子"),TEXT("南山"),TEXT("泡泡"),TEXT("山海"),TEXT("可乐"),TEXT("小鹿"),TEXT("云朵"),TEXT("麦芽")};
     for(int32 i=0;i<Budget && PendingMockUsers>0;++i) {
         --PendingMockUsers; ++DemoCounter;
@@ -230,18 +293,26 @@ void AArenaGameMode::PumpMockUsers(int32 Budget) {
     }
 }
 void AArenaGameMode::ResetArena() {
-    if(GetBridge()->IsRelayMode()) { LastEvent=TEXT("请先断开接入再重置演示"); return; }
+    if(!GetBridge()->IsLocalTestMode()) { LastEvent=TEXT("正式平台模式不可重置演示"); return; }
+    HandleSessionChanged();
+    LastEvent=TEXT("场地已重置，发送“加入”重新开始");
+}
+void AArenaGameMode::HandleSessionChanged() {
+    ResetLiveRound();
+    if(GameAudio)GameAudio->ResetAudio();
     Match.reset(); Viewers.Empty(); Identities.Empty(); Feed.reset(); DamageNumbers.reset(); PendingMockUsers=0;HostBodyId=-1;FocusBodyId=-1;
     GiftNotice=FGiftNotice{}; GiftNoticeQueue.Reset();
-    bSimulationPaused=false; DemoSpeed=1; Overview(); LastEvent=TEXT("场地已重置，发送“加入”重新开始");
+    LiveViewerStates.Empty();PendingLiveAcks.Empty();InFlightLiveAcks.Empty();LiveRoundId=0;
+    bSimulationPaused=false; bRecording=false; bVisualTest=false; bStressTest=false; bCombatStress=false;
+    DemoSpeed=1; Overview(); LastEvent=TEXT("平台会话已切换，等待观众参与");
 }
 void AArenaGameMode::ZoomBy(float Factor) { CameraZoom=FMath::Clamp(CameraZoom*Factor,1.f,12.f); }
 void AArenaGameMode::FocusViewer(int32 Id) { if(const auto* Body=Match.world.find(Id)) { FocusBodyId=Id; CameraZoom=6; CameraCenter={Body->position.x,Body->position.y}; } }
 void AArenaGameMode::Overview() { if(FocusBodyId>=0)return;CameraZoom=1; CameraCenter={4000,4000}; }
 void AArenaGameMode::MoveCamera(float X,float Y) { if(FocusBodyId>=0)return;CameraCenter+=FVector2D(X,Y)*(700/CameraZoom); }
-void AArenaGameMode::SetDemoSpeed(float Speed) { if(!GetBridge()->IsRelayMode()) DemoSpeed=FMath::Clamp(Speed,1.f,8.f); }
+void AArenaGameMode::SetDemoSpeed(float Speed) { if(GetBridge()->IsLocalTestMode()) DemoSpeed=FMath::Clamp(Speed,1.f,8.f); }
 void AArenaGameMode::DemoAction(const FString& Action) {
-    if(GetBridge()->IsRelayMode()) { LastEvent=TEXT("此操作仅用于本地演示"); return; }
+    if(!GetBridge()->IsLocalTestMode()) { LastEvent=TEXT("此操作仅用于本地演示"); return; }
     if(Action==TEXT("host-red")||Action==TEXT("host-blue")||Action==TEXT("host-gray")) {HostAssist(Action==TEXT("host-red")?1:Action==TEXT("host-blue")?2:0);}
     else if(Action==TEXT("combat-showcase")) {
         if(Match.phase!=gw::Phase::Battle || Match.elapsed>gw::BossSpawnSeconds)Match.startNextRound();
@@ -302,9 +373,11 @@ void AArenaGameMode::SaveStressReport() {
         double Sum=0; for(double V:Values) Sum+=V; Values.Sort();
         return FString::Printf(TEXT("{\"mean_ms\":%.3f,\"p95_ms\":%.3f}"),Sum/Values.Num(),Values[FMath::Min(Values.Num()-1,FMath::FloorToInt(Values.Num()*.95))]);
     };
-    const TCHAR* Mode=bCombatStress?TEXT("UE offscreen overview; 5000 viewers plus host; dead participants included; preset starts at 150s with 500 shotguns and five evolved viewers"):TEXT("UE offscreen overview, local auto-combat; player count includes dead participants");
+    const TCHAR* Mode=bCombatStress?TEXT("UE offscreen overview; 5000 viewers plus host; dead participants included; preset starts at 150s; audio fixture uses six weapons across 500 viewers and five evolved viewers"):TEXT("UE offscreen overview, local auto-combat; player count includes dead participants");
     const FString Report=FString::Printf(TEXT("{\"players\":%d,\"host\":%d,\"sampled_alive_min\":%d,\"sampled_alive_max\":%d,\"samples\":%d,\"boss_active_samples\":%d,\"max_visible_shots\":%d,\"max_sword_waves\":%d,\"frame\":%s,\"simulation\":%s,\"hud\":%s,\"mode\":\"%s\"}"),Viewers.Num(),HostBodyId>=0?1:0,StressMinAlive,StressMaxAlive,StressFrames.Num(),StressBossFrames,StressMaxShots,StressMaxSwords,*Stats(StressFrames),*Stats(StressSimulation),*Stats(StressRender),Mode);
-    FFileHelper::SaveStringToFile(Report,*(FPaths::ProjectSavedDir()/(bCombatStress?TEXT("CombatStress5000.json"):TEXT("Stress5000.json"))));
+    FString FinalReport=Report;FinalReport.RemoveAt(FinalReport.Len()-1);
+    FinalReport+=FString::Printf(TEXT(",\"audio\":%s,\"audio_enabled\":%s,\"audio_device\":%s,\"audio_events\":%llu,\"audio_starts\":%llu,\"audio_dropped\":%llu,\"sfx_peak\":%d,\"audio_missing\":%d}"),*Stats(StressAudio),bAudioDisabled?TEXT("false"):TEXT("true"),GameAudio->HasAudioDevice()?TEXT("true"):TEXT("false"),static_cast<unsigned long long>(GameAudio->Events),static_cast<unsigned long long>(GameAudio->Starts),static_cast<unsigned long long>(GameAudio->Dropped),GameAudio->ActivePeak,GameAudio->MissingAssets);
+    FFileHelper::SaveStringToFile(FinalReport,*(FPaths::ProjectSavedDir()/(bCombatStress?TEXT("CombatStress5000.json"):TEXT("Stress5000.json"))));
 }
 UTexture2D* AArenaGameMode::MakePlaceholder(int32 Seed) {
     const int32 Index=Seed%32; if(PlaceholderPool.Num()<32) PlaceholderPool.SetNum(32);

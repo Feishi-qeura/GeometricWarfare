@@ -66,7 +66,7 @@ inline bool Match::damageEnvironment(int id,double amount) {
     auto* v=findFighter(id);if(!v||!v->alive||phase==Phase::Results||!validAmount(amount))return false;
     const int index=indices.at(id);
     if(!v->isHost&&world.bodies[index].shape==Shape::Circle)amount*=.5;
-    const double applied=applyFighterDamage(*v,amount);v->hitFlash=.16;
+    const double applied=applyFighterDamage(*v,amount);v->hitFlash=.16;audio.emit(AudioKind::FighterHit,id);
     emitDamage(world.bodies[index].position,applied,v->team,1,id);
     if(v->hp<=1e-8)kill(-1,index);return true;
 }
@@ -144,6 +144,7 @@ inline void Match::tickWeapon(int index,double dt) {
     }
     const WeaponKind firedKind=f.weaponKind;const int firedTargetKind=f.targetKind,firedTargetIndex=f.targetIndex;
     --f.ammo;f.shotRemaining=gun.fireInterval;
+    audio.emit(static_cast<AudioKind>(firedKind),f.id);
     if(firedKind==WeaponKind::Sniper)f.aimRemaining=f.sniperAimDuration;
     if(f.ammo==0)f.reloadRemaining=reload;
     const int pellets=firedKind==WeaponKind::Shotgun?15+std::min(10,static_cast<int>(random()*11)):(firedKind==WeaponKind::MachineGun?7:1);

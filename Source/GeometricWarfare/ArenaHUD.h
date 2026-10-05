@@ -2,8 +2,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
 #include "Simulation/ArenaView.h"
+#include "UI/ArenaPresentationBudget.h"
+#include "UI/ArenaScreenLayout.h"
 #include "ArenaHUD.generated.h"
-class SWidget;
 class AArenaGameMode;
 UCLASS()
 class GEOMETRICWARFARE_API AArenaHUD : public AHUD {
@@ -11,24 +12,47 @@ class GEOMETRICWARFARE_API AArenaHUD : public AHUD {
 public:
     virtual void BeginPlay() override;
     virtual void DrawHUD() override;
-    virtual void EndPlay(const EEndPlayReason::Type Reason) override;
     void SelectAtCursor(float X,float Y);
     bool BeginPointer(float X,float Y);
     void UpdatePointer(float X,float Y);
     void EndPointer(float X,float Y);
     void CancelPointer();
     void ZoomAtCursor(float X,float Y,float Factor);
+    void ToggleSettings();
+    bool IsSettingsOpen() const {return bSettingsOpen;}
+    bool IsOverlayOpen() const {return bSettingsOpen || bHostPanelOpen;}
 private:
     friend struct FArenaHUDInputAccess;
-    TSharedPtr<SWidget> Controls;
+    friend struct FArenaSettingsTestAccess;
+    friend struct FArenaAdaptiveTestAccess;
+    bool bSettingsOpen=false;
+    bool bHostPanelOpen=false;
+    gwui::ScreenLayout ScreenLayout;
+    bool ToLayoutPointer(float& X,float& Y) const;
+    FBox2D HostButtonBounds=FBox2D(ForceInit);
+    FBox2D SettingsButtonBounds=FBox2D(ForceInit);
+    struct FSettingHitRegion { FBox2D Bounds; int32 Action=0; };
+    TArray<FSettingHitRegion> SettingRegions;
+    int32 PressedSettingAction=-1;
+    FBox2D PressedSettingBounds=FBox2D(ForceInit);
+    gwui::PresentationBudget Presentation;
+    void DrawSettings(AArenaGameMode* Game);
+    void DrawHostPanel(AArenaGameMode* Game);
+    void DrawAdaptiveHUD(AArenaGameMode* Game);
+    void DrawDesktopHUD(AArenaGameMode* Game);
+    void DrawAdaptiveRanks(AArenaGameMode* Game,float X,float Y,float Width,float AvailableHeight);
+    void ActivateSetting(int32 Action);
+    void UpdateAudioSlider(float X);
     UPROPERTY(Transient) TObjectPtr<class UFont> TextFont;
+    // Optional broadcast rule image, supplied with -GWRuleSticker=<absolute PNG>.
+    UPROPERTY(Transient) TObjectPtr<class UTexture2D> RuleSticker;
     float ArenaX=0,ArenaY=0,ArenaSide=0,WorldScale=1;
     FVector2D ViewOrigin;
     // Render-only camera motion. Never written back to the view or pointer input.
     FVector2D ArenaShakeOffset=FVector2D::ZeroVector;
     float ViewportWidth=0,ViewportHeight=0;
     gw::PointerDrag PointerDrag;
-    enum class EPointerArea { None,Arena,Minimap,Rank };
+    enum class EPointerArea { None,Arena,Minimap,Rank,Settings };
     EPointerArea PointerArea=EPointerArea::None;
     FBox2D MinimapBounds=FBox2D(ForceInit);
     struct FRankHitRegion { FBox2D Bounds; int32 Id=-1; };
@@ -59,7 +83,7 @@ private:
     void DrawCombatActors(AArenaGameMode* Game);
     void DrawSupplyStatus(FVector2D Center,float Radius,double Hp,double MaxHp,double HitFlash,const FString& Label);
     void DrawGunfire(AArenaGameMode* Game);
-    void DrawBossBar(AArenaGameMode* Game);
+    void DrawBossBar(AArenaGameMode* Game,float Y=111);
     void DrawGiftNotice(AArenaGameMode* Game);
     void DrawRankTooltip(AArenaGameMode* Game,int32 FighterIndex,float X,float Y,float Width);
     void UpdateArenaShake(AArenaGameMode* Game);

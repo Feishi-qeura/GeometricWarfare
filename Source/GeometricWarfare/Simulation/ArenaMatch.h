@@ -5,6 +5,7 @@
 #include "ArenaBoss.h"
 #include "ArenaWeapons.h"
 #include "ArenaPickups.h"
+#include "ArenaAudio.h"
 #include <array>
 #include <cstdint>
 #include <limits>
@@ -42,6 +43,7 @@ struct Shot { Vec from,to; int team=0; double life=.1; WeaponKind kind=WeaponKin
 class Match {
 public:
     World world;
+    AudioEvents audio;
     MatchConfig config;
     WeaponConfig weapon;
     std::vector<Fighter> fighters;
@@ -142,7 +144,7 @@ public:
     void reset() {
         world.reset(); fighters.clear(); indices.clear(); round=1; elapsed=0; phase=Phase::Battle;
         intermissionRemaining=0; mvpId=fmvpId=mostKillsId=mostDamageTakenId=-1; winnerTeam=0; teamScores={}; leaderboard.clear();
-        events.clear(); shots.clear(); projectiles.clear(); explosions.clear(); damageEvents.clear(); damageCursor=0; teamCounts={}; seed=0xABCD1234u; initializeResources(); standingsDirty=true; standingsTimer=0;
+        audio.clear(); events.clear(); shots.clear(); projectiles.clear(); explosions.clear(); damageEvents.clear(); damageCursor=0; teamCounts={}; seed=0xABCD1234u; initializeResources(); standingsDirty=true; standingsTimer=0;
         evolutionPacks.clear();swordWaves.clear();evolutionMinute=0;resetBoss();
         weaponCrates.clear();weaponCrateWave=0;
     }
@@ -158,10 +160,13 @@ public:
         bases[team].alive=true; bases[team].hp=bases[team].maxHp;
         emit(EventKind::BaseRebuilt,-1,-1,team); return true;
     }
-    bool rebuildOrFortifyBase(int team) {
-        if(team<1||team>2||phase!=Phase::Battle||elapsed+1e-8>=config.sprintSeconds)return false;
-        if(!bases[team].alive)return rebuildBase(team);
-        bases[team].hp+=1000;bases[team].maxHp+=1000;emit(EventKind::BaseRebuilt,-1,-1,team,1000);return true;
+    bool rebuildOrFortifyBase(int team) {return rebuildOrFortifyBase(team,1);}
+    bool rebuildOrFortifyBase(int team,int64_t count) {
+        if(count<=0||team<1||team>2||phase!=Phase::Battle||elapsed+1e-8>=config.sprintSeconds)return false;
+        // The first unit rebuilds a destroyed base; only remaining units fortify.
+        if(!bases[team].alive){rebuildBase(team);--count;}
+        if(count>0){const double Gain=1000.0*static_cast<double>(count);bases[team].hp+=Gain;bases[team].maxHp+=Gain;emit(EventKind::BaseRebuilt,-1,-1,team,Gain);}
+        return true;
     }
     bool revive(int id,bool gift=false) {
         auto* f=findFighter(id); if(!f||f->alive||phase==Phase::Results||(phase==Phase::Sprint&&!f->isHost&&!gift)) return false;
@@ -181,6 +186,7 @@ public:
         } else amount*=damageMultiplierFor(*a,v->team==0);
         if(victimShape==Shape::Circle&&!v->isHost) amount*=.5;
         const double applied=applyFighterDamage(*v,amount);v->hitFlash=.16;
+        audio.emit(AudioKind::FighterHit,victimId);
         emitDamage(world.bodies[indices.at(victimId)].position,applied,v->team,1,victimId);
         if(v->hp<=1e-8) kill(indices.at(attackerId),indices.at(victimId));
         return true;
@@ -191,10 +197,10 @@ public:
         auto& n=npcs[index]; const Shape shape=world.bodies[indices.at(attackerId)].shape;
         const double applied=std::min(n.hp,amount*damageMultiplierFor(*a,true));
         n.hp=std::max(0.0,n.hp-applied);
-        n.hitFlash=.16;
+        n.hitFlash=.16;audio.emit(AudioKind::NpcHit,attackerId);
         emitDamage(n.position,applied,0,2,index);
         if(n.hp<=1e-8) {
-            n.active=false; n.respawnRemaining=config.npcRespawnSeconds;
+            n.active=false; audio.emit(AudioKind::NpcDeath,attackerId); n.respawnRemaining=config.npcRespawnSeconds;
             const int64_t reward=a->team==0||a->isHost?0:awardScore(*a,config.npcReward*(shape==Shape::Square?2:1));
             emit(EventKind::NpcKilled,attackerId,index,a->team,static_cast<double>(reward)); standingsDirty=true;
         }
@@ -215,7 +221,7 @@ public:
         auto& orb=orbs[index]; const bool doubled=orb.natural&&world.bodies[indices.at(id)].shape==Shape::Square;
         const int64_t value=orb.value*(doubled?2:1);const int64_t reward=orb.natural?awardScore(*f,value):value;if(!orb.natural)f->score+=reward; orb.active=false;
         orb.respawnRemaining=orb.natural?config.orbRespawnSeconds:0;
-        emit(EventKind::OrbCollected,id,index,f->team,static_cast<double>(reward)); standingsDirty=true; return true;
+        audio.emit(AudioKind::Orb,id); emit(EventKind::OrbCollected,id,index,f->team,static_cast<double>(reward)); standingsDirty=true; return true;
     }
     void refreshStandings() {
         if(phase==Phase::Results) return;
@@ -341,6 +347,7 @@ private:
         orbGrid[cellIndex(position)].push_back(static_cast<int>(orbs.size())); orbs.push_back({position,value,false,true,0});
     }
     void kill(int attacker,int victim) {
+        audio.emit(AudioKind::FighterDeath,fighters[victim].id);
         auto& v=fighters[victim];Fighter* a=attacker>=0?&fighters[attacker]:nullptr;if(a)++a->kills; ++v.deaths;
         const int64_t carried=v.score/5; // Transfer the same whole-point20% in both ledgers.
         v.score-=carried;

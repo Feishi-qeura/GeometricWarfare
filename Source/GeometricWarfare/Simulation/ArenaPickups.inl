@@ -33,7 +33,7 @@ inline bool Match::collectWeaponCrate(int id,int index){
             f->weaponBeforeTemporary=validWeapon(fallback)&&(f->unlockedWeapons&weaponBit(fallback))?fallback:WeaponKind::Pistol;
         }
     }
-    switchWeapon(id,kind);crate.active=false;crate.hp=0;return true;
+    switchWeapon(id,kind);audio.emit(crate.hp<=1e-8?AudioKind::WeaponBreak:AudioKind::WeaponPickup,id);crate.active=false;crate.hp=0;return true;
 }
 inline void Match::endTemporaryWeapon(Fighter& f){
     if(f.temporaryWeaponRemaining<=0)return;
