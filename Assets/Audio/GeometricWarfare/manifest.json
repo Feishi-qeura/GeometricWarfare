@@ -1,0 +1,158 @@
+[
+  {
+    "name": "Battle",
+    "loop": true,
+    "category": "music",
+    "duration": 68.5714375
+  },
+  {
+    "name": "Boss",
+    "loop": true,
+    "category": "music",
+    "duration": 68.5714375
+  },
+  {
+    "name": "Sprint",
+    "loop": true,
+    "category": "music",
+    "duration": 54.857145833333334
+  },
+  {
+    "name": "Results",
+    "loop": true,
+    "category": "music",
+    "duration": 17.142854166666666
+  },
+  {
+    "name": "HostAssist",
+    "loop": false,
+    "category": "music",
+    "duration": 4.285708333333333
+  },
+  {
+    "name": "Pistol",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.105
+  },
+  {
+    "name": "Shotgun",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.3
+  },
+  {
+    "name": "Sniper",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.38
+  },
+  {
+    "name": "Rifle",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.12
+  },
+  {
+    "name": "MachineGun",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.065
+  },
+  {
+    "name": "Rocket",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.58
+  },
+  {
+    "name": "FighterHit",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.11
+  },
+  {
+    "name": "NpcHit",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.14
+  },
+  {
+    "name": "BossBullet",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.62
+  },
+  {
+    "name": "BossStompImpact",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.8
+  },
+  {
+    "name": "FighterDeath",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.45
+  },
+  {
+    "name": "NpcDeath",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.36
+  },
+  {
+    "name": "Orb",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.16
+  },
+  {
+    "name": "WeaponPickup",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.28
+  },
+  {
+    "name": "WeaponBreak",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.42
+  },
+  {
+    "name": "EvolutionPickup",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.45
+  },
+  {
+    "name": "EvolutionBreak",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.6
+  },
+  {
+    "name": "BossStompJump",
+    "loop": false,
+    "category": "sfx",
+    "duration": 0.85
+  },
+  {
+    "name": "BossLaserWindup",
+    "loop": false,
+    "category": "sfx",
+    "duration": 5.0
+  },
+  {
+    "name": "BossLaserRage",
+    "loop": false,
+    "category": "sfx",
+    "duration": 3.0
+  },
+  {
+    "name": "BossLaserBeam",
+    "loop": true,
+    "category": "sfx",
+    "duration": 0.5
+  }
+]
