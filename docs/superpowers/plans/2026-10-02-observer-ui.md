@@ -22,7 +22,7 @@ Leaderboard identity is captured when the row is pressed so sorting during a cli
 
 ## External document
 
-User supplied https://ccn6dy60tep9.feishu.cn/docx/Ruhmda6G4o5lVVxGfwcclWfVnPd . Chrome inventory and direct-tab binding currently fail with `nodeRepl.fetch request failed`; login alone has not restored the tool connection. No online edits have been made.
+User supplied （私有文档链接已省略） . Chrome inventory and direct-tab binding currently fail with `nodeRepl.fetch request failed`; login alone has not restored the tool connection. No online edits have been made.
 
 ## Verification progress
 

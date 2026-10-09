@@ -6,8 +6,9 @@
 #include "AudioDevice.h"
 
 namespace {
-const TCHAR* const Names[]={TEXT("Battle"),TEXT("Boss"),TEXT("Sprint"),TEXT("Results"),TEXT("HostAssist"),TEXT("Pistol"),TEXT("Shotgun"),TEXT("Rifle"),TEXT("Sniper"),TEXT("MachineGun"),TEXT("Rocket"),TEXT("FighterHit"),TEXT("FighterDeath"),TEXT("BossBullet"),TEXT("BossLaserWindup"),TEXT("BossLaserRage"),TEXT("BossLaserBeam"),TEXT("BossStompJump"),TEXT("BossStompImpact"),TEXT("Orb"),TEXT("NpcHit"),TEXT("NpcDeath"),TEXT("WeaponPickup"),TEXT("WeaponBreak"),TEXT("EvolutionPickup"),TEXT("EvolutionBreak")};
-float Gain(float Value,float Default){return FMath::Square(FMath::IsFinite(Value)?FMath::Clamp(Value,0.f,1.f):Default);}
+const TCHAR* const AudioAssetNames[]={TEXT("Battle"),TEXT("Boss"),TEXT("Sprint"),TEXT("Results"),TEXT("HostAssist"),TEXT("Pistol"),TEXT("Shotgun"),TEXT("Rifle"),TEXT("Sniper"),TEXT("MachineGun"),TEXT("Rocket"),TEXT("FighterHit"),TEXT("FighterDeath"),TEXT("BossBullet"),TEXT("BossLaserWindup"),TEXT("BossLaserRage"),TEXT("BossLaserBeam"),TEXT("BossStompJump"),TEXT("BossStompImpact"),TEXT("Orb"),TEXT("NpcHit"),TEXT("NpcDeath"),TEXT("WeaponPickup"),TEXT("WeaponBreak"),TEXT("EvolutionPickup"),TEXT("EvolutionBreak")};
+// Double every playback route while preserving the slider curve, mute, fades and ducking.
+float Gain(float Value,float Default){return 2.f*FMath::Square(FMath::IsFinite(Value)?FMath::Clamp(Value,0.f,1.f):Default);}
 }
 void UArenaAudioSubsystem::Initialize(FSubsystemCollectionBase& Collection){Super::Initialize(Collection);Priorities.fill(-1);}
 bool UArenaAudioSubsystem::HasAudioDevice()const{return GetWorld()&&GetWorld()->GetAudioDeviceRaw()!=nullptr;}
@@ -17,7 +18,7 @@ UAudioComponent* UArenaAudioSubsystem::MakeComponent(){
 }
 void UArenaAudioSubsystem::PrepareAudio(){
     if(bPrepared)return;bPrepared=true;
-    for(const auto* Name:Names){
+    for(const auto* Name:AudioAssetNames){
         auto* Wave=LoadObject<USoundWave>(nullptr,*FString::Printf(TEXT("/Game/Audio/GeometricWarfare/%s.%s"),Name,Name));
         Waves.Add(Wave);if(!Wave){++MissingAssets;continue;}
         if(auto* Device=GetWorld()->GetAudioDeviceRaw())Device->Precache(Wave,true,false,false);

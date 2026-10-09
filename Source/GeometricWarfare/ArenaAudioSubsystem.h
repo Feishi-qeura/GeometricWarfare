@@ -21,6 +21,7 @@ public:
     bool HasAudioDevice() const;
 private:
     friend struct FArenaAudioTestAccess;
+    friend struct FArenaAudioGainTestAccess;
     UPROPERTY(Transient) TArray<TObjectPtr<USoundWave>> Waves;
     UPROPERTY(Transient) TArray<TObjectPtr<UAudioComponent>> Pool;
     UPROPERTY(Transient) TArray<TObjectPtr<UAudioComponent>> Music;

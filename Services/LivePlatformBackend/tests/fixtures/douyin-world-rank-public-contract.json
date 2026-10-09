@@ -1,0 +1,106 @@
+{
+  "fixture_version": 1,
+  "purpose": "Public contract fixtures only; every token and identity is fake. No live platform success is claimed.",
+  "verified_date": "2026-10-04",
+  "provenance": {
+    "sdk_repository": "https://github.com/bytedance/douyin-openapi-sdk-go",
+    "sdk_revision_observed": "a50593c5ccdc31ab5b7cb2153947dfad612bbed9",
+    "sdk_source": "https://github.com/bytedance/douyin-openapi-sdk-go/blob/a50593c5ccdc31ab5b7cb2153947dfad612bbed9/client/client.go",
+    "source_sha256": "EE759CDE6BE040F742D4CB793E74565E02AF3BAB4F9CD99A8488927C66A2290D",
+    "official_sdk_index": "https://developer.open-douyin.com/docs/resource/zh-CN/interaction/develop/server/sdk-overview",
+    "room_doc": "https://developer.open-douyin.com/docs/resource/zh-CN/interaction/develop/server/live-room-scope/live-info",
+    "rank_overview": "https://developer.open-douyin.com/docs/resource/zh-CN/interaction/develop/server/live-room-scope/user-scores-rank/user-record"
+  },
+  "wire_rules": {
+    "base_url": "https://webcast.bytedance.com",
+    "content_type": "application/json",
+    "rank_and_room_auth_header": "x-token",
+    "auth_value_type": "server application access_token, never launch token",
+    "task_query_auth_header": "access-token",
+    "sdk_diagnostic_header": { "x-from": "openapi-sdk" },
+    "do_not_send_in_body": ["access_token", "header", "secret"],
+    "int64_encoding": "JSON integer without floating-point conversion; NOT quoted decimal strings on the public API",
+    "complete_time_unit": null,
+    "complete_time_unit_status": "Int64 verified; seconds vs milliseconds not specified by world-rank docs or public SDK source. Configure explicitly and verify before publishing completion.",
+    "success": "HTTP 200 plus at least one recognized integer error code and all recognized codes zero. Public examples use err_no; server metadata observed 2026-10-07 uses errcode integer zero without err_no. Empty/malformed response is not proof of success.",
+    "error_fields_recognized_by_sdk_util": ["err_no", "errcode", "error_code", "errno", "error", "err.err_code", "extra.error_code"],
+    "session_ttl_seconds": 43200,
+    "session_ttl_status": "Local service design, not a platform launch-token extension or ongoing broadcast proof. Reauthorize using a newly launched token after expiry."
+  },
+  "application_token": {
+    "method": "POST",
+    "url": "https://developer.toutiao.com/api/apps/v2/token",
+    "body": { "appid": "ttContractFixture", "secret": "FAKE_SERVER_SECRET_NOT_REAL", "grant_type": "client_credential" },
+    "response": { "err_no": 0, "err_tips": "success", "data": { "access_token": "FAKE_APP_TOKEN_NOT_REAL", "expires_in": 7200 } },
+    "secret_location": "Server only",
+    "doc": "https://developer.open-douyin.com/docs/resource/zh-CN/interaction/develop/server/interface-request-credential/get-access-token"
+  },
+  "room_exchange": {
+    "sdk_function": "WebcastmateInfo",
+    "method": "POST",
+    "path": "/api/webcastmate/info",
+    "headers": { "content-type": "application/json", "x-token": "FAKE_APP_TOKEN_NOT_REAL" },
+    "body": { "token": "FAKE_LAUNCH_TOKEN_NOT_REAL" },
+    "body_types": { "token": "string" },
+    "normal_response_without_error_envelope": { "data": { "info": { "room_id": 7214015683695250235, "anchor_open_id": "_000fixture_anchor", "avatar_url": "https://example.invalid/avatar.png", "nick_name": "Fixture anchor" } } },
+    "normal_response_with_error_envelope": { "err_no": 0, "err_msg": "", "data": { "info": { "room_id": 7214015683695250235, "anchor_open_id": "_000fixture_anchor" } } },
+    "response_types": { "data.info.room_id": "int64", "data.info.anchor_open_id": "string", "data.info.avatar_url": "string", "data.info.nick_name": "string" },
+    "expected_trusted_identity": { "app_id": "ttContractFixture", "room_id": "7214015683695250235", "anchor_open_id": "_000fixture_anchor" },
+    "app_binding_source": "app_id is server-configured application credential context; the public response has NO app_id field. Cross-application token rejection needs real platform verification.",
+    "launch_token_validity_seconds": 1800,
+    "launch_token_validity_status": "Official validity stated; no documented one-time-only exception or public refresh chain.",
+    "qps_limit_per_app": 10,
+    "must_reject_client_claims": [
+      { "room_id": "7214015683695250236", "anchor_open_id": "_000fixture_anchor" },
+      { "room_id": "7214015683695250235", "anchor_open_id": "_000different_anchor" },
+      { "app_id": "ttDifferentApp" }
+    ],
+    "must_reject_responses": [
+      { "err_no": 40001, "err_msg": "fixture error", "data": { "info": { "room_id": 7214015683695250235, "anchor_open_id": "_000fixture_anchor" } } },
+      { "data": { "info": { "room_id": 0, "anchor_open_id": "_000fixture_anchor" } } },
+      { "data": { "info": { "room_id": 7214015683695250235, "anchor_open_id": "" } } },
+      {}
+    ]
+  },
+  "world_rank": {
+    "scope": "interactive_rank_config",
+    "headers": { "content-type": "application/json", "x-token": "FAKE_APP_TOKEN_NOT_REAL" },
+    "common_types": { "app_id": "string", "world_rank_version": "string", "is_online_version": "boolean" },
+    "user_types": { "open_id": "string", "rank": "int64", "score": "int64", "winning_points": "int64", "winning_streak_count": "int64" },
+    "user_fixture": { "open_id": "_000fixture_user", "rank": 1, "score": 9007199254740993, "winning_points": 0, "winning_streak_count": 0 },
+    "operation_fixtures": [
+      {
+        "sdk_function": "WorldRankSetValidVersion", "method": "POST", "path": "/api/gaming_con/world_rank/set_valid_version", "qps_limit_per_app": 3,
+        "body": { "app_id": "ttContractFixture", "world_rank_version": "fixture-week-2026-10-04T23:00", "is_online_version": false },
+        "semantics": "Select one active world-rank version for the application/environment. Period rollover is developer-managed, not per round."
+      },
+      {
+        "sdk_function": "WorldRankUploadUserResult", "method": "POST", "path": "/api/gaming_con/world_rank/upload_user_result", "qps_limit_per_app": 100, "max_users": 50,
+        "body": { "app_id": "ttContractFixture", "world_rank_version": "fixture-week-2026-10-04T23:00", "is_online_version": false, "user_list": [{ "open_id": "_000fixture_user", "rank": 1, "score": 9007199254740993, "winning_points": 0, "winning_streak_count": 0 }] },
+        "semantics": "Overwrite cumulative user result keyed by user and version. Includes users appearing in Top150. Does not update the published Top150."
+      },
+      {
+        "sdk_function": "WorldRankUploadRankList", "method": "POST", "path": "/api/gaming_con/world_rank/upload_rank_list", "qps_limit_per_app": 5, "max_users": 150,
+        "body": { "app_id": "ttContractFixture", "world_rank_version": "fixture-week-2026-10-04T23:00", "is_online_version": false, "rank_list": [{ "open_id": "_000fixture_user", "rank": 1, "score": 9007199254740993, "winning_points": 0, "winning_streak_count": 0 }] },
+        "semantics": "Overwrite complete developer-sorted Top150 for version. Never upload batches as partial list patches."
+      },
+      {
+        "sdk_function": "CompleteUploadUserResult", "method": "POST", "path": "/api/gaming_con/world_rank/complete_upload_user_result", "complete_time_fixture_is_not_unit_evidence": true,
+        "body": { "app_id": "ttContractFixture", "world_rank_version": "fixture-week-2026-10-04T23:00", "is_online_version": false, "complete_time": 1234567890 },
+        "semantics": "At period cutoff, after final cumulative/list uploads, mark old version complete, then select next version. No automatic weekly accumulation is supplied by the API."
+      }
+    ],
+    "success_response": { "err_no": 0, "err_msg": "" },
+    "error_responses": [{ "err_no": 40001, "err_msg": "fixture invalid params" }, { "err_no": 4014034, "err_msg": "fixture rate limit" }, { "err_no": 40004, "err_msg": "fixture expired application token" }],
+    "sdk_required_field_nuance": "SDK marks world_rank_version required although HTTP doc allows current-version fallback; send explicitly. SDK marks rank_list.winning_streak_count required; send explicit 0 when no record."
+  },
+  "optional_task_health_probe": {
+    "sdk_function": "TaskGet", "method": "GET", "path": "/api/live_data/task/get",
+    "headers": { "content-type": "application/json", "access-token": "FAKE_APP_TOKEN_NOT_REAL" },
+    "query": { "appid": "ttContractFixture", "roomid": "7214015683695250235", "msg_type": "live_comment" },
+    "qps_limit_per_app": 10,
+    "status_values": { "1": "task absent; may be unmounted or broadcast ended", "2": "task not started", "3": "task running" },
+    "response": { "err_no": 0, "err_msg": "", "logid": "fixture", "data": { "status": 3 } },
+    "boundary": "Task status is not room online status. Public docs do not establish that LiveOpenSDK SinglePush task is visible here. Do not enforce this probe until actual SDK/server interoperability is verified."
+  }
+}

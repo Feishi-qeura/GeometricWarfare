@@ -33,7 +33,9 @@ private:
     void CancelPointer();
     bool ReadPointer(float& X,float& Y) const;
     void ShowOverview();
-    void ToggleControls();
+    void ToggleSettings();
+    void ToggleGM();
+    bool SettingsOpen() const;
     bool bPointerActive=false;
     TWeakObjectPtr<AArenaHUD> PointerHUD;
 };

@@ -53,7 +53,7 @@ static void resultsWinsSimultaneousRespawn() {
 static void resultsWinsSimultaneousShot() {
     Match m=quiet();require(m.add(1,Shape::Square,1)&&m.add(2,Shape::Rectangle,2),"last shot participants join");
     m.step(419.99);
-    m.world.bodies[0].position={3500,3500};m.world.bodies[1].position={3700,3500};
+    m.world.bodies[0].position={World::Size*.25,World::Size*.5};m.world.bodies[1].position={World::Size*.25+200,World::Size*.5};
     for(auto& b:m.world.bodies)b.velocity={165,0};m.world.rebuildSpatial();
     m.fighters[0].targetKind=1;m.fighters[0].targetIndex=1;m.fighters[0].acquisitionRemaining=1;m.fighters[0].shotRemaining=.01;
     m.fighters[1].hp=10;m.fighters[1].score=37;m.weapon.spreadRadians=0;m.config.autoCombat=true;
@@ -84,23 +84,23 @@ static void joiningAndShapes() {
 }
 static void teamCapacityRejection() {
     Match m=quiet();
-    for(int i=0;i<1000;++i) require(m.add(i,Shape::Circle,0),"gray joins up to1000");
-    require(!m.add(1000,Shape::Circle,0),"gray1001 is rejected");
-    require(m.fighters.size()==1000&&m.world.bodies.size()==1000&&!m.findFighter(1000),"rejected admission consumes no body or identity");
-    require(m.add(1000,Shape::Circle,1),"rejected identity can directly join available red");
-    for(int i=1001;i<3000;++i) require(m.add(i,Shape::Circle,1),"red joins up to2000");
-    require(!m.add(3000,Shape::Circle,1),"red2001 is rejected");
+    for(int i=0;i<100;++i) require(m.add(i,Shape::Circle,0),"gray joins up to100");
+    require(!m.add(100,Shape::Circle,0),"gray101 is rejected");
+    require(m.fighters.size()==100&&m.world.bodies.size()==100&&!m.findFighter(100),"rejected admission consumes no body or identity");
+    require(m.add(100,Shape::Circle,1),"rejected identity can directly join available red");
+    for(int i=101;i<300;++i) require(m.add(i,Shape::Circle,1),"red joins up to200");
+    require(!m.add(300,Shape::Circle,1),"red201 is rejected");
     require(!m.chooseTeam(0,1)&&m.findFighter(0)->team==0,"full team leaves gray choice unchanged");
     require(m.chooseTeam(0,2)&&m.findFighter(0)->team==2,"available blue accepts gray");
-    require(m.add(3000,Shape::Circle,0),"successful selection releases gray slot");
-    for(int i=3001;i<5000;++i) require(m.add(i,Shape::Circle,2),"blue joins up to2000");
-    require(!m.add(5000,Shape::Circle,2),"blue2001 is rejected");
-    require(m.teamCounts==std::array<int,3>{1000,2000,2000},"counts include all registered participants");
-    require(Match::TeamCapacity(0)==1000&&Match::TeamCapacity(1)==2000&&Match::TeamCapacity(2)==2000&&Match::TeamCapacity(-1)==0&&Match::TeamCapacity(3)==0,"capacity lookup validates teams");
-    require(m.damagePlayer(1000,0,10000),"capacity participant can die");
-    require(m.teamCounts[2]==2000&&!m.add(5000,Shape::Circle,2),"death reserves existing participant slot");
-    require(m.revive(0)&&m.teamCounts[2]==2000,"revival does not increment participant counts");
-    m.startNextRound();require(m.teamCounts==std::array<int,3>{1000,2000,2000}&&m.fighters.size()==5000,"next round preserves full distribution");
+    require(m.add(300,Shape::Circle,0),"successful selection releases gray slot");
+    for(int i=301;i<500;++i) require(m.add(i,Shape::Circle,2),"blue joins up to200");
+    require(!m.add(500,Shape::Circle,2),"blue201 is rejected");
+    require(m.teamCounts==std::array<int,3>{100,200,200},"counts include all registered participants");
+    require(Match::TeamCapacity(0)==100&&Match::TeamCapacity(1)==200&&Match::TeamCapacity(2)==200&&Match::TeamCapacity(-1)==0&&Match::TeamCapacity(3)==0,"capacity lookup validates teams");
+    require(m.damagePlayer(100,0,10000),"capacity participant can die");
+    require(m.teamCounts[2]==200&&!m.add(500,Shape::Circle,2),"death reserves existing participant slot");
+    require(m.revive(0)&&m.teamCounts[2]==200,"revival does not increment participant counts");
+    m.startNextRound();require(m.teamCounts==std::array<int,3>{100,200,200}&&m.fighters.size()==500,"next round preserves full distribution");
     m.reset();require(m.teamCounts==std::array<int,3>{0,0,0},"reset releases all team slots");
 }
 static void damageEvents() {
@@ -205,7 +205,7 @@ static Match duel(Shape shooter,double distance) {
     MatchConfig config; config.naturalOrbs=0; config.npcCount=0; config.autoCollect=false;
     Match m(config); m.weapon.spreadRadians=0; m.weapon.magazine=1; m.weapon.fireInterval=100; m.weapon.aimTime=0;
     require(m.add(1,shooter,1)&&m.add(2,Shape::Square,2),"duel joins");
-    m.world.bodies[0].position={3500,3500}; m.world.bodies[1].position={3500+distance,3500};
+    m.world.bodies[0].position={World::Size*.25,World::Size*.5}; m.world.bodies[1].position={World::Size*.25+distance,World::Size*.5};
     for(auto& body:m.world.bodies) body.velocity={165,0};
     m.world.rebuildSpatial(); return m;
 }
@@ -246,32 +246,32 @@ static void automaticResourcesAndFrozenWorld() {
     m.step(25); require(m.round==2&&close(m.elapsed,5),"large delta carries through result into next round");
     const double previous=m.elapsed; m.step(-1);m.step(NAN);require(close(m.elapsed,previous),"invalid delta is ignored");
 }
-static void scale5000() {
+static void scale500() {
     Match m; const auto start=std::chrono::steady_clock::now();
-    for(int i=0;i<5000;++i) require(m.add(i,static_cast<Shape>(i%4),i%5==0?0:1+i%2),"5000 participants join");
-    require(!m.add(5001,Shape::Circle,1),"5001st participant rejected");
+    for(int i=0;i<500;++i) require(m.add(i,static_cast<Shape>(i%4),i%5==0?0:1+i%2),"500 participants join");
+    require(!m.add(501,Shape::Circle,1),"501st participant rejected");
     const auto spawned=std::chrono::steady_clock::now(); std::vector<double> milliseconds;
     for(int frame=0;frame<300;++frame) {
         m.events.clear(); const auto before=std::chrono::steady_clock::now(); m.step(1.0/30);
         milliseconds.push_back(std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-before).count());
     }
     double total=0; for(double ms:milliseconds) total+=ms; std::sort(milliseconds.begin(),milliseconds.end());
-    std::cout<<"BENCH 5000: spawn_ms="<<std::chrono::duration<double,std::milli>(spawned-start).count()<<" match30Hz_mean_ms="<<total/300<<" p95_ms="<<milliseconds[285]<<" shots="<<m.shots.size()<<"\n";
+    std::cout<<"BENCH 500: spawn_ms="<<std::chrono::duration<double,std::milli>(spawned-start).count()<<" match30Hz_mean_ms="<<total/300<<" p95_ms="<<milliseconds[285]<<" shots="<<m.shots.size()<<"\n";
     require(m.shots.size()<=512&&m.events.size()<=512&&m.damageEvents.size()<=512,"visuals and event queues are bounded");
-    require(m.leaderboard.size()==20,"5000 match exposes top20");
+    require(m.leaderboard.size()==20,"500 match exposes top20");
     int kills=0; for(size_t i=0;i<m.fighters.size();++i) {
         const auto& f=m.fighters[i]; kills+=f.kills;
-        require(f.id==m.world.bodies[i].id&&f.alive==m.world.bodies[i].active,"5000 indices and active state remain aligned");
+        require(f.id==m.world.bodies[i].id&&f.alive==m.world.bodies[i].active,"500 indices and active state remain aligned");
         require(std::isfinite(f.hp)&&std::isfinite(m.world.bodies[i].position.x),"large match remains finite");
         require(f.team!=0||f.score==0,"gray never earns score at scale");
     }
-    require(kills>0,"5000 benchmark exercised real kills");
-    for(int i=0;i<5000;++i) {
-        const int cluster=i%4; m.world.bodies[i].position={2000.0+4000*(cluster%2)+(i%17),2000.0+4000*(cluster/2)+(i%13)};
+    require(kills>0,"500 benchmark exercised real kills");
+    for(int i=0;i<500;++i) {
+        const int cluster=i%4; m.world.bodies[i].position={World::Size*.25+World::Size*.5*(cluster%2)+(i%17),World::Size*.25+World::Size*.5*(cluster/2)+(i%13)};
     }
     m.world.rebuildSpatial(); const auto crowdedStart=std::chrono::steady_clock::now();
     for(int frame=0;frame<30;++frame) {m.events.clear();m.step(1.0/30);}
-    std::cout<<"BENCH four dense crowds5000: match30Hz_mean_ms="<<std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-crowdedStart).count()/30<<'\n';
+    std::cout<<"BENCH four dense crowds500: match30Hz_mean_ms="<<std::chrono::duration<double,std::milli>(std::chrono::steady_clock::now()-crowdedStart).count()/30<<'\n';
     for(const auto& body:m.world.bodies) require(std::isfinite(body.position.x)&&std::isfinite(body.position.y),"dense combat stays finite");
 }
 int main() {
@@ -279,7 +279,7 @@ int main() {
     try {teamAwards();std::cout<<"PASS team award semantics\n";} catch(const std::exception& e){++failures;std::cerr<<"FAIL team award semantics: "<<e.what()<<'\n';}
     try {teamCapacityRejection();std::cout<<"PASS team capacities\n";} catch(const std::exception& e){++failures;std::cerr<<"FAIL team capacities: "<<e.what()<<'\n';}
     try {damageEvents();std::cout<<"PASS damage events\n";} catch(const std::exception& e){++failures;std::cerr<<"FAIL damage events: "<<e.what()<<'\n';}
-    const std::pair<const char*,void(*)()> tests[]={{"phase boundaries",phaseBoundaries},{"sprint simultaneous respawn",sprintWinsSimultaneousRespawn},{"ranked hero sprint revival",rankedHeroRevivesAtSprint},{"results simultaneous respawn",resultsWinsSimultaneousRespawn},{"results simultaneous shot",resultsWinsSimultaneousShot},{"results simultaneous pickup",resultsWinsSimultaneousPickup},{"joining and shapes",joiningAndShapes},{"damage",damageRules},{"score",scoreRules},{"respawn",respawnAndGifts},{"results",resultsAndReset},{"automatic weapons",automaticWeapons},{"automatic resources",automaticResourcesAndFrozenWorld},{"5000 scale",scale5000}};
+    const std::pair<const char*,void(*)()> tests[]={{"phase boundaries",phaseBoundaries},{"sprint simultaneous respawn",sprintWinsSimultaneousRespawn},{"ranked hero sprint revival",rankedHeroRevivesAtSprint},{"results simultaneous respawn",resultsWinsSimultaneousRespawn},{"results simultaneous shot",resultsWinsSimultaneousShot},{"results simultaneous pickup",resultsWinsSimultaneousPickup},{"joining and shapes",joiningAndShapes},{"damage",damageRules},{"score",scoreRules},{"respawn",respawnAndGifts},{"results",resultsAndReset},{"automatic weapons",automaticWeapons},{"automatic resources",automaticResourcesAndFrozenWorld},{"500 scale",scale500}};
     for(const auto& test:tests) try { test.second(); std::cout<<"PASS "<<test.first<<'\n'; } catch(const std::exception& error) { ++failures; std::cerr<<"FAIL "<<test.first<<": "<<error.what()<<'\n'; }
     std::cout<<assertions<<" assertions, "<<failures<<" failed groups\n"; return failures?1:0;
 }

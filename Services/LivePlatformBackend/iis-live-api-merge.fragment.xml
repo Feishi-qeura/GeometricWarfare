@@ -1,0 +1,30 @@
+<!-- MERGE EXAMPLE ONLY. Do not replace an existing site's web.config.
+     URL Rewrite + ARR and the explicit proxy/server-variable permissions
+     must be inspected/enabled by the server operator beforehand. -->
+<configuration>
+  <system.webServer>
+    <rewrite>
+      <rules>
+        <rule name="GeometricWarfareLiveAPIHTTPS" stopProcessing="true">
+          <match url="^live-api/(.*)$" />
+          <conditions>
+            <add input="{HTTPS}" pattern="^on$" />
+          </conditions>
+          <serverVariables>
+            <set name="HTTP_X_FORWARDED_PROTO" value="https" />
+          </serverVariables>
+          <action type="Rewrite" url="http://127.0.0.1:8765/{R:1}" appendQueryString="false" />
+        </rule>
+      </rules>
+    </rewrite>
+  </system.webServer>
+  <location path="live-api">
+    <system.webServer>
+      <security>
+        <requestFiltering>
+          <requestLimits maxAllowedContentLength="4194304" />
+        </requestFiltering>
+      </security>
+    </system.webServer>
+  </location>
+</configuration>

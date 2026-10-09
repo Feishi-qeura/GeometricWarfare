@@ -66,7 +66,7 @@ static void swordAnglesRangeAndCadence(){
     MatchConfig c;c.naturalOrbs=0;c.npcCount=0;c.autoCollect=false;Match m(c);m.weapon.range=0;
     m.add(1,Shape::Rectangle,1);m.add(2,Shape::Rectangle,2);m.add(3,Shape::Rectangle,2);
     m.evolutionPacks.push_back({{0,0},true,0});m.collectEvolutionPack(1,0);
-    m.world.bodies[0].position={1000,1000};m.world.bodies[1].position={2000,1000};m.world.bodies[2].position={2000,1600};
+    m.world.bodies[0].position={500,700};m.world.bodies[1].position={1500,700};m.world.bodies[2].position={1500,1300};
     for(auto& b:m.world.bodies){b.velocity={};b.spin=0;}m.world.rebuildSpatial();m.fighters[0].aimAngle=0;
     pinned(m,4.999);check(m.swordWaves.empty(),"evolution waits the complete five second pulse interval");pinned(m,.001);
     check(m.swordWaves.size()==12,"five second endpoint emits both six-wave groups simultaneously");
@@ -85,12 +85,12 @@ static void swordBoundedPoolAndHostSeat(){
     pool.step(.01);check(pool.swordWaves.size()==256,"simultaneous evolution pulses stay within the 256-wave bound");
     pool.step(2.5);check(pool.swordWaves.empty(),"all retained waves expire without growing storage");
     Match seats(c);seats.weapon.range=0;
-    for(int i=0;i<5000;++i){check(seats.add(i,Shape::Rectangle,i<1000?0:i<3000?1:2),"maximum viewer fixture joins");seats.world.bodies.back().position={100,100};}
+    for(int i=0;i<500;++i){check(seats.add(i,Shape::Rectangle,i<100?0:i<300?1:2),"maximum viewer fixture joins");seats.world.bodies.back().position={100,100};}
     check(seats.addHost(6000,2),"host occupies the final physical seat");
     for(size_t i=0;i<seats.fighters.size();++i){seats.fighters[i].shotRemaining=100;seats.world.bodies[i].velocity={};}
-    seats.world.find(1000)->position={4000,4000};seats.world.find(6000)->position={4100,4000};seats.findFighter(6000)->armor=0;
-    seats.world.rebuildSpatial();SwordWave wave;wave.ownerId=1000;wave.team=1;wave.from=wave.position={4000,4000};wave.direction={1,0};seats.swordWaves.push_back(wave);
-    seats.step(.25);check(eq(seats.findFighter(6000)->hp,2940)&&seats.swordWaves[0].hitPlayers.test(5000),"piercing sword safely damages host in index 5000 and records its one-hit bit");
+    seats.world.find(100)->position={World::Size*.5,World::Size*.5};seats.world.find(6000)->position={World::Size*.5+100,World::Size*.5};seats.findFighter(6000)->armor=0;
+    seats.world.rebuildSpatial();SwordWave wave;wave.ownerId=100;wave.team=1;wave.from=wave.position={World::Size*.5,World::Size*.5};wave.direction={1,0};seats.swordWaves.push_back(wave);
+    seats.step(.25);check(eq(seats.findFighter(6000)->hp,2940)&&seats.swordWaves[0].hitPlayers.test(500),"piercing sword safely damages host in index 500 and records its one-hit bit");
 }
 static void gunAndSwordChecks(){
     Body envelope,ordinary;envelope.scale=2.5;envelope.position={100,100};ordinary.position={160,100};Vec normal;double depth=0;
@@ -154,7 +154,7 @@ int main(){int failures=0;
     e.step(300-e.elapsed);check(e.evolutionPacks.size()==50,"five minute endpoints each spawn ten packs including the new sprint boundary");
     e.step(60);check(e.evolutionPacks.size()==60,"sixth minute keeps spawning ten packs during sprint");
     e.step(60);check(e.phase==Phase::Results&&e.evolutionPacks.size()==60,"results at seven minutes prevents a new evolution spawn");
-    Match cap=quiet();for(int i=0;i<5000;++i)check(cap.add(i,Shape::Rectangle,i<1000?0:i<3000?1:2),"5000 legal viewers");check(cap.addHost(6000,1)&&cap.fighters.size()==5001,"host extra seat fits full viewer population");
+    Match cap=quiet();for(int i=0;i<500;++i)check(cap.add(i,Shape::Rectangle,i<100?0:i<300?1:2),"500 legal viewers");check(cap.addHost(6000,1)&&cap.fighters.size()==501,"host extra seat fits full viewer population");
     check(!cap.addHost(6001,2)&&!cap.add(6002,Shape::Circle,1),"only one host and no audience overflow");
     std::cout<<assertions<<" expansion assertions passed\n";
 }catch(const std::exception& error){++failures;std::cerr<<"FAIL "<<error.what()<<'\n';}return failures?1:0;}

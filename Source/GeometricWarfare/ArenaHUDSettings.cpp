@@ -3,7 +3,7 @@
 #include "ArenaUserSettings.h"
 #include "Engine/Canvas.h"
 
-void AArenaHUD::ToggleSettings() {CancelPointer();if(bHostPanelOpen)bHostPanelOpen=false;else bSettingsOpen=!bSettingsOpen;SettingRegions.Reset();}
+void AArenaHUD::ToggleSettings() {CancelPointer();if(GMWidget.IsValid()){CloseGM();return;}if(bHostPanelOpen)bHostPanelOpen=false;else bSettingsOpen=!bSettingsOpen;SettingRegions.Reset();}
 void AArenaHUD::ActivateSetting(int32 Action) {
     if(Action==0 || Action==6){ToggleSettings();return;}
     if(Action==10){CancelPointer();bSettingsOpen=false;bHostPanelOpen=true;SettingRegions.Reset();return;}
@@ -41,7 +41,7 @@ void AArenaHUD::DrawSettings(AArenaGameMode* Game) {
     const float Width=560*Scale,Height=736*Scale,X=(W-Width)/2,Y=(H-Height)/2;
     Rect(0,0,W,H,FLinearColor(.035f,.065f,.08f,.68f));Rect(X,Y,Width,Height,Paper);
     const auto Txt=[&](const FString& Value,float PX,float PY,int32 Size,FLinearColor Color){Text(Value,X+PX*Scale,Y+PY*Scale,FMath::Max(7,FMath::RoundToInt(Size*Scale)),Color);};
-    Txt(TEXT("游戏设置"),28,20,24,Ink);Txt(TEXT("即时生效 · 自动保存 · 对局继续运行"),28,57,11,Muted);
+    Txt(TEXT("玩法设置"),28,20,24,Ink);Txt(TEXT("即时生效 · 自动保存 · 对局继续运行"),28,57,11,Muted);
     const auto Row=[&](int32 Action,float Top,const TCHAR* Label,const FString& Value){
         Txt(Label,28,Top+10,14,Ink);
         const FBox2D B({X+305*Scale,Y+Top*Scale},{X+532*Scale,Y+(Top+38)*Scale});
@@ -54,9 +54,9 @@ void AArenaHUD::DrawSettings(AArenaGameMode* Game) {
     Row(9,136,TEXT("开播画面比例"),Aspects[FMath::Clamp(S->LayoutAspect,0,5)]);
     Row(1,184,TEXT("垂直同步"),S->IsVSyncEnabled()?TEXT("开启"):TEXT("关闭"));
     Row(2,232,TEXT("帧率上限"),S->GetFrameRateLimit()==0?TEXT("不限"):FString::Printf(TEXT("%.0f FPS"),S->GetFrameRateLimit()));
-    const TCHAR* Modes[]={TEXT("自动（1000人起精简）"),TEXT("完整"),TEXT("精简")};
+    const TCHAR* Modes[]={TEXT("自动"),TEXT("完整"),TEXT("精简")};
     Row(3,280,TEXT("战场动效"),Modes[FMath::Clamp(S->EffectMode,0,2)]);
-    Row(4,328,TEXT("战场姓名 / 血条数量"),FString::FromInt(S->BattlefieldLabels));
+    Row(4,328,TEXT("战场姓名 / 能量条数量"),FString::FromInt(S->BattlefieldLabels));
     Row(5,376,TEXT("飘字数量"),FString::FromInt(S->FloatingNumbers));
     const auto Slider=[&](int32 Action,float Top,const TCHAR* Label,float Value){
         Txt(Label,28,Top+10,14,Ink);Txt(FString::Printf(TEXT("%d%%"),FMath::RoundToInt(Value*100)),244,Top+10,12,Accent);
@@ -68,10 +68,10 @@ void AArenaHUD::DrawSettings(AArenaGameMode* Game) {
     };
     Slider(15,424,TEXT("BGM 音量"),S->BgmVolume);Slider(16,472,TEXT("音效音量"),S->SfxVolume);
     const auto B=S->Budget(Game->GetViewers().Num());
-    Txt(FString::Printf(TEXT("当前 %d 人 · %s · 姓名/血条 %d · 飘字 %d"),Game->GetViewers().Num(),B.reduced?TEXT("精简"):TEXT("完整"),B.labels,B.damageNumbers),28,529,11,Muted);
+    Txt(FString::Printf(TEXT("当前 %d 人 · %s · 姓名/能量条 %d · 飘字 %d"),Game->GetViewers().Num(),B.reduced?TEXT("精简"):TEXT("完整"),B.labels,B.damageNumbers),28,529,11,Muted);
     Txt(TEXT("竖屏：战场在上，榜单在下；等比适配，不拉伸。"),28,556,11,Muted);
     Txt(TEXT("Spout 固定 1920×1080；不同画面比例使用留边。"),28,579,11,Muted);
-    Txt(TEXT("精简动效优先保留关注玩家、主播、英雄和 BOSS 提示。"),28,602,10,Muted);
+    Txt(TEXT("精简动效优先保留关注观众、主播、英雄和 BOSS 提示。"),28,602,10,Muted);
     Txt(TEXT("垂直同步开启时，实际帧率也受显示器刷新率限制。"),28,625,10,Muted);
     const auto Button=[&](int32 Action,float Left,float WidthValue,const TCHAR* Label){
         const FBox2D Bnd({X+Left*Scale,Y+670*Scale},{X+(Left+WidthValue)*Scale,Y+708*Scale});

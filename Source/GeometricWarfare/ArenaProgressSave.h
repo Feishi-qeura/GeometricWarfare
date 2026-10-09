@@ -11,5 +11,8 @@ class UArenaProgressSave : public USaveGame {
 public:
     UPROPERTY(SaveGame) int32 Version=1;
     UPROPERTY(SaveGame) TMap<FString,uint8> WeaponUnlocks;
+    // Additive version-1 field: old saves have no entry and use the pistol.
+    // Only the permanent left-hand selection is saved, never a crate lease.
+    UPROPERTY(SaveGame) TMap<FString,uint8> SelectedLeftWeapons;
     UPROPERTY(SaveGame) TSet<FString> UnusedRifleCodes;
 };

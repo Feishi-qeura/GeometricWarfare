@@ -23,31 +23,20 @@ inline bool Match::collectWeaponCrate(int id,int index){
     if(!f||!f->alive||f->isHost||phase==Phase::Results||index<0||index>=static_cast<int>(weaponCrates.size()))return false;
     auto& crate=weaponCrates[index];const auto kind=crate.weaponKind;
     if(!crate.active||kind<WeaponKind::Sniper||kind>WeaponKind::RocketLauncher)return false;
-    if(f->temporaryWeaponRemaining>0&&f->temporaryWeaponKind==kind&&!(f->unlockedWeapons&weaponBit(kind))){
+    if(f->temporaryWeaponRemaining>0&&f->temporaryWeaponKind==kind){
         f->temporaryWeaponRemaining=TemporaryWeaponLifetime;
     }else{
-        const auto fallback=(f->unlockedWeapons&weaponBit(f->weaponKind))?f->weaponKind:f->weaponBeforeTemporary;
-        endTemporaryWeapon(*f);
-        if(!(f->unlockedWeapons&weaponBit(kind))){
-            f->temporaryWeaponKind=kind;f->temporaryWeaponRemaining=TemporaryWeaponLifetime;
-            f->weaponBeforeTemporary=validWeapon(fallback)&&(f->unlockedWeapons&weaponBit(fallback))?fallback:WeaponKind::Pistol;
-        }
+        f->temporaryWeaponKind=kind;f->temporaryWeaponRemaining=TemporaryWeaponLifetime;
+        f->rightWeapon={};f->rightWeapon.ammo=weaponFor(kind).magazine;
     }
-    switchWeapon(id,kind);audio.emit(crate.hp<=1e-8?AudioKind::WeaponBreak:AudioKind::WeaponPickup,id);crate.active=false;crate.hp=0;return true;
+    emit(EventKind::WeaponObtained,id,-1,f->team,static_cast<int>(kind));
+    audio.emit(crate.hp<=1e-8?AudioKind::WeaponBreak:AudioKind::WeaponPickup,id);crate.active=false;crate.hp=0;return true;
 }
 inline void Match::endTemporaryWeapon(Fighter& f){
-    if(f.temporaryWeaponRemaining<=0)return;
-    const auto expired=f.temporaryWeaponKind;
-    const auto fallback=validWeapon(f.weaponBeforeTemporary)&&(f.unlockedWeapons&weaponBit(f.weaponBeforeTemporary))?f.weaponBeforeTemporary:WeaponKind::Pistol;
+    // A crate never equips or unlocks a left weapon. Releasing its lease has
+    // no left-state restoration and no permanent selection event.
     f.temporaryWeaponRemaining=0;f.temporaryWeaponKind=WeaponKind::Pistol;f.weaponBeforeTemporary=WeaponKind::Pistol;
-    if(f.weaponKind!=expired||(f.unlockedWeapons&weaponBit(expired)))return;
-    // Round transitions also release leases during Results, when the public
-    // player switch command is deliberately disabled.
-    f.weaponStates[static_cast<size_t>(f.weaponKind)]={f.ammo,f.reloadRemaining,f.shotRemaining};
-    f.weaponKind=fallback;const auto& state=f.weaponStates[static_cast<size_t>(fallback)];
-    f.ammo=state.ammo;f.reloadRemaining=state.reloadRemaining;f.shotRemaining=state.shotRemaining;
-    f.targetKind=0;f.targetIndex=-1;f.aimRemaining=weaponFor(f).aimTime;f.sniperAimDuration=0;f.acquisitionRemaining=0;
-    emit(EventKind::WeaponSwitched,f.id,-1,f.team,static_cast<int>(fallback));
+    f.rightWeapon={};
 }
 inline void Match::tickWeaponCrates(double dt){
     for(auto& crate:weaponCrates)crate.hitFlash=std::max(0.0,crate.hitFlash-dt);

@@ -10,8 +10,10 @@ if (-not $EngineRoot) {
     }
 }
 if (-not $EngineRoot) { throw 'Pass -EngineRoot with your UE 5.8 folder.' }
-$arguments = @("`"$projectRoot\GeometricWarfare.uproject`"", '/Engine/Maps/Entry', '-game', '-windowed', '-ForceRes', '-ResX=1920', '-ResY=1080', '-NoSplash', '-NoSound', '-DDC-ForceMemoryCache', '-DisablePlugins=RiderLink')
+# This development demo explicitly opts into local simulation; normal startup waits for the SDK provider.
+$arguments = @("`"$projectRoot\GeometricWarfare.uproject`"", '/Engine/Maps/Entry', '-game', '-GWLocalTest', '-windowed', '-ForceRes', '-ResX=1920', '-ResY=1080', '-NoSplash', '-NoSound', '-DDC-ForceMemoryCache', '-DisablePlugins=RiderLink')
 if ($Screenshot) { $arguments += '-GWVisualTest' }
 if ($Stress) { $arguments += '-GWStressTest' }
 # Running this script opens the interactive demo window.
+Write-Output 'Starting the development demo with explicit -GWLocalTest.'
 Start-Process -FilePath (Join-Path $EngineRoot 'Engine\Binaries\Win64\UnrealEditor.exe') -ArgumentList $arguments

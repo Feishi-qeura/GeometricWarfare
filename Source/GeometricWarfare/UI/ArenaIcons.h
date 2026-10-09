@@ -10,7 +10,7 @@ namespace gwui {
 enum class Icon {
     Circle, Square, Rectangle, Triangle, Pistol, Bullet, Heart, Skull,
     Score, People, Crosshair, Shield, Reload, Trophy, Clock, Shotgun, Rifle, Lightning,
-    Sniper, MachineGun, RocketLauncher, BossBuff, EvolutionBuff, Hero, WeaponCrate
+    Sniper, MachineGun, RocketLauncher, BossBuff, EvolutionBuff, Hero, WeaponCrate, Base, Revive, Boss
 };
 
 namespace detail {
@@ -86,6 +86,16 @@ inline void DrawIcon(UCanvas* Canvas,Icon Which,FVector2D Center,float Size,FLin
     const float Stroke=FMath::Clamp(Size*.07f,1.f,3.f);
     const detail::IconPainter P{Canvas,Center,Size-Stroke,Stroke,Color};
     switch(Which) {
+    case Icon::Base: {
+        const FVector2D V[]={{-.44,.40},{-.44,-.25},{-.27,-.25},{-.27,-.43},{-.10,-.43},{-.10,-.25},{.10,-.25},{.10,-.43},{.27,-.43},{.27,-.25},{.44,-.25},{.44,.40}};
+        P.Outline(V);P.Line({-.10,.40},{-.10,.10});P.Line({-.10,.10},{.10,.10});P.Line({.10,.10},{.10,.40});break;
+    }
+    case Icon::Revive:
+        P.Ring({0,0},.42f);P.Line({0,-.25},{0,.25});P.Line({-.25,0},{.25,0});break;
+    case Icon::Boss: {
+        const FVector2D V[]={{-.30,-.40},{.30,-.40},{.47,.38},{-.47,.38}};
+        P.Outline(V);P.Line({-.25,-.08},{-.10,.02});P.Line({.25,-.08},{.10,.02});P.Line({-.18,.23},{.18,.23});break;
+    }
     case Icon::Circle:
         P.Ring({0,0},.43f);
         break;

@@ -1,0 +1,11 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.0",
+  "FriendlyName": "Douyin Live Provider",
+  "Description": "Official LiveOpenSDK 2.7.12 host adapter for LiveInteraction.",
+  "Category": "Live Interaction",
+  "CanContainContent": false,
+  "Modules": [{"Name":"DouyinLiveProvider","Type":"Runtime","LoadingPhase":"PreDefault","PlatformAllowList":["Win64"]}],
+  "Plugins": [{"Name":"LiveInteraction","Enabled":true}]
+}

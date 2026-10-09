@@ -11,8 +11,8 @@ bool ValidPointer(float X,float Y,float Width,float Height) {
     return FMath::IsFinite(X) && FMath::IsFinite(Y) && Width>0 && Height>0
         && X>=0 && Y>=0 && X<Width && Y<Height;
 }
-gw::ArenaView ReadView(const AArenaGameMode& Game) {
-    return {Game.CameraZoom,{Game.CameraCenter.X,Game.CameraCenter.Y}};
+gw::ArenaView ReadView(const AArenaGameMode& Game,double Aspect) {
+    return {Game.CameraZoom,{Game.CameraCenter.X,Game.CameraCenter.Y},Aspect};
 }
 void WriteView(AArenaGameMode& Game,const gw::ArenaView& View) {
     Game.CameraZoom=static_cast<float>(View.zoom);
@@ -54,7 +54,7 @@ bool AArenaHUD::BeginPointer(float X,float Y) {
         PressedRankId=Region.Id; PressedRankBounds=Region.Bounds;
         PointerDrag.begin(X,Y); return true;
     }
-    if(ArenaSide>0 && InArena(Point)) {
+    if(ArenaW()>0 && ArenaH()>0 && InArena(Point)) {
         PointerArea=EPointerArea::Arena;
         PointerDrag.begin(X,Y); return true;
     }
@@ -74,12 +74,12 @@ void AArenaHUD::UpdatePointer(float X,float Y) {
         if(!MinimapBounds.bIsValid) { CancelPointer(); return; }
         const FVector2D Size=MinimapBounds.GetSize();
         if(Size.X<=0 || Size.Y<=0) { CancelPointer(); return; }
-        auto View=ReadView(*Game);
+        auto View=ReadView(*Game,ArenaW()/ArenaH());
         View.jumpNormalized((X-MinimapBounds.Min.X)/Size.X,(Y-MinimapBounds.Min.Y)/Size.Y);
         WriteView(*Game,View);
     } else if(PointerArea==EPointerArea::Arena && PointerDrag.dragging) {
-        auto View=ReadView(*Game);
-        View.panPixels(Delta.x,Delta.y,ArenaSide);
+        auto View=ReadView(*Game,ArenaW()/ArenaH());
+        View.panPixels(Delta.x,Delta.y,ArenaW(),ArenaH());
         WriteView(*Game,View);
     }
 }
@@ -103,10 +103,10 @@ void AArenaHUD::EndPointer(float X,float Y) {
     if(Area==EPointerArea::Rank) {
         // Use the ID captured on press, even when the leaderboard has re-sorted.
         if(RankId>=0 && bWithinPressedRank) Game->FocusViewer(RankId);
-    } else if(Area==EPointerArea::Arena && ArenaSide>0 && InArena({X,Y}) && !Contains(MinimapBounds,{X,Y})) {
-        const auto View=ReadView(*Game);
-        const gw::Vec Position=View.screenToWorld((X-ArenaX)/ArenaSide,(Y-ArenaY)/ArenaSide);
-        const double Radius=24.0*View.visibleSize()/ArenaSide;
+    } else if(Area==EPointerArea::Arena && ArenaW()>0 && ArenaH()>0 && InArena({X,Y}) && !Contains(MinimapBounds,{X,Y})) {
+        const auto View=ReadView(*Game,ArenaW()/ArenaH());
+        const gw::Vec Position=View.screenToWorld((X-ArenaX)/ArenaW(),(Y-ArenaY)/ArenaH());
+        const double Radius=24.0*View.visibleExtent().x/ArenaW();
         std::vector<int> Candidates;
         const auto& World=Game->GetArena();
         World.query(Position,Radius,Candidates);
@@ -144,16 +144,16 @@ void AArenaHUD::ZoomAtCursor(float X,float Y,float Factor) {
         if(Factor!=1){CancelPointer();RankOffset=FMath::Clamp(RankOffset+(Factor>1?-1:1),0,FMath::Max(0,RankTotalRows-RankVisibleRows));RankRegions.Reset();}
         return;
     }
-    if(ArenaSide<=0 || !InArena({X,Y}) || Contains(MinimapBounds,{X,Y})) return;
+    if(ArenaW()<=0 || ArenaH()<=0 || !InArena({X,Y}) || Contains(MinimapBounds,{X,Y})) return;
     auto* Game=GetWorld()->GetAuthGameMode<AArenaGameMode>();
     if(!Game) return;
-    auto View=ReadView(*Game);
+    auto View=ReadView(*Game,ArenaW()/ArenaH());
     if(Game->FocusBodyId>=0) {
-        View.zoomAt((X-ArenaX)/ArenaSide,(Y-ArenaY)/ArenaSide,Factor,true);
+        View.zoomAt((X-ArenaX)/ArenaW(),(Y-ArenaY)/ArenaH(),Factor,true);
         Game->CameraZoom=static_cast<float>(View.zoom);
         return;
     }
-    View.zoomAt((X-ArenaX)/ArenaSide,(Y-ArenaY)/ArenaSide,Factor);
+    View.zoomAt((X-ArenaX)/ArenaW(),(Y-ArenaY)/ArenaH(),Factor);
     WriteView(*Game,View);
 }
 

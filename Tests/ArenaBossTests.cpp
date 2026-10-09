@@ -20,7 +20,7 @@ static int nearestNpc(const Match& m) {int nearest=-1;double distance=450;for(si
 static void spawnBoundary() {
     auto m=quiet();m.step(149.999);require(!m.boss.active&&!m.boss.spawned,"boss absent before 150 seconds");
     m.step(.001);require(m.boss.active&&m.boss.spawned&&close(m.boss.hp,32000),"boss spawns exactly 150 seconds with 32000 hp");
-    require(close(m.boss.position.x,4000)&&close(m.boss.position.y,4000),"boss spawns at arena center");
+    require(close(m.boss.position.x,World::Size*.5)&&close(m.boss.position.y,World::Size*.5),"boss spawns at arena center");
     require(m.add(1,Shape::Rectangle,1),"boss attacker joins");
     require(m.damageBoss(1,100000)&&!m.boss.active,"boss can be killed");
     m.step(50);require(!m.boss.active&&m.boss.spawned,"boss never respawns within same round");
@@ -28,7 +28,7 @@ static void spawnBoundary() {
     m.step(BossSpawnSeconds);require(m.boss.active,"boss spawns in reset round");
 }
 static void bulletTiming() {
-    auto m=combat();target(m,1,{4700,4000});forceAttack(m,BossAttack::Bullet);
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5});forceAttack(m,BossAttack::Bullet);
     pinned(m,4.999);require(m.boss.projectilesFired==0,"bullet waits full five seconds");pinned(m,.001);
     require(m.boss.projectilesFired==1&&m.boss.attacksCompleted==1,"bullet fires exactly at five seconds and chooses next event");
     const auto& p=m.boss.projectiles[0];require(p.active&&close(p.radius,17.6)&&close(p.velocity.length(),1000),"bullet has required radius and bounded speed");
@@ -37,17 +37,17 @@ static void bulletTiming() {
     require(!m.boss.projectiles[0].active,"bullet stops at first hit");
     require(close(m.bases[1].hp,2500)&&close(m.bases[2].hp,2500),"boss bullet cannot damage bases");
     auto range=combat();target(range,2,{100,100});forceAttack(range,BossAttack::StompRest);range.boss.attackInitialized=true;range.boss.attackElapsed=-100;
-    range.boss.projectiles[0]={{100,4000},{1000,0},BossBulletRadius,3990,100,true};pinned(range,.02);
+    range.boss.projectiles[0]={{100,World::Size*.5},{1000,0},BossBulletRadius,3990,100,true};pinned(range,.02);
     require(!range.boss.projectiles[0].active&&close(range.boss.projectiles[0].travelled,4000),"bullet expires exactly at maximum range");
 }
 static void laserTiming() {
-    auto m=combat();target(m,1,{5000,4000});target(m,2,{1000,4000});target(m,3,{6500,4000});forceAttack(m,BossAttack::LaserWindup);m.boss.targetId=1;
-    pinned(m,2);place(m,1,{5000,4500});pinned(m,1);
-    require(close(m.boss.laserFrom.x,4000)&&close(m.boss.laserFrom.y,4000),"warning ray begins at boss, never behind boss");
-    require(m.boss.laserTo.y>4000,"windup laser follows moving target");place(m,1,{5000,4000});pinned(m,1.999);
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5});target(m,2,{World::Size*.5-700,World::Size*.5});target(m,3,{World::Size*.5+900,World::Size*.5});forceAttack(m,BossAttack::LaserWindup);m.boss.targetId=1;
+    pinned(m,2);place(m,1,{World::Size*.5+700,World::Size*.5+500});pinned(m,1);
+    require(close(m.boss.laserFrom.x,World::Size*.5)&&close(m.boss.laserFrom.y,World::Size*.5),"warning ray begins at boss, never behind boss");
+    require(m.boss.laserTo.y>World::Size*.5,"windup laser follows moving target");place(m,1,{World::Size*.5+700,World::Size*.5});pinned(m,1.999);
     require(m.boss.attack==BossAttack::LaserWindup&&close(m.findFighter(1)->hp,10000),"five second laser windup deals no damage");pinned(m,.001);
     require(m.boss.attack==BossAttack::LaserActive,"laser locks at exactly five seconds");const Vec from=m.boss.laserFrom,to=m.boss.laserTo;
-    place(m,1,{5000,5000});pinned(m,.199);require(close(m.findFighter(3)->hp,10000),"laser waits until its first point two second tick");pinned(m,.001);
+    place(m,1,{World::Size*.5+700,World::Size*.5+700});pinned(m,.199);require(close(m.findFighter(3)->hp,10000),"laser waits until its first point two second tick");pinned(m,.001);
     require(close(m.findFighter(3)->hp,9850)&&close(m.findFighter(1)->hp,10000),"first pulse hits forward player but not target that left locked ray");
     require(close(m.findFighter(2)->hp,10000),"single direction laser never hits player behind boss");
     require(close(m.boss.laserFrom.x,from.x)&&close(m.boss.laserTo.y,to.y),"active laser stays locked after target moves");
@@ -55,11 +55,11 @@ static void laserTiming() {
     require(m.boss.attacksCompleted==1&&m.boss.attack!=BossAttack::LaserActive,"laser ends after three seconds");
 }
 static void stompTiming() {
-    auto m=combat();target(m,1,{4700,4000});forceAttack(m,BossAttack::StompJump);m.boss.targetId=1;
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5});forceAttack(m,BossAttack::StompJump);m.boss.targetId=1;
     pinned(m,.5);require(m.boss.jumpHeight>100,"jump visibly leaves ground");
-    require(close(m.boss.position.x,4000)&&close(m.boss.position.y,4000),"jump changes height without moving boss toward target");pinned(m,.5);
+    require(close(m.boss.position.x,World::Size*.5)&&close(m.boss.position.y,World::Size*.5),"jump changes height without moving boss toward target");pinned(m,.5);
     require(m.boss.attack==BossAttack::StompWave&&close(m.boss.jumpHeight,0),"jump lands after one second");
-    require(close(m.boss.landingPosition.x,4000)&&close(m.boss.landingPosition.y,4000)&&close(m.boss.waveCenter.x,4000)&&close(m.boss.waveCenter.y,4000),"landing and shockwave stay at original spawn center");
+    require(close(m.boss.landingPosition.x,World::Size*.5)&&close(m.boss.landingPosition.y,World::Size*.5)&&close(m.boss.waveCenter.x,World::Size*.5)&&close(m.boss.waveCenter.y,World::Size*.5),"landing and shockwave stay at original spawn center");
     place(m,1,m.boss.position+Vec{660,0});double waveTime=0,beforeHit=0;
     while(m.findFighter(1)->hp>9955&&waveTime<.9){beforeHit=m.world.find(1)->position.x;m.step(.01);waveTime+=.01;}
     require(close(m.findFighter(1)->hp,9955),"wave deals forty five damage");
@@ -70,28 +70,28 @@ static void stompTiming() {
     require(m.boss.attacksCompleted==1,"stomp completes after two second rest");
 }
 static void rageAndFire() {
-    auto m=combat();target(m,1,{4000,4000});m.boss.hp=m.boss.maxHp*.4+1;
+    auto m=combat();target(m,1,{World::Size*.5,World::Size*.5});m.boss.hp=m.boss.maxHp*.4+1;
     require(m.damageBoss(1,1)&&m.boss.rage&&close(m.boss.hp,m.boss.maxHp*.4),"rage enters exactly at forty percent health");
     require(close(m.boss.hitFlash,.18),"boss hit flashes on valid damage");forceAttack(m,BossAttack::Bullet);
     pinned(m,.999);require(close(m.findFighter(1)->hp,10000),"fire waits a full second of exposure");pinned(m,.001);
     require(close(m.findFighter(1)->hp,9999)&&close(m.findFighter(1)->movementSlow,.8),"rage fire remains one damage per second and slows twenty percent");
-    require(close(m.boss.hitFlash,0),"boss hit flash expires");place(m,1,{4700,4000});pinned(m,1.499);
+    require(close(m.boss.hitFlash,0),"boss hit flash expires");place(m,1,{World::Size*.5+700,World::Size*.5});pinned(m,1.499);
     require(m.boss.projectilesFired==0&&close(m.findFighter(1)->movementSlow,1),"rage bullet still waits until two point five seconds and leaving fire restores speed");pinned(m,.001);
     require(m.boss.projectilesFired==5&&close(m.boss.projectiles[0].damage,200),"rage bullet fires five missiles at two point five seconds for double damage");
-    auto laser=combat();target(laser,2,{5000,4000});target(laser,4,{1000,4000});laser.boss.hp=1600;laser.boss.rage=true;forceAttack(laser,BossAttack::LaserWindup);laser.boss.targetId=2;
+    auto laser=combat();target(laser,2,{World::Size*.5+700,World::Size*.5});target(laser,4,{World::Size*.5-700,World::Size*.5});laser.boss.hp=1600;laser.boss.rage=true;forceAttack(laser,BossAttack::LaserWindup);laser.boss.targetId=2;
     pinned(laser,2.999);require(laser.boss.attack==BossAttack::LaserWindup,"rage windup waits three seconds");pinned(laser,.001);
     require(laser.boss.attack==BossAttack::LaserActive,"rage windup finishes at three seconds");pinned(laser,1);require(close(laser.findFighter(2)->hp,8400),"rage beam deals five double damage pulses plus ten scorch ticks per second");
-    require(close(laser.findFighter(4)->hp,10000)&&close(laser.boss.laserFrom.x,4000)&&close(laser.boss.laserTo.x,8000),"rage laser remains single direction from boss to forward edge");
-    auto stomp=combat();target(stomp,3,{4700,4000});stomp.boss.rage=true;stomp.boss.hp=1600;forceAttack(stomp,BossAttack::StompWave);
+    require(close(laser.findFighter(4)->hp,10000)&&close(laser.boss.laserFrom.x,World::Size*.5)&&close(laser.boss.laserTo.x,World::Size),"rage laser remains single direction from boss to forward edge");
+    auto stomp=combat();target(stomp,3,{World::Size*.5+700,World::Size*.5});stomp.boss.rage=true;stomp.boss.hp=1600;forceAttack(stomp,BossAttack::StompWave);
     pinned(stomp,1);require(stomp.boss.attacksCompleted==1&&stomp.boss.attack!=BossAttack::StompRest,"rage stomp skips rest");
     require(close(stomp.findFighter(3)->hp,9910),"rage wave doubles damage");
 }
 static void environmentAndReward() {
-    auto m=combat();target(m,1,{4000,4000},Shape::Circle);m.findFighter(1)->hp=1;forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
+    auto m=combat();target(m,1,{World::Size*.5,World::Size*.5},Shape::Circle);m.findFighter(1)->hp=1;forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
     pinned(m,1);require(close(m.findFighter(1)->hp,.5),"fire uses circle shape defence");m.findFighter(1)->score=37;pinned(m,1);
     require(!m.findFighter(1)->alive&&m.findFighter(1)->deaths==1&&m.findFighter(1)->score==30,"fire death retains the unaffected eighty percent of carried score");
     int64_t drops=0;for(const auto& o:m.orbs)if(o.active&&!o.natural)drops+=o.value;require(drops==7,"environment kill drops the floored twenty percent score loss");
-    auto armor=combat();target(armor,2,{4500,4000});armor.findFighter(2)->armor=100;armor.boss.projectiles[0]={{4400,4000},{1000,0},BossBulletRadius,0,100,true};forceAttack(armor,BossAttack::StompRest);armor.boss.attackInitialized=true;armor.boss.attackElapsed=-100;
+    auto armor=combat();target(armor,2,{World::Size*.5+500,World::Size*.5});armor.findFighter(2)->armor=100;armor.boss.projectiles[0]={{World::Size*.5+400,World::Size*.5},{1000,0},BossBulletRadius,0,100,true};forceAttack(armor,BossAttack::StompRest);armor.boss.attackInitialized=true;armor.boss.attackElapsed=-100;
     pinned(armor,.1);require(close(armor.findFighter(2)->hp,9970)&&close(armor.findFighter(2)->armor,40.5),"boss damage uses shared armor split");
     auto reward=quiet();reward.step(BossSpawnSeconds);reward.add(3,Shape::Rectangle,1);reward.bases[1].hp=2000;
     require(reward.damageBoss(3,100000)&&close(reward.teamBuffRemaining[1],60)&&close(reward.teamBuffRemaining[2],0),"last hit grants exactly one team sixty second buff");
@@ -111,31 +111,31 @@ static void npcWaveAndSafety() {
     safety.phase=Phase::Results;require(!safety.damageBoss(9,100),"results phase rejects boss damage");safety.reset();require(safety.boss.projectiles.size()==32&&safety.boss.waveHits.size()<=World::Capacity+1,"boss pools remain fixed and bounded after reset");
 }
 static void collisionEdges() {
-    Body rectangle;rectangle.shape=Shape::Rectangle;rectangle.position={4000,4000};
-    require(boss_detail::bodyEntry({3900,4035},{4100,4035},rectangle,17.6)>1,"bullet misses outside flat rectangle despite circumcircle overlap");
-    require(boss_detail::bodyEntry({3900,4032.5},{4100,4032.5},rectangle,17.6)<=1,"bullet catches rectangle edge within radius");
+    Body rectangle;rectangle.shape=Shape::Rectangle;rectangle.position={World::Size*.5,World::Size*.5};
+    require(boss_detail::bodyEntry({World::Size*.5-100,World::Size*.5+35},{World::Size*.5+100,World::Size*.5+35},rectangle,17.6)>1,"bullet misses outside flat rectangle despite circumcircle overlap");
+    require(boss_detail::bodyEntry({World::Size*.5-100,World::Size*.5+32.5},{World::Size*.5+100,World::Size*.5+32.5},rectangle,17.6)<=1,"bullet catches rectangle edge within radius");
     rectangle.angle=detail::Tau/8;
-    require(boss_detail::bodyEntry({3950,4000},{4050,4000},rectangle,17.6)<=1,"swept bullet hits rotated polygon");
-    Body circle;circle.position={4000,4000};circle.scale=2.5;
-    require(boss_detail::bodyEntry({3900,4060},{4100,4060},circle,17.6)<=1,"host sized circular envelope receives edge hits");
+    require(boss_detail::bodyEntry({World::Size*.5-50,World::Size*.5},{World::Size*.5+50,World::Size*.5},rectangle,17.6)<=1,"swept bullet hits rotated polygon");
+    Body circle;circle.position={World::Size*.5,World::Size*.5};circle.scale=2.5;
+    require(boss_detail::bodyEntry({World::Size*.5-100,World::Size*.5+60},{World::Size*.5+100,World::Size*.5+60},circle,17.6)<=1,"host sized circular envelope receives edge hits");
     rectangle.angle=0;
-    require(!boss_detail::waveTouches({4000,4100},0,84,rectangle),"wave broadphase false positive does not damage polygon");
-    require(boss_detail::waveTouches({4000,4100},0,85,rectangle),"wave reaches exact polygon edge");
-    require(!boss_detail::waveTouches({4000,4100},120,140,rectangle),"wave does not hit a unit wholly behind passed front");
-    auto m=combat();target(m,1,{4300,4000});target(m,2,{4600,4000});forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
-    m.boss.projectiles[0]={{4000,4000},{1000,0},BossBulletRadius,0,100,true};pinned(m,.8);
+    require(!boss_detail::waveTouches({World::Size*.5,World::Size*.5+100},0,84,rectangle),"wave broadphase false positive does not damage polygon");
+    require(boss_detail::waveTouches({World::Size*.5,World::Size*.5+100},0,85,rectangle),"wave reaches exact polygon edge");
+    require(!boss_detail::waveTouches({World::Size*.5,World::Size*.5+100},120,140,rectangle),"wave does not hit a unit wholly behind passed front");
+    auto m=combat();target(m,1,{World::Size*.5+300,World::Size*.5});target(m,2,{World::Size*.5+600,World::Size*.5});forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
+    m.boss.projectiles[0]={{World::Size*.5,World::Size*.5},{1000,0},BossBulletRadius,0,100,true};pinned(m,.8);
     require(close(m.findFighter(1)->hp,9900)&&close(m.findFighter(2)->hp,10000),"projectile chooses first intersecting target and does not pierce");
 }
 static void exposureAndRageTransitions() {
-    auto m=combat();target(m,1,{4000,4000});forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
-    pinned(m,.6);place(m,1,{4700,4000});pinned(m,.01);place(m,1,{4000,4000});pinned(m,.6);
+    auto m=combat();target(m,1,{World::Size*.5,World::Size*.5});forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
+    pinned(m,.6);place(m,1,{World::Size*.5+700,World::Size*.5});pinned(m,.01);place(m,1,{World::Size*.5,World::Size*.5});pinned(m,.6);
     require(close(m.findFighter(1)->hp,10000),"leaving fire resets fractional exposure");pinned(m,.4);require(close(m.findFighter(1)->hp,9999),"fresh full exposure damages exactly once");
     m.damageBoss(1,100000);require(close(m.findFighter(1)->movementSlow,1),"boss death immediately clears fire slow");pinned(m,2);require(close(m.findFighter(1)->hp,19998),"dead boss fire is inactive after its evolution reward doubles current hp");
-    auto bullet=combat();target(bullet,2,{5000,4000});forceAttack(bullet,BossAttack::Bullet);pinned(bullet,3);bullet.damageBoss(2,bullet.boss.maxHp*.6);pinned(bullet,.01);
+    auto bullet=combat();target(bullet,2,{World::Size*.5+700,World::Size*.5});forceAttack(bullet,BossAttack::Bullet);pinned(bullet,3);bullet.damageBoss(2,bullet.boss.maxHp*.6);pinned(bullet,.01);
     require(bullet.boss.projectilesFired==5&&close(bullet.boss.projectiles[0].damage,200),"entering rage shortens in-progress bullet cooldown");
-    auto laser=combat();target(laser,3,{5000,4000});forceAttack(laser,BossAttack::LaserWindup);pinned(laser,3.5);laser.damageBoss(3,laser.boss.maxHp*.6);pinned(laser,.01);
+    auto laser=combat();target(laser,3,{World::Size*.5+700,World::Size*.5});forceAttack(laser,BossAttack::LaserWindup);pinned(laser,3.5);laser.damageBoss(3,laser.boss.maxHp*.6);pinned(laser,.01);
     require(laser.boss.attack==BossAttack::LaserActive,"entering rage shortens in-progress laser windup");
-    auto rest=combat();target(rest,4,{5000,4000});forceAttack(rest,BossAttack::StompRest);pinned(rest,1);rest.damageBoss(4,rest.boss.maxHp*.6);pinned(rest,.01);
+    auto rest=combat();target(rest,4,{World::Size*.5+700,World::Size*.5});forceAttack(rest,BossAttack::StompRest);pinned(rest,1);rest.damageBoss(4,rest.boss.maxHp*.6);pinned(rest,.01);
     require(rest.boss.attacksCompleted==1,"entering rage cancels existing stomp rest");
 }
 static void rewardIntegration() {
@@ -168,62 +168,62 @@ static void npcGridAndReset() {
 }
 static void stationaryEveryStage() {
     for(bool rage:{false,true})for(BossAttack attack:{BossAttack::Bullet,BossAttack::LaserWindup,BossAttack::LaserActive,BossAttack::StompJump,BossAttack::StompWave,BossAttack::StompRest}){
-        auto m=combat();target(m,1,{5000,4500});m.boss.hp=m.boss.maxHp*(rage?.1:1);m.boss.rage=rage;forceAttack(m,attack);m.boss.targetId=1;
+        auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5+500});m.boss.hp=m.boss.maxHp*(rage?.1:1);m.boss.rage=rage;forceAttack(m,attack);m.boss.targetId=1;
         const double duration=attack==BossAttack::Bullet?(rage?2.5:5):(attack==BossAttack::LaserWindup?(rage?3:5):(attack==BossAttack::LaserActive?3:(attack==BossAttack::StompRest?(rage?.1:2):1)));
-        for(double time=0;time<duration-1e-8;time+=.1){pinned(m,std::min(.1,duration-time));require(close(m.boss.position.x,4000)&&close(m.boss.position.y,4000),"boss remains at center through every ordinary and rage attack stage");}
+        for(double time=0;time<duration-1e-8;time+=.1){pinned(m,std::min(.1,duration-time));require(close(m.boss.position.x,World::Size*.5)&&close(m.boss.position.y,World::Size*.5),"boss remains at center through every ordinary and rage attack stage");}
     }
     for(const Vec aim:{Vec{1,0},Vec{-1,0},Vec{0,1},Vec{0,-1},Vec{1,1},Vec{-1,1},Vec{1,-1},Vec{-1,-1}}){
         BossState boss;boss.laserDirection=boss_detail::direction(aim);boss_detail::laserBounds(boss);
-        require(close(boss.laserFrom.x,4000)&&close(boss.laserFrom.y,4000),"all warning orientations originate at stationary boss");
+        require(close(boss.laserFrom.x,World::Size*.5)&&close(boss.laserFrom.y,World::Size*.5),"all warning orientations originate at stationary boss");
         const Vec ray=boss.laserTo-boss.position;require(ray.dot(boss.laserDirection)>0,"laser endpoint is strictly forward of boss");
-        require(close(boss.laserTo.x,0)||close(boss.laserTo.x,8000)||close(boss.laserTo.y,0)||close(boss.laserTo.y,8000),"single direction laser stops at forward world boundary");
+        require(close(boss.laserTo.x,0)||close(boss.laserTo.x,World::Size)||close(boss.laserTo.y,0)||close(boss.laserTo.y,World::Size),"single direction laser stops at forward world boundary");
     }
 }
 static void closeBehindLaser() {
     for(bool rage:{false,true}){
-        auto m=combat();target(m,1,{5000,4000});target(m,2,{3990,4000},Shape::Rectangle);target(m,3,{3990,4010},Shape::Circle);
+        auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5});target(m,2,{World::Size*.5-10,World::Size*.5},Shape::Rectangle);target(m,3,{World::Size*.5-10,World::Size*.5+10},Shape::Circle);
         m.boss.hp=m.boss.maxHp*(rage?.1:1);m.boss.rage=rage;forceAttack(m,BossAttack::LaserActive);m.boss.laserDirection={1,0};pinned(m,1);
         require(close(m.findFighter(1)->hp,rage?8400:9250),"single direction beam still damages a forward target");
         require(close(m.findFighter(2)->hp,9999)&&close(m.findFighter(3)->hp,9999.5),"targets immediately behind origin receive fire only, never beam cap damage");
     }
 }
 static void expandedHazards() {
-    auto fire=combat();target(fire,1,{4600,4000});target(fire,2,{4600.01,4100});
+    auto fire=combat();target(fire,1,{World::Size*.5+600,World::Size*.5});target(fire,2,{World::Size*.5+600.01,World::Size*.5+100});
     forceAttack(fire,BossAttack::StompRest);fire.boss.attackInitialized=true;fire.boss.attackElapsed=-100;
     pinned(fire,1);require(close(fire.findFighter(1)->hp,9999)&&close(fire.findFighter(1)->movementSlow,.8),"fire reaches the six hundred unit boundary");
     require(close(fire.findFighter(2)->hp,10000)&&close(fire.findFighter(2)->movementSlow,1),"fire excludes bodies whose centers are outside six hundred units");
-    auto wave=combat();target(wave,3,{4915,4000});target(wave,4,{4931,4100});forceAttack(wave,BossAttack::StompWave);
+    auto wave=combat();target(wave,3,{World::Size*.5+915,World::Size*.5});target(wave,4,{World::Size*.5+931,World::Size*.5+100});forceAttack(wave,BossAttack::StompWave);
     pinned(wave,.98);require(close(wave.findFighter(3)->hp,10000),"stomp has not reached the outer target before its actual edge");
     pinned(wave,.02);require(close(wave.findFighter(3)->hp,9955)&&close(wave.findFighter(4)->hp,10000),"nine hundred unit wave reaches overlapping shapes but not outside shapes");
 }
 static void missileExplosion() {
-    auto m=combat();target(m,1,{5000,4000});target(m,2,{4872.4,4090},Shape::Rectangle,2);target(m,3,{4952.4,4156},Shape::Rectangle,0);
-    require(m.addHost(4,1),"explosion host joins");m.findFighter(4)->armor=0;m.findFighter(4)->shotRemaining=100;place(m,4,{4952.4,3810});
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5});target(m,2,{World::Size*.5+572.4,World::Size*.5+90},Shape::Rectangle,2);target(m,3,{World::Size*.5+652.4,World::Size*.5+156},Shape::Rectangle,0);
+    require(m.addHost(4,1),"explosion host joins");m.findFighter(4)->armor=0;m.findFighter(4)->shotRemaining=100;place(m,4,{World::Size*.5+652.4,World::Size*.5-190});
     // These exact edge expectations use stationary, axis-aligned fixtures.
     for(auto& body:m.world.bodies)body.spin=0;
     forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
-    m.boss.projectiles[0]={{4930,4000},{1000,0},BossBulletRadius,0,100,true};
+    m.boss.projectiles[0]={{World::Size*.5+630,World::Size*.5},{1000,0},BossBulletRadius,0,100,true};
     m.step(.03);
     require(close(m.findFighter(1)->hp,9900)&&close(m.findFighter(2)->hp,9900),"missile explodes once and damages every overlapping live team");
     require(close(m.findFighter(3)->hp,10000),"explosion checks rectangle edges rather than circumcircle bounds");
     require(close(m.findFighter(4)->hp,2900),"explosion includes the enlarged host body at its actual edge");
-    require(m.world.find(1)->position.x>5050&&m.world.find(2)->position.x<4835&&m.world.find(2)->position.y>4130&&m.world.find(4)->position.y<3760,"explosion knocks each hit body away from the impact point");
+    require(m.world.find(1)->position.x>World::Size*.5+750&&m.world.find(2)->position.x<World::Size*.5+535&&m.world.find(2)->position.y>World::Size*.5+130&&m.world.find(4)->position.y<World::Size*.5-240,"explosion knocks each hit body away from the impact point");
     const Vec p=m.world.find(2)->position;std::vector<int> found;m.world.query(p,1,found);
     require(std::find(found.begin(),found.end(),1)!=found.end(),"explosion knockback updates the player spatial index");
     pinned(m,.2);require(close(m.findFighter(1)->hp,9900)&&close(m.findFighter(2)->hp,9900),"consumed missile cannot repeat explosion damage");
     const auto& explosion=m.boss.explosions[0];
-    require(explosion.active&&close(explosion.position.x,4952.4)&&close(explosion.position.y,4000)&&close(explosion.radius,140),"explosion visual remains centered at the first swept hit with the damage radius");
+    require(explosion.active&&close(explosion.position.x,World::Size*.5+652.4)&&close(explosion.position.y,World::Size*.5)&&close(explosion.radius,140),"explosion visual remains centered at the first swept hit with the damage radius");
     require(m.damageBoss(1,100000)&&explosion.active,"boss death preserves an existing short impact visual");
     m.config.autoCombat=false;m.step(.45);
     require(!explosion.active&&close(explosion.age,.45),"impact visuals expire even after boss death and disabled combat");
     m.reset();require(m.boss.explosions.size()==16&&m.boss.explosionCursor==0&&!m.boss.explosions[0].active,"round reset clears bounded explosion storage");
 }
 static void missileEnvironmentDeath() {
-    auto m=combat();target(m,1,{5000,4000});target(m,2,{4952.4,4090},Shape::Circle,2);target(m,3,{4900,3910},Shape::Rectangle,0);
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5});target(m,2,{World::Size*.5+652.4,World::Size*.5+90},Shape::Circle,2);target(m,3,{World::Size*.5+600,World::Size*.5-90},Shape::Rectangle,0);
     m.findFighter(1)->hp=80;m.findFighter(1)->score=37;m.findFighter(2)->hp=100;
     m.findFighter(3)->alive=false;m.world.find(3)->active=false;m.findFighter(3)->respawnRemaining=100;m.world.rebuildSpatial();
     forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
-    m.boss.projectiles[0]={{4900,4000},{1000,0},BossBulletRadius,0,100,true};pinned(m,.06);
+    m.boss.projectiles[0]={{World::Size*.5+600,World::Size*.5},{1000,0},BossBulletRadius,0,100,true};pinned(m,.06);
     require(!m.findFighter(1)->alive&&m.findFighter(1)->deaths==1&&m.findFighter(1)->score==30,"missile lethality retains the unaffected eighty percent of carried score");
     require(close(m.findFighter(2)->hp,50)&&m.findFighter(2)->kills==0&&m.findFighter(2)->score==0,"splash keeps circle defence and grants no nearby player kill reward");
     require(close(m.findFighter(3)->hp,10000),"missile splash excludes dead fighters");
@@ -235,7 +235,7 @@ static void laserGrowth() {
     require(close(BossLaserWidthAt(-1),17.6)&&close(BossLaserWidthAt(0),17.6),"active beam begins with the narrow warning width");
     require(close(BossLaserWidthAt(.1625),23.1)&&close(BossLaserWidthAt(.325),35.2)&&close(BossLaserWidthAt(.4875),47.3),"beam thickness follows smooth growth through the visible charge");
     require(close(BossLaserWidthAt(.65),52.8)&&close(BossLaserWidthAt(3),52.8),"beam reaches its maximum after sixty five hundredths of a second");
-    auto m=combat();target(m,1,{5000,4041.4});target(m,2,{5300,4041.41});forceAttack(m,BossAttack::LaserActive);m.boss.laserDirection={1,0};
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5+41.4});target(m,2,{World::Size*.5+900,World::Size*.5+41.41});forceAttack(m,BossAttack::LaserActive);m.boss.laserDirection={1,0};
     for(auto& body:m.world.bodies)body.spin=0;
     pinned(m,.799);require(close(m.findFighter(1)->hp,10000),"first three narrow pulses do not reach a body at the final beam edge");
     pinned(m,.001);require(close(m.findFighter(1)->hp,9850)&&close(m.findFighter(2)->hp,10000),"fourth laser pulse uses maximum visual width for exact polygon collision");
@@ -250,8 +250,8 @@ static void rewardRecipients() {
     require(m.findFighter(2)->alive&&!m.hasBossBuff(*m.findFighter(2))&&!m.hasBossBuff(*m.findFighter(5)),"reviving or joining after the boss kill cannot acquire its team reward");
 }
 static void boundedExplosionPool() {
-    auto m=combat();target(m,1,{5000,4000});m.world.find(1)->spin=0;forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
-    for(int i=0;i<18;++i){place(m,1,{5000,4000});m.boss.projectiles[0]={{4980,4000},{1000,0},BossBulletRadius,0,100,true};m.step(.001);}
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5});m.world.find(1)->spin=0;forceAttack(m,BossAttack::StompRest);m.boss.attackInitialized=true;m.boss.attackElapsed=-100;
+    for(int i=0;i<18;++i){place(m,1,{World::Size*.5+700,World::Size*.5});m.boss.projectiles[0]={{World::Size*.5+680,World::Size*.5},{1000,0},BossBulletRadius,0,100,true};m.step(.001);}
     require(m.boss.explosions.size()==16&&m.boss.explosionCursor==2,"successive impacts recycle the sixteen-slot explosion ring");
     require(std::all_of(m.boss.explosions.begin(),m.boss.explosions.end(),[](const BossExplosion& e){return e.active;}),"each recent missile impact keeps a bounded visual");
     require(close(m.findFighter(1)->hp,8200),"eighteen missiles each apply exactly one explosion hit");
@@ -259,22 +259,22 @@ static void boundedExplosionPool() {
     m.step(.001);require(std::none_of(m.boss.explosions.begin(),m.boss.explosions.end(),[](const BossExplosion& e){return e.active;}),"all explosion slots expire at their lifetime boundaries");
 }
 static void scorchLifetimeAndOverlap() {
-    auto m=combat();target(m,1,{5000,4000});target(m,2,{5500,4500});target(m,3,{1000,1000},Shape::Rectangle,2);m.boss.hp=1600;
-    m.bases[1].position={6000,4000};m.bases[2].position={7000,4000};
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5});target(m,2,{World::Size*.5+850,World::Size*.5+500});target(m,3,{1000,1000},Shape::Rectangle,2);m.boss.hp=1600;
+    m.bases[1].position={World::Size*.5+800,World::Size*.5};m.bases[2].position={World::Size*.5+800,World::Size*.5};
     forceAttack(m,BossAttack::LaserActive);m.boss.laserDirection={1,0};
     pinned(m,.099);require(close(m.findFighter(1)->hp,10000),"scorch waits until the first tenth second boundary");
     pinned(m,.001);require(close(m.findFighter(1)->hp,9990),"rage laser lays damaging scorch at firing onset");
     pinned(m,2.9);require(close(m.findFighter(1)->hp,5200),"three second rage beam includes fifteen laser and thirty scorch ticks");
     m.damageBoss(3,100000);require(!m.boss.active,"boss can die while the scorch remains");
-    place(m,1,{5000,4500});place(m,2,{5500,4000});
+    place(m,1,{World::Size*.5+700,World::Size*.5+500});place(m,2,{World::Size*.5+850,World::Size*.5});
     pinned(m,1.999);require(close(m.findFighter(2)->hp,9810),"late entrant receives only nineteen overlapping scorch ticks before expiry");
     pinned(m,.001);require(close(m.findFighter(2)->hp,9800),"scorch survives boss death and its final tick is exactly five seconds from laser start");
     pinned(m,.5);require(close(m.findFighter(2)->hp,9800)&&close(m.findFighter(1)->hp,5200),"expired scorch and absent overlap cause no extra damage");
     require(close(m.bases[1].hp,2500)&&close(m.bases[2].hp,5000),"boss beam and scorch never damage either base");
 }
 static void scorchMitigationAndNpc() {
-    auto m=combat();target(m,1,{5000,4000},Shape::Circle);target(m,2,{5500,4000});target(m,3,{6000,4000});
-    require(m.addHost(4,0),"gray host joins scorch fixture");place(m,4,{6500,4000});m.findFighter(4)->armor=0;m.findFighter(4)->shotRemaining=100;
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5},Shape::Circle);target(m,2,{World::Size*.5+825,World::Size*.5});target(m,3,{World::Size*.5+900,World::Size*.5});
+    require(m.addHost(4,0),"gray host joins scorch fixture");place(m,4,{World::Size*.5+625,World::Size*.5});m.findFighter(4)->armor=0;m.findFighter(4)->shotRemaining=100;
     m.findFighter(1)->armor=100;m.findFighter(2)->armor=100;m.findFighter(3)->alive=false;m.world.find(3)->active=false;m.findFighter(3)->respawnRemaining=100;m.world.rebuildSpatial();
     m.boss.hp=1600;forceAttack(m,BossAttack::LaserActive);m.boss.laserDirection={1,0};pinned(m,.1);
     require(close(m.findFighter(1)->hp,9998.5)&&close(m.findFighter(1)->armor,97.025),"scorch applies circle reduction before shared armor");
@@ -291,12 +291,12 @@ static void scorchMitigationAndNpc() {
 static void scorchPresentationAndPool() {
     require(close(BossScorchWidthAt(0),17.6)&&close(BossScorchWidthAt(.1625),23.1)&&close(BossScorchWidthAt(.325),35.2)&&close(BossScorchWidthAt(.4875),47.3)&&close(BossScorchWidthAt(.65),52.8),"scorch width uses the same gradual smooth growth as the beam");
     require(close(BossScorchOpacityAt(0),1)&&close(BossScorchOpacityAt(4),1)&&close(BossScorchOpacityAt(4.25),.84375)&&close(BossScorchOpacityAt(4.5),.5)&&close(BossScorchOpacityAt(4.75),.15625)&&close(BossScorchOpacityAt(5),0),"scorch remains opaque for four seconds then smoothly fades through expiry");
-    auto ordinary=combat();target(ordinary,1,{5000,4000});forceAttack(ordinary,BossAttack::LaserActive);ordinary.step(.1);
+    auto ordinary=combat();target(ordinary,1,{World::Size*.5+700,World::Size*.5});forceAttack(ordinary,BossAttack::LaserActive);ordinary.step(.1);
     require(std::none_of(ordinary.boss.scorches.begin(),ordinary.boss.scorches.end(),[](const BossScorch& scorch){return scorch.active;}),"ordinary laser does not leave rage scorch");
-    auto m=combat();target(m,1,{5000,4000});m.boss.hp=1600;forceAttack(m,BossAttack::LaserWindup);m.boss.targetId=1;
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5});m.boss.hp=1600;forceAttack(m,BossAttack::LaserWindup);m.boss.targetId=1;
     pinned(m,3);const auto& scorch=m.boss.scorches[0];
     require(scorch.active&&close(scorch.age,0)&&scorch.ticks==0&&close(scorch.lifetime,5),"scorch starts at the exact windup endpoint without aging before birth");
-    const Vec from=scorch.from,to=scorch.to,direction=scorch.direction;place(m,1,{5000,5000});pinned(m,.4);
+    const Vec from=scorch.from,to=scorch.to,direction=scorch.direction;place(m,1,{World::Size*.5+700,World::Size*.5+700});pinned(m,.4);
     require(close(scorch.from.x,from.x)&&close(scorch.from.y,from.y)&&close(scorch.to.x,to.x)&&close(scorch.to.y,to.y)&&close(scorch.direction.x,direction.x)&&close(scorch.direction.y,direction.y),"scorch retains the locked ray after its target moves");
     for(int i=0;i<8;++i){forceAttack(m,BossAttack::LaserActive);m.step(.001);}
     require(m.boss.scorches.size()==8&&m.boss.scorchCursor==1&&std::all_of(m.boss.scorches.begin(),m.boss.scorches.end(),[](const BossScorch& s){return s.active;}),"repeated rage laser starts recycle a bounded eight-slot scorch pool");
@@ -327,14 +327,14 @@ static void rageDamageReduction() {
     exact.damageBoss(3,100);require(close(exact.boss.hp,6345),"very next hit after threshold receives rage reduction");
 }
 static void rageCardinalMissiles() {
-    auto m=combat();target(m,1,{4700,4700});m.boss.hp=1600;forceAttack(m,BossAttack::Bullet);pinned(m,2.5);
+    auto m=combat();target(m,1,{World::Size*.5+700,World::Size*.5+700});m.boss.hp=1600;forceAttack(m,BossAttack::Bullet);pinned(m,2.5);
     require(m.boss.projectilesFired==5&&m.boss.attacksCompleted==1,"rage attack creates aimed missile plus four cardinal missiles in one firing event");
     const Vec expected[]={{.7071067811865475,.7071067811865475},{1,0},{0,1},{-1,0},{0,-1}};
     for(size_t i=0;i<5;++i){const auto& p=m.boss.projectiles[i];
-        require(p.active&&close(p.position.x,4000)&&close(p.position.y,4000)&&close(p.travelled,0)&&close(p.damage,200),"every rage missile is born at the boss with double damage and no pre-birth travel");
+        require(p.active&&close(p.position.x,World::Size*.5)&&close(p.position.y,World::Size*.5)&&close(p.travelled,0)&&close(p.damage,200),"every rage missile is born at the boss with double damage and no pre-birth travel");
         require(close(p.velocity.x,expected[i].x*1000)&&close(p.velocity.y,expected[i].y*1000),"rage extras use fixed world cardinal directions rather than target-relative spread");}
     require(close(m.bases[1].hp,2500)&&close(m.bases[2].hp,2500),"rage burst leaves bases immune");
-    auto pool=combat();target(pool,2,{4700,4700});pool.boss.hp=1600;
+    auto pool=combat();target(pool,2,{World::Size*.5+700,World::Size*.5+700});pool.boss.hp=1600;
     for(int i=0;i<7;++i){forceAttack(pool,BossAttack::Bullet);pool.boss.attackElapsed=2.499;pinned(pool,.001);}
     require(pool.boss.projectiles.size()==32&&pool.boss.projectilesFired==35&&pool.boss.projectileCursor==3,"repeated rage volleys recycle a bounded thirty two missile pool");
     require(std::all_of(pool.boss.projectiles.begin(),pool.boss.projectiles.end(),[](const BossProjectile& p){return p.active;}),"bounded pool retains thirty two recent moving rage missiles");
@@ -345,19 +345,19 @@ static void spawnWaveAndAttraction() {
     m.step(.001);require(close(m.boss.spawnAge,0),"birth wave starts exactly at 150 seconds without pre-birth aging");
     m.step(.5);require(close(m.boss.spawnAge,.5),"birth wave advances independently of enabled combat");
     require(close(BossSpawnWaveRadiusAt(0),0)&&close(BossSpawnWaveOpacityAt(0),1),"birth wave begins at the boss fully visible");
-    require(close(BossSpawnWaveRadiusAt(1),2828.42712474619)&&close(BossSpawnWaveOpacityAt(1),.5),"birth wave radius and opacity use smooth halfway progress");
-    require(close(BossSpawnWaveRadiusAt(2),5656.85424949238)&&close(BossSpawnWaveOpacityAt(2),0),"birth wave reaches all four map corners and fades out at two seconds");
-    const Vec starts[]={{7000,4000},{1000,4000},{4000,1000},{4000,7000}};
+    require(close(BossSpawnWaveRadiusAt(1),World::Size*std::sqrt(2.0)*.25)&&close(BossSpawnWaveOpacityAt(1),.5),"birth wave radius and opacity use smooth halfway progress");
+    require(close(BossSpawnWaveRadiusAt(2),World::Size*std::sqrt(2.0)*.5)&&close(BossSpawnWaveOpacityAt(2),0),"birth wave reaches all four map corners and fades out at two seconds");
+    const Vec starts[]={{World::Size*.875,World::Size*.5},{World::Size*.125,World::Size*.5},{World::Size*.5,World::Size*.125},{World::Size*.5,World::Size*.875}};
     for(int i=0;i<3;++i){require(m.add(i+1,static_cast<Shape>(i),i),"each faction joins attraction fixture");place(m,i+1,starts[i]);m.world.find(i+1)->velocity={165,0};}
     require(m.addHost(4,0),"host joins attraction fixture");place(m,4,starts[3]);m.world.find(4)->velocity={82.5,0};
     require(m.add(5,Shape::Rectangle,1),"dead fixture joins");m.findFighter(5)->alive=false;m.findFighter(5)->respawnRemaining=100;m.world.find(5)->active=false;
     const Vec deadPosition=m.world.find(5)->position;m.world.rebuildSpatial();m.step(1);
     for(int i=0;i<4;++i){const auto* body=m.world.find(i+1);const Vec toward=m.boss.position-body->position;
-        require(toward.dot(body->velocity)>0&&(body->position-m.boss.position).length()<3000,"boss gravity turns every living faction and host inward without teleporting");}
+        require(toward.dot(body->velocity)>0&&(body->position-m.boss.position).length()<World::Size*.375,"boss gravity turns every living faction and host inward without teleporting");}
     require(close(m.world.find(5)->position.x,deadPosition.x)&&close(m.world.find(5)->position.y,deadPosition.y),"boss gravity ignores inactive dead geometry");
     require(m.world.find(4)->velocity.length()<m.world.find(2)->velocity.length(),"attraction preserves the host movement-speed distinction");
-    m.damageBoss(2,100000);place(m,1,{7000,4000});m.world.find(1)->velocity={0,165};m.step(.1);
-    require(close(m.world.find(1)->velocity.x,0)&&m.world.find(1)->position.y>4000,"boss death immediately stops steering surviving bodies");
+    m.damageBoss(2,100000);place(m,1,{World::Size*.5+800,World::Size*.5});m.world.find(1)->velocity={0,165};m.step(.1);
+    require(close(m.world.find(1)->velocity.x,0)&&m.world.find(1)->position.y>World::Size*.5,"boss death immediately stops steering surviving bodies");
     require(close(m.boss.spawnAge,1.6),"existing birth wave keeps aging after an early boss death");
     m.reset();require(close(m.boss.spawnAge,0)&&!m.boss.spawned,"round reset clears the birth wave");
 }

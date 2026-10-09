@@ -18,15 +18,14 @@ void AArenaPlayerController::GWComment(const FString& UserId,const FString& Nick
     if(auto* Game=GetWorld()->GetAuthGameMode<AArenaGameMode>()) Game->GetBridge()->SimulateComment(UserId,Nickname,Content);
 }
 void AArenaPlayerController::GWConnectRelay(const FString& Url,const FString& RoomId) {
-    if(!UDouyinLiveSubsystem::IsValidRelayEndpoint(Url,RoomId)) return;
+    if(!ULiveInteractionSubsystem::IsValidRelayEndpoint(Url,RoomId)) return;
     if(auto* Game=GetWorld()->GetAuthGameMode<AArenaGameMode>()) {
-        Game->GetBridge()->DisconnectRelay();
-        Game->ResetArena();
+        if(!Game->GetBridge()->IsLocalTestMode()) return;
         Game->GetBridge()->ConnectRelay(Url,RoomId);
     }
 }
 void AArenaPlayerController::GWDisconnect() { if(auto* Game=GetWorld()->GetAuthGameMode<AArenaGameMode>()) Game->GetBridge()->DisconnectRelay(); }
-void AArenaPlayerController::GWAdd(int32 Count) { if(auto* Game=GetWorld()->GetAuthGameMode<AArenaGameMode>()) Game->AddMockUsers(FMath::Clamp(Count,1,5000)); }
+void AArenaPlayerController::GWAdd(int32 Count) { if(auto* Game=GetWorld()->GetAuthGameMode<AArenaGameMode>()) Game->AddMockUsers(FMath::Clamp(Count,1,gw::Match::ViewerCapacity)); }
 void AArenaPlayerController::GWAction(const FString& Action) { if(auto* Game=GetWorld()->GetAuthGameMode<AArenaGameMode>()) Game->DemoAction(Action); }
 void AArenaPlayerController::GWSpeed(float Speed) { if(auto* Game=GetWorld()->GetAuthGameMode<AArenaGameMode>()) Game->SetDemoSpeed(Speed); }
 void AArenaPlayerController::GWFocus(int32 Id) { if(auto* Game=GetWorld()->GetAuthGameMode<AArenaGameMode>()) Game->FocusViewer(Id); }
@@ -42,14 +41,18 @@ void AArenaPlayerController::SetupInputComponent() {
     InputComponent->BindKey(EKeys::LeftMouseButton,IE_Released,this,&AArenaPlayerController::PointerReleased);
     InputComponent->BindKey(EKeys::RightMouseButton,IE_Pressed,this,&AArenaPlayerController::UnlockCamera);
     InputComponent->BindKey(EKeys::Home,IE_Pressed,this,&AArenaPlayerController::ShowOverview);
-    InputComponent->BindKey(EKeys::F1,IE_Pressed,this,&AArenaPlayerController::ToggleControls);
+    InputComponent->BindKey(EKeys::Escape,IE_Pressed,this,&AArenaPlayerController::ToggleSettings);
+    InputComponent->BindKey(EKeys::G,IE_Pressed,this,&AArenaPlayerController::ToggleGM);
 }
+bool AArenaPlayerController::SettingsOpen() const {const auto* H=Cast<AArenaHUD>(GetHUD());return H && H->IsOverlayOpen();}
+void AArenaPlayerController::ToggleSettings(){CancelPointer();if(auto* H=Cast<AArenaHUD>(GetHUD()))H->ToggleSettings();}
+void AArenaPlayerController::ToggleGM(){CancelPointer();if(auto* H=Cast<AArenaHUD>(GetHUD()))H->ToggleGM();}
 void AArenaPlayerController::ZoomIn(){float X,Y;if(ReadPointer(X,Y))if(auto* H=Cast<AArenaHUD>(GetHUD()))H->ZoomAtCursor(X,Y,1.25f);}
 void AArenaPlayerController::ZoomOut(){float X,Y;if(ReadPointer(X,Y))if(auto* H=Cast<AArenaHUD>(GetHUD()))H->ZoomAtCursor(X,Y,.8f);}
-void AArenaPlayerController::CameraLeft(){if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->MoveCamera(-1,0);}
-void AArenaPlayerController::CameraRight(){if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->MoveCamera(1,0);}
-void AArenaPlayerController::CameraUp(){if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->MoveCamera(0,-1);}
-void AArenaPlayerController::CameraDown(){if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->MoveCamera(0,1);}
+void AArenaPlayerController::CameraLeft(){if(SettingsOpen())return;if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->MoveCamera(-1,0);}
+void AArenaPlayerController::CameraRight(){if(SettingsOpen())return;if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->MoveCamera(1,0);}
+void AArenaPlayerController::CameraUp(){if(SettingsOpen())return;if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->MoveCamera(0,-1);}
+void AArenaPlayerController::CameraDown(){if(SettingsOpen())return;if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->MoveCamera(0,1);}
 bool AArenaPlayerController::ReadPointer(float& X,float& Y) const {
     const auto* ViewportClient=GetWorld()?GetWorld()->GetGameViewport():nullptr;
     if(!ViewportClient || !ViewportClient->Viewport || !GetMousePosition(X,Y)) return false;
@@ -89,10 +92,10 @@ void AArenaPlayerController::CancelPointer() {
     bPointerActive=false; PointerHUD.Reset();
 }
 void AArenaPlayerController::UnlockCamera() {
+    if(SettingsOpen())return;
     CancelPointer();
     if(auto* H=Cast<AArenaHUD>(GetHUD())) H->CancelPointer();
     if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>()) G->FocusBodyId=-1;
 }
 void AArenaPlayerController::EndPlay(const EEndPlayReason::Type Reason) { CancelPointer(); Super::EndPlay(Reason); }
-void AArenaPlayerController::ShowOverview(){if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->Overview();}
-void AArenaPlayerController::ToggleControls(){if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())G->bShowControls=!G->bShowControls;}
+void AArenaPlayerController::ShowOverview(){if(SettingsOpen())return;if(auto* G=GetWorld()->GetAuthGameMode<AArenaGameMode>())if(G->FocusBodyId<0)G->Overview();}

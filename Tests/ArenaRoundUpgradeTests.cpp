@@ -7,6 +7,77 @@ static int assertions=0;
 static void check(bool ok,const char* message){++assertions;if(!ok)throw std::runtime_error(message);}
 static bool eq(double a,double b){return std::abs(a-b)<1e-5;}
 static Match quiet(){MatchConfig c;c.autoCombat=false;c.autoCollect=false;c.npcCount=0;return Match(c);}
+static bool wand(Match& m,int id,int64_t count){return m.applyFairyWand(id,count);}
+static void fairyWandLiving(){
+    struct Case{Shape shape;int64_t count;double max;};
+    const Case cases[]={{Shape::Circle,1,330},{Shape::Triangle,10,600},{Shape::Square,66,2230},{Shape::Rectangle,1,230}};
+    for(const auto& test:cases){auto m=quiet();m.add(1,test.shape,1);m.findFighter(1)->hp-=75;
+        check(wand(m,1,test.count),"living fairy wand applies counted bonus");
+        check(eq(m.findFighter(1)->maxHp,test.max)&&eq(m.findFighter(1)->hp,test.max-75),"living wand increases max and current HP while preserving missing HP");
+        check(wand(m,1,1)&&eq(m.findFighter(1)->maxHp,test.max+30)&&eq(m.findFighter(1)->hp,test.max-45),"separate wand receipts accumulate within one life");
+    }
+    auto m=quiet();m.add(1,Shape::Circle,0);m.findFighter(1)->hp=150;
+    check(wand(m,1,10)&&m.changeShape(1,Shape::Square),"gray viewer keeps wand bonus on shape change");
+    check(eq(m.findFighter(1)->maxHp,550)&&eq(m.findFighter(1)->hp,412.5),"shape change keeps bonus and existing HP ratio semantics");
+    m.findFighter(1)->hp=100;check(m.healLike(1,1)&&eq(m.findFighter(1)->hp,127.5),"like healing uses wand-enhanced maximum");
+}
+static void fairyWandEvolution(){
+    auto before=quiet();before.add(1,Shape::Circle,1);before.findFighter(1)->hp=225;
+    check(wand(before,1,2)&&before.grantEvolution(1),"wand before evolution applies");
+    check(eq(before.findFighter(1)->maxHp,720)&&eq(before.findFighter(1)->hp,570),"evolution doubles the enhanced base and current HP");
+    check(wand(before,1,1)&&eq(before.findFighter(1)->maxHp,780)&&eq(before.findFighter(1)->hp,630),"wand while evolved adds sixty effective HP per unit");
+    check(before.grantEvolution(1)&&eq(before.findFighter(1)->maxHp,780),"refreshing evolution does not double wand bonus again");
+    before.findFighter(1)->evolutionRemaining=.001;before.step(.001);
+    check(eq(before.findFighter(1)->maxHp,390)&&eq(before.findFighter(1)->hp,315),"evolution expiry preserves wand bonus and HP ratio");
+    auto after=quiet();after.add(1,Shape::Circle,1);after.findFighter(1)->hp=225;after.grantEvolution(1);
+    check(wand(after,1,2)&&eq(after.findFighter(1)->maxHp,720)&&eq(after.findFighter(1)->hp,570),"gift and evolution order produce identical life totals");
+    check(after.changeShape(1,Shape::Rectangle)&&eq(after.findFighter(1)->maxHp,520),"evolved shape change retains doubled wand bonus");
+    auto host=quiet();host.addHost(1,1);check(wand(host,1,1)&&host.grantEvolution(1)&&eq(host.findFighter(1)->maxHp,6060),"host HP base stays compatible with existing evolution");
+    host.findFighter(1)->evolutionRemaining=.001;host.step(.001);check(eq(host.findFighter(1)->maxHp,3030),"host evolution expiry preserves life bonus");
+}
+static void fairyWandDeath(){
+    auto m=quiet();m.add(1,Shape::Square,1);check(wand(m,1,10),"grant before death");
+    m.damageEnvironment(1,1e9);check(!m.findFighter(1)->alive&&eq(m.findFighter(1)->maxHp,250),"ordinary death clears wand bonus immediately");
+    check(wand(m,1,1)&&eq(m.findFighter(1)->hp,250)&&eq(m.findFighter(1)->maxHp,250),"single wand on dead viewer only revives");
+    m.damageEnvironment(1,1e9);check(wand(m,1,3)&&eq(m.findFighter(1)->maxHp,310)&&eq(m.findFighter(1)->hp,310),"dead batch spends first wand on revival and remaining units on HP");
+    m.grantEvolution(1);m.damageEnvironment(1,1e9);
+    check(!m.findFighter(1)->alive&&eq(m.findFighter(1)->maxHp,250)&&eq(m.findFighter(1)->evolutionRemaining,0),"evolved death removes both evolution and wand bonus");
+    check(m.changeShape(1,Shape::Rectangle)&&eq(m.findFighter(1)->maxHp,200),"dead shape change cannot restore previous life bonus");
+    m.step(15);check(m.findFighter(1)->alive&&eq(m.findFighter(1)->hp,200),"automatic revival starts without prior life bonus");
+    m.phase=Phase::Sprint;m.damageEnvironment(1,1e9);check(!m.revive(1),"ordinary Sprint revival remains blocked");
+    check(wand(m,1,66)&&eq(m.findFighter(1)->maxHp,2150)&&eq(m.findFighter(1)->hp,2150),"Sprint batch revives and enhances remaining sixty-five units");
+    check(!m.revive(1,true),"legacy revive still rejects living viewers");
+}
+static void fairyWandHero(){
+    auto m=quiet();m.config.sprintSeconds=1;m.add(1,Shape::Rectangle,1);m.findFighter(1)->score=10;
+    check(wand(m,1,2)&&m.grantEvolution(1),"hero candidate receives wand and evolution");m.step(1);
+    check(m.findFighter(1)->heroBuff&&eq(m.findFighter(1)->maxHp,2160)&&eq(m.findFighter(1)->hp,2160),"hero keeps fixed 2100 base plus life bonus without evolution multiplication");
+    check(wand(m,1,1)&&eq(m.findFighter(1)->maxHp,2190),"hero wand adds thirty even during evolution");
+    check(m.changeShape(1,Shape::Circle)&&eq(m.findFighter(1)->maxHp,2190),"hero shape change retains fixed base and life bonus");
+    m.findFighter(1)->evolutionRemaining=.001;m.step(.001);check(eq(m.findFighter(1)->maxHp,2190),"hero evolution expiry preserves life bonus");
+    check(m.grantEvolution(1)&&eq(m.findFighter(1)->maxHp,2190),"hero new evolution still does not multiply life");
+    m.damageEnvironment(1,1e9);check(!m.findFighter(1)->alive&&m.findFighter(1)->heroBuff&&eq(m.findFighter(1)->maxHp,2100),"hero death clears life bonus while retaining qualification");
+    check(wand(m,1,2)&&eq(m.findFighter(1)->hp,2130)&&eq(m.findFighter(1)->armor,300),"hero batch revives with armor and only leftover life bonus");
+}
+static void fairyWandBoundsAndReset(){
+    auto m=quiet();m.add(1,Shape::Circle,1);
+    check(!wand(m,1,0)&&!wand(m,1,-1)&&!wand(m,99,1)&&eq(m.findFighter(1)->maxHp,300),"invalid wand counts and missing viewer have no effect");
+    check(wand(m,1,66),"grant before round reset");m.startNextRound();check(eq(m.findFighter(1)->hp,300)&&eq(m.findFighter(1)->maxHp,300),"new round clears current-life bonus");
+    check(wand(m,1,1),"grant before match reset");m.reset();m.add(1,Shape::Circle,1);check(eq(m.findFighter(1)->maxHp,300),"new session cannot inherit life bonus");
+    m.phase=Phase::Results;check(!wand(m,1,1)&&eq(m.findFighter(1)->maxHp,300),"Results blocks live bonus");
+    m.phase=Phase::Battle;m.damageEnvironment(1,1e9);m.phase=Phase::Results;check(!wand(m,1,3)&&!m.findFighter(1)->alive,"Results blocks batch revival");
+    m.phase=Phase::Battle;check(wand(m,1,std::numeric_limits<int64_t>::max()),"large valid count applies without integer overflow");
+    check(std::isfinite(m.findFighter(1)->maxHp)&&m.findFighter(1)->maxHp>2.7e20&&eq(m.findFighter(1)->hp,m.findFighter(1)->maxHp),"large count remains positive finite and fully healed after revival");
+}
+static void fairyWandHealingFeedback(){
+    auto m=quiet();m.add(1,Shape::Circle,1);
+    check(!wand(m,1,0)&&eq(m.findFighter(1)->healFlash,0),"invalid gift does not show healing feedback");
+    m.phase=Phase::Results;check(!wand(m,1,1)&&eq(m.findFighter(1)->healFlash,0),"Results gift does not show healing feedback");
+    m.phase=Phase::Battle;check(wand(m,1,1)&&eq(m.findFighter(1)->healFlash,.7),"living wand HP gain shows existing healing flash");
+    m.step(.7);check(eq(m.findFighter(1)->healFlash,0),"wand healing feedback expires normally");
+    m.damageEnvironment(1,1e9);check(wand(m,1,1)&&eq(m.findFighter(1)->healFlash,0),"single wand revival does not imply an additional health grant");
+    m.damageEnvironment(1,1e9);check(wand(m,1,2)&&eq(m.findFighter(1)->healFlash,.7),"batch revival shows feedback for remaining health grant");
+}
 static void timingAndScore(){
     auto m=quiet();check(eq(m.config.battleSeconds,420)&&eq(m.config.sprintSeconds,300),"seven minutes with final two minute Sprint");
     m.step(299.999);check(m.phase==Phase::Battle,"Battle still active before300");m.step(.001);check(m.phase==Phase::Sprint,"Sprint starts exactly300");
@@ -18,7 +89,7 @@ static void timingAndScore(){
     score.step(14.999);check(!score.fighters[1].alive,"redblue waits full15seconds");score.step(.001);check(score.fighters[1].alive&&score.fighters[1].score==59,"respawn retains remainder exactly15seconds");
     score.fighters[1].score=91;score.damagePlayer(3,2,10000);check(score.fighters[1].score==73&&score.orbs.back().value==18,"gray kill drops only20percent for scoring viewers");
     score.damageEnvironment(3,10000);score.step(19.999);check(!score.fighters[2].alive,"gray waits full20seconds");score.step(.001);check(score.fighters[2].alive,"gray revives exactly20seconds");
-    const Vec spawn=score.world.bodies[2].position;check(std::abs(spawn.x-4000)<400&&std::abs(spawn.y-1920)<400,"gray revival is upper center");
+    const Vec spawn=score.world.bodies[2].position;check(std::abs(spawn.x-World::Size*.5)<400&&std::abs(spawn.y-World::Size*.24)<400,"gray revival is upper center");
 }
 static void heroes(){
     MatchConfig c;c.autoCombat=false;c.autoCollect=false;c.naturalOrbs=0;c.npcCount=0;c.sprintSeconds=2;c.battleSeconds=20;Match m(c);
@@ -38,7 +109,7 @@ static void heroes(){
 static void heroSwords(){
     MatchConfig c;c.naturalOrbs=0;c.npcCount=0;c.autoCollect=false;Match m(c);m.weapon.range=0;
     m.add(1,Shape::Rectangle,1);m.add(2,Shape::Rectangle,2);m.add(3,Shape::Rectangle,2);
-    for(size_t i=0;i<m.fighters.size();++i){m.world.bodies[i].position={1000+1500.0*i,1000};m.world.bodies[i].velocity={90,0};}
+    for(size_t i=0;i<m.fighters.size();++i){m.world.bodies[i].position={World::Size*.25+World::Size*.25*i,World::Size*.5};m.world.bodies[i].velocity={90,0};}
     m.world.rebuildSpatial();auto& owner=m.fighters[0];owner.heroBuff=true;owner.heroSwordRemaining=5;owner.aimAngle=.4;
     m.step(4.999);check(m.swordWaves.empty(),"hero waits5seconds");m.step(.001);check(m.swordWaves.size()==1,"hero starts its burst with only one sword at five seconds");
     check(eq(m.swordWaves[0].speed,880)&&eq(m.swordWaves[0].life,1.25)&&eq(m.swordWaves[0].traveled,0),"first hero sword has double speed and no age before birth");
@@ -74,12 +145,14 @@ static void heroScheduling(){
 static void evolutionMagnet(){
     auto packs=quiet();packs.step(59.999);check(packs.evolutionPacks.empty(),"nopackbefore60");packs.step(.001);check(packs.evolutionPacks.size()==10,"tenpacksperminute");packs.step(300);check(packs.evolutionPacks.size()==60,"sixtybeforeroundends");
     MatchConfig c;c.autoCombat=false;c.naturalOrbs=2;c.npcCount=0;Match m(c);m.add(1,Shape::Square,1);
-    m.orbs[0].position={1000,1000};m.orbs[1].position={7500,7500};m.world.bodies[0].position={1500,1000};m.world.bodies[0].velocity={0,90};m.world.rebuildSpatial();
+    m.orbs[0].position={1000,1000};m.orbs[1].position={World::Size*.125,World::Size*.875};m.world.bodies[0].position={1500,1000};m.world.bodies[0].velocity={0,90};m.world.rebuildSpatial();
     check(m.grantEvolution(1),"grantmagnet");const auto old=m.orbs[0].position;m.step(.1);
-    check(m.orbs[0].position.x>old.x&&m.orbs[0].active,"orb visiblytravels towardevolvedunit");check(eq(m.orbs[1].position.x,7500)&&eq(m.orbs[1].position.y,7500),"outsideweaponrange remainsstill");
+    check(m.orbs[0].position.x>old.x&&m.orbs[0].active,"orb visiblytravels towardevolvedunit");check(eq(m.orbs[1].position.x,World::Size*.125)&&eq(m.orbs[1].position.y,World::Size*.875),"outsideweaponrange remainsstill");
     m.step(1);check(!m.orbs[0].active&&m.fighters[0].score==4,"magnetusesnormalcollectionandshapeaward");
     auto host=quiet();host.addHost(1,0);check(eq(host.fighters[0].maxHp,3000),"hostbase3000");host.grantEvolution(1);check(eq(host.fighters[0].maxHp,6000)&&eq(host.fighters[0].armor,500),"Bossgrant canevolvehost withoutreducingarmor");host.fighters[0].evolutionRemaining=.001;host.step(.001);check(eq(host.fighters[0].maxHp,3000)&&eq(host.fighters[0].maxArmor,500),"hostevolutionendsbackat3000");
 }
 int main(){int fails=0;const auto run=[&](auto fn,const char* name){try{fn();std::cout<<"PASS "<<name<<'\n';}catch(const std::exception& e){++fails;std::cerr<<"FAIL "<<name<<": "<<e.what()<<'\n';}};
     run(timingAndScore,"timing score respawn");run(heroes,"topten hero lifecycle");run(heroSwords,"sequential parallel hero swords and damage");run(heroScheduling,"hero birth scheduling and cancellation");run(evolutionMagnet,"evolution spawn magnet and host");
+    run(fairyWandLiving,"fairy wand living count and shape");run(fairyWandEvolution,"fairy wand evolution lifecycle");run(fairyWandDeath,"fairy wand death and batch revival");run(fairyWandHero,"fairy wand hero lifecycle");run(fairyWandBoundsAndReset,"fairy wand bounds and reset");
+    run(fairyWandHealingFeedback,"fairy wand healing feedback");
     std::cout<<assertions<<" assertions, "<<fails<<" failed groups\n";return fails?1:0;}

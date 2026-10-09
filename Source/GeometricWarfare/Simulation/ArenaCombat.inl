@@ -4,15 +4,20 @@ inline WeaponConfig Match::weaponFor(WeaponKind kind) const {
     case WeaponKind::RocketLauncher:return {1000,4900,.42,.28,5,0,1};default:return weapon;}
 }
 inline WeaponConfig Match::weaponFor(const Fighter& f) const {
-    auto gun=weaponFor(f.weaponKind);if(f.weaponKind!=WeaponKind::Sniper)return gun;
+    return weaponFor(f,false);
+}
+inline WeaponConfig Match::weaponFor(const Fighter& f,bool rightHand) const {
+    const WeaponKind kind=rightHand?f.temporaryWeaponKind:f.weaponKind;
+    const int targetKind=rightHand?f.rightWeapon.targetKind:f.targetKind,targetIndex=rightHand?f.rightWeapon.targetIndex:f.targetIndex;
+    auto gun=weaponFor(kind);if(kind!=WeaponKind::Sniper)return gun;
     const auto owner=indices.find(f.id);if(owner==indices.end())return gun;
     Vec target;bool found=false;
-    if(f.targetKind==1&&f.targetIndex>=0&&f.targetIndex<static_cast<int>(fighters.size())){target=world.bodies[f.targetIndex].position;found=true;}
-    else if(f.targetKind==2&&f.targetIndex>=0&&f.targetIndex<static_cast<int>(npcs.size())){target=npcs[f.targetIndex].position;found=true;}
-    else if(f.targetKind==3&&f.targetIndex>=1&&f.targetIndex<=2){target=bases[f.targetIndex].position;found=true;}
-    else if(f.targetKind==4){target=boss.position;found=true;}
-    else if(f.targetKind==5&&f.targetIndex>=0&&f.targetIndex<static_cast<int>(evolutionPacks.size())){target=evolutionPacks[f.targetIndex].position;found=true;}
-    else if(f.targetKind==6&&f.targetIndex>=0&&f.targetIndex<static_cast<int>(weaponCrates.size())){target=weaponCrates[f.targetIndex].position;found=true;}
+    if(targetKind==1&&targetIndex>=0&&targetIndex<static_cast<int>(fighters.size())){target=world.bodies[targetIndex].position;found=true;}
+    else if(targetKind==2&&targetIndex>=0&&targetIndex<static_cast<int>(npcs.size())){target=npcs[targetIndex].position;found=true;}
+    else if(targetKind==3&&targetIndex>=1&&targetIndex<=2){target=bases[targetIndex].position;found=true;}
+    else if(targetKind==4){target=boss.position;found=true;}
+    else if(targetKind==5&&targetIndex>=0&&targetIndex<static_cast<int>(evolutionPacks.size())){target=evolutionPacks[targetIndex].position;found=true;}
+    else if(targetKind==6&&targetIndex>=0&&targetIndex<static_cast<int>(weaponCrates.size())){target=weaponCrates[targetIndex].position;found=true;}
     if(found){const double distance=(target-world.bodies[owner->second].position).length();gun.aimTime=1+std::clamp((distance-2400)/2400,0.0,1.0);if(distance>=2400)gun.damage=300;}
     return gun;
 }
@@ -37,6 +42,7 @@ inline bool Match::healLike(int id,int64_t count) {
     auto* f=findFighter(id);if(!f||!f->alive||count<=0||phase==Phase::Results)return false;
     const double restored=std::max(0.0,std::min(f->maxHp-f->hp,f->maxHp*.05*std::min<int64_t>(count,20)));
     f->hp+=restored;
+    if(restored>0)f->healFlash=.7;
     emitDamage(world.bodies[indices.at(id)].position,restored,f->team,1,id,NumberKind::Healing);return true;
 }
 inline bool Match::grantShotgun(int id) {
@@ -49,12 +55,11 @@ inline void Match::resetWeaponAmmo(Fighter& f) {
 inline bool Match::grantWeapon(int id,WeaponKind kind) {
     auto* f=findFighter(id);if(!f||f->isHost||!validWeapon(kind)||phase==Phase::Results)return false;
     f->unlockedWeapons|=weaponBit(kind);
-    if(f->temporaryWeaponRemaining>0&&f->temporaryWeaponKind==kind)endTemporaryWeapon(*f);
     return switchWeapon(id,kind);
 }
 inline bool Match::switchWeapon(int id,WeaponKind kind) {
     auto* f=findFighter(id);if(!f||!validWeapon(kind)||phase==Phase::Results||(f->isHost&&kind!=WeaponKind::Rifle))return false;
-    if(!(f->unlockedWeapons&weaponBit(kind))&&!(f->temporaryWeaponRemaining>0&&f->temporaryWeaponKind==kind))return false;
+    if(!(f->unlockedWeapons&weaponBit(kind)))return false;
     if(f->weaponKind==kind)return true;
     f->weaponStates[static_cast<size_t>(f->weaponKind)]={f->ammo,f->reloadRemaining,f->shotRemaining};
     f->weaponKind=kind;const auto& state=f->weaponStates[static_cast<size_t>(kind)];
@@ -70,20 +75,20 @@ inline bool Match::damageEnvironment(int id,double amount) {
     emitDamage(world.bodies[index].position,applied,v->team,1,id);
     if(v->hp<=1e-8)kill(-1,index);return true;
 }
-inline bool Match::targetPosition(int index,Vec& position) const {
-    const auto& f=fighters[index];const int target=f.targetIndex;
-    if(f.targetKind==1&&target>=0&&target<static_cast<int>(fighters.size())&&fighters[target].alive&&hostile(f,fighters[target]))position=world.bodies[target].position;
-    else if(f.targetKind==2&&target>=0&&target<static_cast<int>(npcs.size())&&npcs[target].active)position=npcs[target].position;
-    else if(f.targetKind==3&&target>=1&&target<=2&&bases[target].alive&&f.team!=target)position=bases[target].position;
-    else if(f.targetKind==4&&boss.active)position=boss.position;
-    else if(f.targetKind==5&&!f.isHost&&target>=0&&target<static_cast<int>(evolutionPacks.size())&&evolutionPacks[target].active)position=evolutionPacks[target].position;
-    else if(f.targetKind==6&&!f.isHost&&target>=0&&target<static_cast<int>(weaponCrates.size())&&weaponCrates[target].active)position=weaponCrates[target].position;
+inline bool Match::targetPosition(int index,Vec& position,bool rightHand) const {
+    const auto& f=fighters[index];const int target=rightHand?f.rightWeapon.targetIndex:f.targetIndex;const int targetKind=rightHand?f.rightWeapon.targetKind:f.targetKind;
+    if(targetKind==1&&target>=0&&target<static_cast<int>(fighters.size())&&fighters[target].alive&&hostile(f,fighters[target]))position=world.bodies[target].position;
+    else if(targetKind==2&&target>=0&&target<static_cast<int>(npcs.size())&&npcs[target].active)position=npcs[target].position;
+    else if(targetKind==3&&target>=1&&target<=2&&bases[target].alive&&f.team!=target)position=bases[target].position;
+    else if(targetKind==4&&boss.active)position=boss.position;
+    else if(targetKind==5&&!f.isHost&&target>=0&&target<static_cast<int>(evolutionPacks.size())&&evolutionPacks[target].active)position=evolutionPacks[target].position;
+    else if(targetKind==6&&!f.isHost&&target>=0&&target<static_cast<int>(weaponCrates.size())&&weaponCrates[target].active)position=weaponCrates[target].position;
     else return false;
-    const double range=weaponFor(f).range*(!f.isHost&&world.bodies[index].shape==Shape::Rectangle?1.5:1);
+    const double range=weaponFor(f,rightHand).range*(!f.isHost&&world.bodies[index].shape==Shape::Rectangle?1.5:1);
     const Vec delta=position-world.bodies[index].position;return delta.dot(delta)<=range*range;
 }
-inline void Match::acquireTarget(int index) {
-    auto& f=fighters[index];const auto& body=world.bodies[index];const auto gun=weaponFor(f);
+inline void Match::acquireTarget(int index,bool rightHand) {
+    auto& f=fighters[index];auto state=weaponRuntime(f,rightHand);const auto& body=world.bodies[index];const auto gun=weaponFor(f,rightHand);
     const double range=gun.range*(!f.isHost&&body.shape==Shape::Rectangle?1.5:1),range2=range*range;
     double best=std::numeric_limits<double>::max();int kind=0,target=-1;
     const auto consider=[&](Vec position,int candidateKind,int candidateIndex){const Vec delta=position-body.position;const double d=delta.dot(delta);if(d<=range2&&d<best){best=d;kind=candidateKind;target=candidateIndex;}};
@@ -101,58 +106,70 @@ inline void Match::acquireTarget(int index) {
     }
     if(!kind)for(int y=cell(body.position.y-range);y<=cell(body.position.y+range);++y)for(int x=cell(body.position.x-range);x<=cell(body.position.x+range);++x)
         for(int other:npcGrid[y*ResourceCells+x])if(npcs[other].active)consider(npcs[other].position,2,other);
-    const bool changed=kind!=f.targetKind||target!=f.targetIndex;
-    f.targetKind=kind;f.targetIndex=target;f.acquisitionRemaining=.45+static_cast<double>(index%11)*.023;
-    if(changed){f.aimRemaining=weaponFor(f).aimTime*(!f.isHost&&body.shape==Shape::Rectangle?.5:1);f.sniperAimDuration=f.weaponKind==WeaponKind::Sniper?f.aimRemaining:0;}
+    const bool changed=kind!=state.targetKind||target!=state.targetIndex;
+    state.targetKind=kind;state.targetIndex=target;state.acquisitionRemaining=.45+static_cast<double>(index%11)*.023;
+    if(changed){state.aimRemaining=weaponFor(f,rightHand).aimTime*(!f.isHost&&body.shape==Shape::Rectangle?.5:1);state.sniperAimDuration=state.kind==WeaponKind::Sniper?state.aimRemaining:0;}
+}
+inline WeaponRuntimeView Match::weaponRuntime(Fighter& f,bool rightHand) {
+    if(rightHand){auto& r=f.rightWeapon;return {f.temporaryWeaponKind,r.ammo,r.reloadRemaining,r.shotRemaining,r.aimRemaining,r.sniperAimDuration,r.acquisitionRemaining,r.aimAngle,r.targetKind,r.targetIndex};}
+    return {f.weaponKind,f.ammo,f.reloadRemaining,f.shotRemaining,f.aimRemaining,f.sniperAimDuration,f.acquisitionRemaining,f.aimAngle,f.targetKind,f.targetIndex};
 }
 inline void Match::tickWeapon(int index,double dt) {
-    auto& f=fighters[index];const auto& body=world.bodies[index];auto gun=weaponFor(f);
-    f.shotRemaining=std::max(0.0,f.shotRemaining-dt);
+    tickWeaponHand(index,dt,false);
+    const auto& f=fighters[index];
+    if(f.alive&&!f.isHost&&f.temporaryWeaponRemaining>0)tickWeaponHand(index,dt,true);
+}
+inline void Match::tickWeaponHand(int index,double dt,bool rightHand) {
+    auto& f=fighters[index];auto state=weaponRuntime(f,rightHand);const auto& body=world.bodies[index];auto gun=weaponFor(f,rightHand);
+    state.shotRemaining=std::max(0.0,state.shotRemaining-dt);
     double aimDt=dt;
-    if(f.reloadRemaining>0){
+    if(state.reloadRemaining>0){
         // Sniper telegraphing starts after reload. Only the portion of this
         // interval after completion can advance its next visible aim.
-        if(f.weaponKind==WeaponKind::Sniper)aimDt=std::max(0.0,dt-f.reloadRemaining);
-        f.reloadRemaining=std::max(0.0,f.reloadRemaining-dt);if(f.reloadRemaining<=1e-8){f.reloadRemaining=0;f.ammo=gun.magazine;}
+        if(state.kind==WeaponKind::Sniper)aimDt=std::max(0.0,dt-state.reloadRemaining);
+        state.reloadRemaining=std::max(0.0,state.reloadRemaining-dt);if(state.reloadRemaining<=1e-8){state.reloadRemaining=0;state.ammo=gun.magazine;}
     }
-    f.acquisitionRemaining-=dt;Vec target;
+    state.acquisitionRemaining-=dt;Vec target;
     const double range=gun.range*(!f.isHost&&body.shape==Shape::Rectangle?1.5:1);
     const Vec bossOffset=boss.position-body.position;
-    const bool bossPreempts=boss.active&&f.targetKind!=4&&bossOffset.dot(bossOffset)<=range*range;
-    if(f.acquisitionRemaining<=0||bossPreempts||!targetPosition(index,target))acquireTarget(index);
-    if(!targetPosition(index,target)){f.targetKind=0;return;}
-    const Vec delta=target-body.position;const double distance=delta.length();f.aimAngle=std::atan2(delta.y,delta.x);
-    gun=weaponFor(f);
-    if(f.weaponKind==WeaponKind::Sniper){
+    const bool bossPreempts=boss.active&&state.targetKind!=4&&bossOffset.dot(bossOffset)<=range*range;
+    if(state.acquisitionRemaining<=0||bossPreempts||!targetPosition(index,target,rightHand))acquireTarget(index,rightHand);
+    if(!targetPosition(index,target,rightHand)){state.targetKind=0;return;}
+    const Vec delta=target-body.position;const double distance=delta.length();state.aimAngle=std::atan2(delta.y,delta.x);
+    gun=weaponFor(f,rightHand);
+    if(state.kind==WeaponKind::Sniper){
         const double duration=gun.aimTime*(!f.isHost&&body.shape==Shape::Rectangle?.5:1);
         // Changing distance bands preserves time already spent aiming. A target
         // crossing into the far band still requires the full longer telegraph.
-        const double elapsedAim=f.sniperAimDuration>0?std::max(0.0,f.sniperAimDuration-f.aimRemaining):0;
-        f.aimRemaining=std::max(0.0,duration-elapsedAim);f.sniperAimDuration=duration;
+        const double elapsedAim=state.sniperAimDuration>0?std::max(0.0,state.sniperAimDuration-state.aimRemaining):0;
+        state.aimRemaining=std::max(0.0,duration-elapsedAim);state.sniperAimDuration=duration;
     }
-    f.aimRemaining=std::max(0.0,f.aimRemaining-aimDt);
-    if(f.aimRemaining>1e-8||f.shotRemaining>1e-8||f.reloadRemaining>1e-8)return;
+    state.aimRemaining=std::max(0.0,state.aimRemaining-aimDt);
+    if(state.aimRemaining>1e-8||state.shotRemaining>1e-8||state.reloadRemaining>1e-8)return;
     const double reload=gun.reloadTime*(!f.isHost&&body.shape==Shape::Circle?.5:1);
-    if(f.ammo<=0){f.reloadRemaining=reload;if(f.weaponKind==WeaponKind::Sniper)f.aimRemaining=f.sniperAimDuration;return;}
-    if(f.targetKind!=4&&f.targetKind!=1){
+    if(state.ammo<=0){state.reloadRemaining=reload;if(state.kind==WeaponKind::Sniper)state.aimRemaining=state.sniperAimDuration;return;}
+    if(state.targetKind!=4&&state.targetKind!=1){
         // Keep routine steering staggered, but never spend a shot on a lower
         // tier after a hostile participant has entered range during cooldown.
         // A changed target must complete its own full aim on subsequent ticks.
-        const int previousKind=f.targetKind,previousIndex=f.targetIndex;
-        acquireTarget(index);
-        if(f.targetKind!=previousKind||f.targetIndex!=previousIndex)return;
+        const int previousKind=state.targetKind,previousIndex=state.targetIndex;
+        acquireTarget(index,rightHand);
+        if(state.targetKind!=previousKind||state.targetIndex!=previousIndex)return;
     }
-    const WeaponKind firedKind=f.weaponKind;const int firedTargetKind=f.targetKind,firedTargetIndex=f.targetIndex;
-    --f.ammo;f.shotRemaining=gun.fireInterval;
+    const WeaponKind firedKind=state.kind;const int firedTargetKind=state.targetKind,firedTargetIndex=state.targetIndex;
+    const double firedAngle=state.aimAngle;const bool hadRightWeapon=!f.isHost&&f.temporaryWeaponRemaining>0;
+    --state.ammo;state.shotRemaining=gun.fireInterval;
     audio.emit(static_cast<AudioKind>(firedKind),f.id);
-    if(firedKind==WeaponKind::Sniper)f.aimRemaining=f.sniperAimDuration;
-    if(f.ammo==0)f.reloadRemaining=reload;
+    if(firedKind==WeaponKind::Sniper)state.aimRemaining=state.sniperAimDuration;
+    if(state.ammo==0)state.reloadRemaining=reload;
+    // Finish runtime writes before hit callbacks: breaking a crate may replace
+    // the right slot. Captured firing data cannot overwrite that fresh weapon.
     const int pellets=firedKind==WeaponKind::Shotgun?15+std::min(10,static_cast<int>(random()*11)):(firedKind==WeaponKind::MachineGun?7:1);
     for(int pellet=0;pellet<pellets;++pellet){
         const double damage=firedKind==WeaponKind::Shotgun?3+std::min(2,static_cast<int>(random()*3)):gun.damage;
         const double spread=(random()*2-1)*gun.spreadRadians/(!f.isHost&&body.shape==Shape::Rectangle?1.5:1);
-        const double angle=f.aimAngle+spread;const Vec direction{std::cos(angle),std::sin(angle)};
-        if(firedKind>=WeaponKind::Sniper){launchProjectile(index,direction);continue;}
+        const double angle=firedAngle+spread;const Vec direction{std::cos(angle),std::sin(angle)};
+        if(firedKind>=WeaponKind::Sniper){launchProjectile(index,direction,firedKind,damage,rightHand);continue;}
         const double radius=firedTargetKind>=5?PickupHalfExtent:(firedTargetKind==4?110:(firedTargetKind==3?140:(firedTargetKind==2?30:25*world.bodies[firedTargetIndex].scale)));
         bool hit=false;
         bool intersects=std::abs(std::sin(spread))*distance<=radius;
@@ -172,7 +189,7 @@ inline void Match::tickWeapon(int index,double dt) {
             else if(firedTargetKind==6)hit=damageWeaponCrate(f.id,firedTargetIndex,damage);
         }
         const double life=std::clamp(distance/2400.0,.12,.36);
-        const Shot shot{body.position+direction*(28*body.scale),body.position+direction*distance,f.team,life,firedKind,life,hit};
+        const Shot shot{weaponMuzzle(body,direction,rightHand,hadRightWeapon),body.position+direction*distance,f.team,life,firedKind,life,hit,rightHand};
         if(shots.size()<512)shots.push_back(shot);else{shots[shotCursor%512]=shot;++shotCursor;}
     }
 }

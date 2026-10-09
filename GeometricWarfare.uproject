@@ -1,5 +1,6 @@
 {
 	"FileVersion": 3,
+	"DisableEnginePluginsByDefault": true,
 	"EngineAssociation": "5.8",
 	"Category": "",
 	"Description": "",
@@ -11,7 +12,9 @@
 		}
 	],
 	"Plugins": [
-		{ "Name": "DouyinLiveBridge", "Enabled": true },
+		{ "Name": "LiveInteraction", "Enabled": true },
+		{ "Name": "DouyinLiveProvider", "Enabled": true },
+		{ "Name": "LiveSpoutOutput", "Enabled": true },
 		{
 			"Name": "ModelingToolsEditorMode",
 			"Enabled": true,

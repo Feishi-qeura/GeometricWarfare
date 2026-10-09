@@ -1,5 +1,7 @@
 # 几何战争观察界面验证记录
 
+> 历史验证记录：本文对应当时的战斗/演示版本，保留原始证据与操作过程。2026-10-04 后续平台中立迁移已移除游戏内 GM 与模拟输入面板，插件改为 LiveInteraction；本文旧界面、旧插件路径与当时通过结果不代表当前迁移或真实官方 SDK 验收。
+
 验证日期：2026-10-02。工程：`D:\demo\GeometricWarfare`。本轮围绕用户提出的七项观察界面改进完成实现、Editor/Game 构建、原生测试、真实 HUD 方法集成测试、不同分辨率画面检查和 5000 人离屏概览采样。新版正常速度录像已完成编码和元数据核验；飞书在线文档未修改。
 
 ## 七项实现与确认规则
@@ -71,6 +73,6 @@
 
 **本轮新版 1× 录像已完成并核验。** [GeometricWarfare-Demo-1x.mp4](D:/demo/GeometricWarfare/Saved/Videos/GeometricWarfare-Demo-1x.mp4) 已更新为本轮界面，包含完整 300 秒对局、30 秒结算和下一局开场。本轮[视频元数据](D:/demo/GeometricWarfare/Saved/Videos/GeometricWarfare-Demo-1x.metadata.json)创建时间为 `2026-10-02T12:44:44.4102528Z`（香港时间 20:44:44）；ffprobe 确认 4057 帧、338.083333 秒、1920×1080、H.264、yuv420p、12 fps。12 fps 是录像采样率，游戏按正常 1× 时间运行，不代表实时渲染帧率。已检查实际伤害、玩家跟随与积分、胜利结算及下一局基地恢复画面。
 
-Chrome 连接曾多次尝试，包含会话重置和直接 URL 连接，仍未恢复。因此[用户提供的飞书在线文档](https://ccn6dy60tep9.feishu.cn/docx/Ruhmda6G4o5lVVxGfwcclWfVnPd)本轮没有修改，也没有上传或替换其附件。[本地提案 DOCX](D:/demo/GeometricWarfare/docs/proposal/【提案评估】几何战争_草稿.docx)及[飞书待同步文字](D:/demo/GeometricWarfare/Saved/ProposalQA/feishu-update-snippet.txt)已更新为本轮结果，保留开发者 FEISHI、社交玩法及原模板结构；ZIP/XML、内容和模板结构通过校验，记录见 [expansion-qa.json](D:/demo/GeometricWarfare/Saved/ProposalQA/expansion-qa.json)。本机缺少 Word/LibreOffice，DOCX 最终分页尚未完成视觉核验。
+Chrome 连接曾多次尝试，包含会话重置和直接 URL 连接，仍未恢复。因此用户提供的飞书在线文档（私有文档链接已省略）本轮没有修改，也没有上传或替换其附件。[本地提案 DOCX](D:/demo/GeometricWarfare/docs/proposal/【提案评估】几何战争_草稿.docx)及[飞书待同步文字](D:/demo/GeometricWarfare/Saved/ProposalQA/feishu-update-snippet.txt)已更新为本轮结果，保留开发者 FEISHI、社交玩法及原模板结构；ZIP/XML、内容和模板结构通过校验，记录见 [expansion-qa.json](D:/demo/GeometricWarfare/Saved/ProposalQA/expansion-qa.json)。本机缺少 Word/LibreOffice，DOCX 最终分页尚未完成视觉核验。
 
 当前演示继续使用本地模拟评论和礼物效果。真实抖音 SDK、生产直播间权限、线上事件投递及真实礼物履约仍未完成端到端联调。

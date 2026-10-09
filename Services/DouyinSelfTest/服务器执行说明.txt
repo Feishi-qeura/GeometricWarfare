@@ -1,0 +1,16 @@
+把这份说明连同整个部署包放到腾讯云 Windows 服务器，再让服务器上的 Codex 处理：
+
+请阅读当前目录 README.md 和 Install-Receiver.ps1，为抖音 openAPI 自查工具部署独立模拟数据收件服务。
+已部署的 https://example.com/live-api 后端继续保留调试模式，不更改 AppSecret、正式站点和现有路由。
+测试域名计划使用 test.example.com。请先只读核查域名解析、证书、IIS Rewrite/ARR 和 Python 路径。
+测试域名需要 A 记录指向这台服务器公网 IPv4，HTTPS 证书必须覆盖 test.example.com。
+若 DNS/证书尚未配置，请告诉我准确的缺少项和域名控制台操作；不要声称已完成，不要跳过证书验证。
+前置条件齐备后，在管理员 Windows PowerShell 5.1 运行 Install-Receiver.ps1；禁止把 .env 或 SQLite 放进网站目录。
+验证本机健康检查、公网 HTTPS HEAD 200，以及合法签名 POST 被保存。数据推送密钥默认 default，与 AppSecret 不同。
+在抖音控制台的自查工具配置 roomID=1000000000000000000，HTTPS 推送域名输入 test.example.com，密钥 default，保留 GamePlayer 虚拟角色。
+配置评论（加入、1、2、y、z、c、s、武器1）、点赞（1和10）、五种已开通礼物（各1个）；按页面实际可配置项保存，并检查推送后服务本地计数增长。
+如果浏览器不可操作，请明确报告未保存的页面配置，不要以本地服务通过代替控制台保存结果。
+本工具只验证 HTTP 收件链路，模拟消息不自动进入当前 SDK 游戏，不上报游戏履约或总榜。
+最后给我：测试域名 HEAD 状态、各测试类型收件结果、是否已保存控制台配置和具体剩余阻塞。
+
+绝不要把密码、AppSecret、启动 token 或真实数据推送密钥粘贴到聊天。

@@ -63,7 +63,7 @@ inline bool Match::damageBoss(int attackerId,double amount) {
         boss.hp=0;boss.active=false;boss.lastHitTeam=attacker->team;boss.attack=BossAttack::Idle;boss.attackRemaining=0;boss.jumpHeight=0;boss.waveRadius=0;
         for(auto& projectile:boss.projectiles)projectile.active=false;
         for(auto& fighter:fighters)fighter.movementSlow=1;
-        if(attacker->team>=0&&attacker->team<=2){teamBuffRemaining[attacker->team]=60;
+        if(attacker->team>=0&&attacker->team<=2){teamBuffRemaining[attacker->team]=60;emit(EventKind::BossReward,attackerId,-1,attacker->team,60);
             for(auto& fighter:fighters)if(fighter.alive&&fighter.team==attacker->team){fighter.bossBuffEligible=true;grantEvolution(fighter.id);}
             if(attacker->team>0){auto& base=bases[attacker->team];if(base.alive&&base.hp>0){base.hp*=2;base.maxHp=std::max(base.maxHp,base.hp);}}}
     }

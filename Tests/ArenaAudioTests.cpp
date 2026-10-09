@@ -29,7 +29,19 @@ int main(){
         gun.step(.001);if(gun.audio.count(static_cast<AudioKind>(kind))!=1)std::cerr<<"kind="<<static_cast<int>(kind)<<" ammo="<<f.ammo<<" aim="<<f.aimRemaining<<"\n";check(gun.audio.count(static_cast<AudioKind>(kind))==1,"one audio event per real weapon trigger, including multi pellet");
         gun.audio.clear();f.ammo=0;f.reloadRemaining=20;gun.step(.001);check(gun.audio.count(static_cast<AudioKind>(kind))==0,"no audio during empty reload");
     }
-    Match boss=quiet();boss.add(1,Shape::Rectangle,1);boss.world.bodies[0].position={4400,4000};boss.world.rebuildSpatial();boss.elapsed=BossSpawnSeconds;boss.config.autoCombat=true;
+    for(auto kind:{WeaponKind::Sniper,WeaponKind::MachineGun,WeaponKind::RocketLauncher}){
+        Match gun=quiet();gun.add(1,Shape::Rectangle,1);gun.add(2,Shape::Rectangle,2);gun.grantWeapon(1,kind);
+        gun.weaponCrates.push_back({{500,500},kind,true});gun.collectWeaponCrate(1,0);
+        gun.world.bodies[0].position={1000,1000};gun.world.bodies[1].position={1150,1000};gun.world.bodies[0].velocity=gun.world.bodies[1].velocity={};gun.world.rebuildSpatial();
+        auto& f=gun.fighters[0];f.targetKind=f.rightWeapon.targetKind=1;f.targetIndex=f.rightWeapon.targetIndex=1;f.acquisitionRemaining=f.rightWeapon.acquisitionRemaining=100;f.aimRemaining=f.rightWeapon.aimRemaining=0;f.sniperAimDuration=f.rightWeapon.sniperAimDuration=10;gun.fighters[1].hp=gun.fighters[1].maxHp=100000;gun.fighters[1].shotRemaining=100;gun.config.autoCombat=true;
+        gun.audio.clear();gun.step(.001);check(gun.audio.count(static_cast<AudioKind>(kind))==2,"same-kind dual hands emit one audio event for each real trigger");
+        gun.audio.clear();f.ammo=0;f.reloadRemaining=20;f.rightWeapon.ammo=1;f.rightWeapon.reloadRemaining=f.rightWeapon.shotRemaining=f.rightWeapon.aimRemaining=0;f.rightWeapon.sniperAimDuration=10;gun.step(.001);
+        check(gun.audio.count(static_cast<AudioKind>(kind))==1,"right trigger remains audible while left hand is reloading");
+        gun.audio.clear();f.ammo=1;f.reloadRemaining=f.shotRemaining=f.aimRemaining=0;f.sniperAimDuration=10;f.rightWeapon.ammo=0;f.rightWeapon.reloadRemaining=20;gun.step(.001);
+        check(gun.audio.count(static_cast<AudioKind>(kind))==1,"left trigger remains audible while right hand is reloading");
+        gun.audio.clear();f.ammo=0;f.reloadRemaining=20;gun.step(.001);check(gun.audio.count(static_cast<AudioKind>(kind))==0,"both empty reloading hands remain silent");
+    }
+    Match boss=quiet();boss.add(1,Shape::Rectangle,1);boss.world.bodies[0].position={World::Size*.5+400,World::Size*.5};boss.world.rebuildSpatial();boss.elapsed=BossSpawnSeconds;boss.config.autoCombat=true;
     boss.boss.active=boss.boss.spawned=true;boss.boss.attack=BossAttack::LaserWindup;boss.step(.001);
     check(boss.audio.count(AudioKind::BossLaserWindup)==1,"laser telegraph begins once");boss.step(.001);check(boss.audio.count(AudioKind::BossLaserWindup)==1,"no telegraph each frame");
     boss.audio.clear();boss.boss.attack=BossAttack::StompJump;boss.boss.attackInitialized=false;boss.step(.001);

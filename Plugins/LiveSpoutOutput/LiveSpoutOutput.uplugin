@@ -1,0 +1,12 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.0",
+  "FriendlyName": "Live Spout Output",
+  "Description": "Fixed 1920x1080 main game viewport and Canvas HUD output to local Spout receivers.",
+  "Category": "Live Interaction",
+  "CanContainContent": false,
+  "EnabledByDefault": true,
+  "SupportedTargetPlatforms": ["Win64"],
+  "Modules": [{"Name": "LiveSpoutOutput", "Type": "Runtime", "LoadingPhase": "Default", "PlatformAllowList": ["Win64"]}]
+}

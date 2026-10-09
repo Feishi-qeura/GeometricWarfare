@@ -7,6 +7,7 @@ Saved/
 # IDE and generated project files
 .vs/
 .vscode/
+.idea/
 *.sln
 *.slnx
 *.suo
@@ -23,6 +24,13 @@ Saved/
 /tmp/
 .codex/
 .agents/
+.superpowers/
+/DoyYinLog/
+# Private submission templates are retained locally, not in the public source tree.
+/docs/proposal/*.docx
+/docs/proposal/*待同步.txt
+# Separate, unreleased co-op project design is not part of this live project.
+/docs/superpowers/specs/2026-10-07-geometric-coop-design.md
 .DS_Store
 Thumbs.db
 ~$*
@@ -37,3 +45,28 @@ Thumbs.db
 *.key
 *.p12
 *.pfx
+
+# Generated local SDK integration packages
+/output/
+/Build/Windows/FileOpenOrder/
+__pycache__/
+.venv/
+.pytest_cache/
+*.pyc
+*.pdb
+*.sqlite3*
+*.db
+*.sav
+*.jsonl
+*.log
+# Proprietary SDK acquisition projects belong in tmp/, never in the source tree.
+**/Library/
+**/Temp/
+**/obj/
+**/Packages/com.bytedance.liveopensdk/
+# Spout native bin/lib under Source/ThirdParty are intentional BSD dependencies.
+/output/douyin-live-debug-*/
+/output/douyin-live-release-*/
+/output/douyin-live-release-*.zip
+/output/live-backend-deploy-*/
+/output/live-backend-deploy-*.zip

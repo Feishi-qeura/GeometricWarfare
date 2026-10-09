@@ -23,10 +23,11 @@ double SegmentViewDistance(FVector2D A,FVector2D B,FVector2D Min,FVector2D Max) 
 }
 
 void AArenaHUD::UpdateArenaShake(AArenaGameMode* G) {
+    if(Presentation.reduced){ArenaShakeOffset=FVector2D::ZeroVector;return;}
     ArenaShakeOffset=FVector2D::ZeroVector;
     if(G->IsSimulationPaused() || G->GetMatch().phase==gw::Phase::Results || WorldScale<=0)return;
     const auto& B=G->GetMatch().boss;
-    const FVector2D Min=ViewOrigin,Max=Min+FVector2D(ArenaSide/WorldScale);
+    const FVector2D Min=ViewOrigin,Max=Min+FVector2D(ArenaW()/WorldScale,ArenaH()/WorldScale);
     const auto Near=[&](gw::Vec P,double Radius){return FMath::Clamp(1.-PointViewDistance({P.x,P.y},Min,Max)/Radius,0.,1.);};
     float Strength=0;
     if(B.active && B.attack==gw::BossAttack::LaserActive) {
@@ -47,7 +48,7 @@ void AArenaHUD::UpdateArenaShake(AArenaGameMode* G) {
 
 void AArenaHUD::DrawStatusAura(FVector2D Center,float HalfSize,bool Evolution,bool BossBuff,float Time,bool ClipToArena,bool Hero) {
     if(!Evolution && !BossBuff && !Hero)return;
-    const float Breath=.5f+.5f*FMath::Sin(Time*3.1f),Size=HalfSize*(.98f+.045f*Breath);
+    const float Breath=Presentation.reduced?.5f:.5f+.5f*FMath::Sin(Time*3.1f),Size=HalfSize*(.98f+.045f*Breath);
     const float Stroke=FMath::Clamp(HalfSize*.07f,.9f,1.8f),Glow=Stroke+FMath::Clamp(HalfSize*.17f,1.4f,4.f);
     // Submit each complete outline as one triangle batch, even with thousands of buffs.
     const auto Outline=[&](const auto& Points,FLinearColor Color,float Width) {
@@ -62,16 +63,16 @@ void AArenaHUD::DrawStatusAura(FVector2D Center,float HalfSize,bool Evolution,bo
     };
     if(Evolution) {
         const TArray<FVector2D> Square={Center+FVector2D(-Size,-Size),Center+FVector2D(Size,-Size),Center+FVector2D(Size,Size),Center+FVector2D(-Size,Size)};
-        Outline(Square,FLinearColor(1,.34f,.025f,.10f+.12f*Breath),Glow);
+        if(!Presentation.reduced)Outline(Square,FLinearColor(1,.34f,.025f,.10f+.12f*Breath),Glow);
         Outline(Square,FLinearColor(1,.34f,.025f,.52f+.4f*Breath),Stroke);
     }
     if(BossBuff) {
         // With both effects the purple circle encloses all four orange corners.
         const float Radius=Evolution?Size*1.414214f+Stroke*1.6f:Size*1.16f;
-        const int32 Segments=HalfSize<7?12:32;
+        const int32 Segments=Presentation.reduced || HalfSize<7?12:32;
         TArray<FVector2D,TInlineAllocator<32>> Circle;
         for(int32 i=0;i<Segments;++i){const float A=i*2*PI/Segments;Circle.Add(Center+FVector2D(FMath::Cos(A),FMath::Sin(A))*Radius);}
-        Outline(Circle,FLinearColor(.57f,.17f,.95f,.09f+.11f*Breath),Glow);
+        if(!Presentation.reduced)Outline(Circle,FLinearColor(.57f,.17f,.95f,.09f+.11f*Breath),Glow);
         Outline(Circle,FLinearColor(.57f,.17f,.95f,.50f+.42f*Breath),Stroke);
     }
     if(Hero) {
@@ -79,7 +80,7 @@ void AArenaHUD::DrawStatusAura(FVector2D Center,float HalfSize,bool Evolution,bo
         const float Radius=Size*(Evolution&&BossBuff?1.88f:Evolution?1.65f:BossBuff?1.48f:1.25f);
         TArray<FVector2D,TInlineAllocator<6>> Hex;
         for(int32 i=0;i<6;++i){const float A=-PI/2+i*PI/3;Hex.Add(Center+FVector2D(FMath::Cos(A),FMath::Sin(A))*Radius);}
-        Outline(Hex,FLinearColor(1,.69f,.07f,.12f+.12f*Breath),Glow);
+        if(!Presentation.reduced)Outline(Hex,FLinearColor(1,.69f,.07f,.12f+.12f*Breath),Glow);
         Outline(Hex,FLinearColor(.89f,.54f,.035f,.78f+.20f*Breath),Stroke+0.3f);
     }
 }
@@ -103,7 +104,7 @@ void AArenaHUD::ArenaPolygon(const TArray<FVector2D>& Points,FLinearColor Color)
     if(EntirelyInside){Polygon(Points,Color);return;}
     TArray<FVector2D> P=Points,Q;
     for(int32 Edge=0;Edge<4 && P.Num()>2;++Edge) {
-        Q.Reset();const bool Vertical=Edge<2;const double Bound=Edge==0?ArenaX:Edge==1?ArenaX+ArenaSide:Edge==2?ArenaY:ArenaY+ArenaSide;
+        Q.Reset();const bool Vertical=Edge<2;const double Bound=Edge==0?ArenaX:Edge==1?ArenaX+ArenaW():Edge==2?ArenaY:ArenaY+ArenaH();
         auto Coordinate=[Vertical](FVector2D V){return Vertical?V.X:V.Y;};
         auto Inside=[&](FVector2D V){return (Edge==0||Edge==2)?Coordinate(V)>=Bound:Coordinate(V)<=Bound;};
         FVector2D A=P.Last();bool AInside=Inside(A);
@@ -165,7 +166,7 @@ void AArenaHUD::DrawCombatGround(AArenaGameMode* G) {
     TArray<FVector2D> Ground;for(int32 i=0;i<48;++i)Ground.Add(Center+FVector2D(FMath::Cos(i*PI/24),FMath::Sin(i*PI/24))*R);
     ArenaPolygon(Ground,C);C.A=.52f;ArenaRing(Center,R,C,1.5f,48);
     C.A=.15f;ArenaRing(Center,R*.70f,C,1,32);
-    for(int32 i=0;i<18;++i) {
+    for(int32 i=0;i<(Presentation.reduced?0:18);++i) {
         const float Angle=i*2.399963f,Distance=R*FMath::Sqrt((i+.5f)/18.f);
         const auto P=Center+FVector2D(FMath::Cos(Angle),FMath::Sin(Angle))*Distance;
         const float Phase=FMath::Fmod(G->RunningTime*.8f+i*.37f,1.f),Height=(5+7*WorldScale)*Phase;
@@ -278,7 +279,7 @@ void AArenaHUD::DrawCombatActors(AArenaGameMode* G) {
         ArenaPolygon({Point(-.35f,.3f),Point(-1.18f,.3f),Point(-1.45f,.94f)},C);
     }
     const float R=110*WorldScale,Jump=B.jumpHeight*WorldScale;
-    if(Position.X+R<ArenaX||Position.X-R>ArenaX+ArenaSide||Position.Y+R<ArenaY||Position.Y-R-Jump>ArenaY+ArenaSide)return;
+    if(Position.X+R<ArenaX||Position.X-R>ArenaX+ArenaW()||Position.Y+R<ArenaY||Position.Y-R-Jump>ArenaY+ArenaH())return;
     ArenaRing(Position,R*.75f,FLinearColor(.15f,.08f,.02f,.15f),FMath::Max(3.f,R*.2f),24);
     const auto P=Position-FVector2D(0,Jump);
     const TArray<FVector2D> Shape={P+FVector2D(-.62f,-.8f)*R,P+FVector2D(.62f,-.8f)*R,P+FVector2D(1,.8f)*R,P+FVector2D(-1,.8f)*R};
@@ -293,21 +294,32 @@ void AArenaHUD::DrawCombatActors(AArenaGameMode* G) {
 void AArenaHUD::DrawGunfire(AArenaGameMode* G) {
     const auto& M=G->GetMatch();
     for(size_t Index=0;Index<M.fighters.size();++Index) {
-        const auto& F=M.fighters[Index];if(!F.alive || F.weaponKind!=gw::WeaponKind::Sniper || F.aimRemaining<=0 || F.targetKind==0 || F.reloadRemaining>0)continue;
-        gw::Vec Target;const int32 I=F.targetIndex;
-        if(F.targetKind==1 && I>=0 && I<static_cast<int32>(M.fighters.size()) && M.fighters[I].alive)Target=M.world.bodies[I].position;
-        else if(F.targetKind==2 && I>=0 && I<static_cast<int32>(M.npcs.size()) && M.npcs[I].active)Target=M.npcs[I].position;
-        else if(F.targetKind==3 && I>=1 && I<=2 && M.bases[I].alive)Target=M.bases[I].position;
-        else if(F.targetKind==4 && M.boss.active)Target=M.boss.position;
-        else if(F.targetKind==5 && I>=0 && I<static_cast<int32>(M.evolutionPacks.size()) && M.evolutionPacks[I].active)Target=M.evolutionPacks[I].position;
-        else if(F.targetKind==6 && I>=0 && I<static_cast<int32>(M.weaponCrates.size()) && M.weaponCrates[I].active)Target=M.weaponCrates[I].position;
+        const auto& F=M.fighters[Index];if(!F.alive)continue;
+        for(int Hand=0;Hand<(F.temporaryWeaponRemaining>0?2:1);++Hand) {
+        const bool Right=Hand==1;
+        const auto Kind=Right?F.temporaryWeaponKind:F.weaponKind;
+        const int TargetKind=Right?F.rightWeapon.targetKind:F.targetKind;
+        const int TargetIndex=Right?F.rightWeapon.targetIndex:F.targetIndex;
+        const double AimRemaining=Right?F.rightWeapon.aimRemaining:F.aimRemaining;
+        const double ReloadRemaining=Right?F.rightWeapon.reloadRemaining:F.reloadRemaining;
+        const double AimAngle=Right?F.rightWeapon.aimAngle:F.aimAngle;
+        const double SniperAimDuration=Right?F.rightWeapon.sniperAimDuration:F.sniperAimDuration;
+        if(Kind!=gw::WeaponKind::Sniper || AimRemaining<=0 || TargetKind==0 || ReloadRemaining>0)continue;
+        gw::Vec Target;const int32 I=TargetIndex;
+        if(TargetKind==1 && I>=0 && I<static_cast<int32>(M.fighters.size()) && M.fighters[I].alive)Target=M.world.bodies[I].position;
+        else if(TargetKind==2 && I>=0 && I<static_cast<int32>(M.npcs.size()) && M.npcs[I].active)Target=M.npcs[I].position;
+        else if(TargetKind==3 && I>=1 && I<=2 && M.bases[I].alive)Target=M.bases[I].position;
+        else if(TargetKind==4 && M.boss.active)Target=M.boss.position;
+        else if(TargetKind==5 && I>=0 && I<static_cast<int32>(M.evolutionPacks.size()) && M.evolutionPacks[I].active)Target=M.evolutionPacks[I].position;
+        else if(TargetKind==6 && I>=0 && I<static_cast<int32>(M.weaponCrates.size()) && M.weaponCrates[I].active)Target=M.weaponCrates[I].position;
         else continue;
-        const auto& Position=M.world.bodies[Index].position;const FVector2D D(FMath::Cos(F.aimAngle),FMath::Sin(F.aimAngle));
-        const auto A=Project(Position.x,Position.y)+D*(76*WorldScale*M.world.bodies[Index].scale);
+        const auto& Position=M.world.bodies[Index].position;const FVector2D D(FMath::Cos(AimAngle),FMath::Sin(AimAngle));
+        const auto A=Project(Position.x,Position.y)+(D*76+FVector2D(-D.Y,D.X)*(F.temporaryWeaponRemaining>0?(Right?10.f:-10.f):0.f))*WorldScale*M.world.bodies[Index].scale;
         const auto Z=Project(Position.x,Position.y)+D*((Target-Position).length()*WorldScale);
-        const double AimDuration=F.sniperAimDuration>0?F.sniperAimDuration:M.weaponFor(F).aimTime;
-        const float Progress=1-FMath::Clamp(static_cast<float>(F.aimRemaining/FMath::Max(AimDuration,.001)),0.f,1.f);
+        const double AimDuration=SniperAimDuration>0?SniperAimDuration:M.weaponFor(F,Right).aimTime;
+        const float Progress=1-FMath::Clamp(static_cast<float>(AimRemaining/FMath::Max(AimDuration,.001)),0.f,1.f);
         ArenaLine(A,Z,FLinearColor(.95f,.035f,.025f,.28f+.35f*Progress),FMath::Max(.8f,1.2f*WorldScale));
+        }
     }
     for(const auto& Projectile:M.projectiles)if(Projectile.active) {
         const auto P=Project(Projectile.position.x,Projectile.position.y);
@@ -346,11 +358,11 @@ void AArenaHUD::DrawGunfire(AArenaGameMode* G) {
         }
     }
 }
-void AArenaHUD::DrawBossBar(AArenaGameMode* G) {
+void AArenaHUD::DrawBossBar(AArenaGameMode* G,float Y) {
     const auto& M=G->GetMatch();const auto& B=M.boss;if(!B.active)return;
-    const float Width=FMath::Clamp(ArenaSide-365.f,100.f,280.f),X=ArenaX+ArenaSide*.5f-Width*.5f,Y=111;
+    const float Width=FMath::Clamp(ArenaW()-365.f,100.f,280.f),X=ArenaX+ArenaW()*.5f-Width*.5f;
     const auto C=B.rage?CombatRed:CombatGold;
-    Text(B.spawnAge<gw::BossSpawnWaveSeconds?TEXT("梯形 BOSS · 引力冲击"):B.rage?TEXT("梯形 BOSS · 暴怒"):TEXT("几何体 | 梯形"),X+Width/2,91,9,C,true);
+    Text(B.spawnAge<gw::BossSpawnWaveSeconds?TEXT("梯形 BOSS · 引力冲击"):B.rage?TEXT("梯形 BOSS · 暴怒"):TEXT("几何体 | 梯形"),X+Width/2,Y-20,9,C,true);
     HealthBar(X,Y,Width,17,B.hp,B.maxHp,C,9);
     if(B.rage)for(int32 i=0;i<16;++i){const float Phase=FMath::Fmod(G->RunningTime*1.9f+i*.319f,1.f),Px=X+(i+.5f)*Width/16;const float Height=3+8*Phase;Line({Px,Y-1},{Px+2,Y-Height},FLinearColor(1,.2f,.015f,(1-Phase)*.85f),2);}
 }

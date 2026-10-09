@@ -2,7 +2,9 @@ inline bool Match::collectEvolutionPack(int id,int index) {
     auto* f=findFighter(id);if(!f||!f->alive||f->isHost||phase==Phase::Results||index<0||index>=static_cast<int>(evolutionPacks.size())||!evolutionPacks[index].active)return false;
     audio.emit(evolutionPacks[index].hp<=1e-8?AudioKind::EvolutionBreak:AudioKind::EvolutionPickup,id);
     evolutionPacks[index].active=false;evolutionPacks[index].hp=0;
-    return grantEvolution(id);
+    const bool granted=grantEvolution(id);
+    if(granted)emit(EventKind::EvolutionObtained,id,-1,f->team,40);
+    return granted;
 }
 inline bool Match::grantEvolution(int id) {
     auto* f=findFighter(id);if(!f||!f->alive||phase==Phase::Results)return false;
@@ -15,7 +17,7 @@ inline bool Match::grantEvolution(int id) {
 inline void Match::endEvolution(Fighter& f) {
     if(f.evolutionRemaining>0){
         const double fraction=f.maxHp>0?f.hp/f.maxHp:0;
-        f.maxHp=f.heroBuff?2100:(f.isHost?3000:shapeHp(world.bodies[indices.at(f.id)].shape));f.hp=f.maxHp*fraction;
+        f.evolutionRemaining=0;f.maxHp=maxHpFor(f);f.hp=f.maxHp*fraction;
         f.maxArmor=f.heroBuff?300:(f.isHost?500:0);f.armor=std::min(f.armor,f.maxArmor);
     }
     f.evolutionRemaining=0;f.swordRemaining=5;

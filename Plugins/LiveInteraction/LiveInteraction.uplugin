@@ -1,0 +1,10 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1.0",
+  "FriendlyName": "Live Interaction",
+  "Description": "Platform-neutral authenticated event boundary and provider registry. Local simulation and custom protocol are explicit development tests. No SDK is bundled.",
+  "Category": "Live Interaction",
+  "CanContainContent": false,
+  "Modules": [{ "Name": "LiveInteraction", "Type": "Runtime", "LoadingPhase": "Default" }]
+}

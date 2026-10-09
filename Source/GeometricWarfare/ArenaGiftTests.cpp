@@ -1,4 +1,5 @@
 #include "ArenaGameMode.h"
+#include "LiveInteractionTestAdapter.h"
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
@@ -7,6 +8,16 @@
 #include "Misc/Guid.h"
 
 #if WITH_DEV_AUTOMATION_TESTS
+namespace {
+class FRifleIsolationProvider final : public ILiveInteractionProvider {
+public:
+    FString GetPlatformId() const override { return TEXT("rifle-isolation-test"); }
+    bool Start(ULiveInteractionSubsystem& Host) override {
+        return Host.BeginProviderSession(*this,TEXT("test-app"),TEXT("test-room")).Nonce.IsValid();
+    }
+    void Stop() override {}
+};
+}
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FArenaGiftCombatTest,"GeometricWarfare.Arena.GiftCombat",EAutomationTestFlags::EditorContext | EAutomationTestFlags::EngineFilter)
 bool FArenaGiftCombatTest::RunTest(const FString&)
 {
@@ -15,6 +26,7 @@ bool FArenaGiftCombatTest::RunTest(const FString&)
     const FString TestSlot=TEXT("ArenaGiftAutomation_")+FGuid::NewGuid().ToString(EGuidFormats::Digits);
     auto* Instance=NewObject<UGameInstance>(GEngine);
     Instance->InitializeStandalone(FName(*TestSlot));
+    FLiveInteractionTestAdapter::EnableLocalTest(*Instance->GetSubsystem<ULiveInteractionSubsystem>());
     UWorld* World=Instance->GetWorld();
     const auto Cleanup=[&](){World->EndPlay(EEndPlayReason::Quit);World->DestroyWorld(false);Instance->Shutdown();GEngine->DestroyWorldContext(World);};
     FURL Url;Url.AddOption(TEXT("game=/Script/GeometricWarfare.ArenaGameMode"));
@@ -30,17 +42,17 @@ bool FArenaGiftCombatTest::RunTest(const FString&)
     if(!Verify(TEXT("Gift fixture owns a new unique save slot"),!UGameplayStatics::DoesSaveGameExist(TestSlot,0))){Cleanup();return false;}
     Game->ResetArena();Game->Match.config.autoCombat=false;Game->Match.config.autoCollect=false;
     auto* Bridge=Game->GetBridge();
-    if(!Verify(TEXT("Gift fixture uses the real local bridge"),Bridge!=nullptr&&!Bridge->IsRelayMode())){Cleanup();return false;}
+    if(!Verify(TEXT("Gift fixture uses the real local bridge"),Bridge!=nullptr&&Bridge->IsLocalTestMode())){Cleanup();return false;}
     const FString Name=TEXT("礼物测试"),UserA=TEXT("local-")+Name,UserB=TEXT("gift-independent-id");
     const auto NewGift=[&](const FString& User,const TCHAR* Gift,int32 Count=1){
-        FDouyinGift Event;Event.MessageId=FGuid::NewGuid().ToString();Event.UserId=User;Event.Nickname=Name;Event.GiftName=Gift;Event.Count=Count;return Event;
+        FLiveGift Event;Event.MessageId=FGuid::NewGuid().ToString();Event.UserId=User;Event.Nickname=Name;Event.GiftName=Gift;Event.Count=Count;return FLiveInteractionTestAdapter::Stamp(*Bridge,Event);
     };
     const auto Comment=[&](const FString& User,const FString& Text){return Bridge->SimulateComment(User,Name,Text);};
     const auto Equipped=[&](int32 Id,gw::WeaponKind Kind){const auto* F=Game->Match.findFighter(Id);return F&&F->weaponKind==Kind;};
     const auto Unlocked=[&](int32 Id,gw::WeaponKind Kind){const auto* F=Game->Match.findFighter(Id);return F&&(F->unlockedWeapons&gw::weaponBit(Kind))!=0;};
     const auto Near=[](double A,double B){return FMath::IsNearlyEqual(A,B,.00001);};
 
-    const FDouyinGift PendingMirror=NewGift(UserB,TEXT("魔法镜"));
+    const FLiveGift PendingMirror=NewGift(UserB,TEXT("魔法镜"));
     Verify(TEXT("Magic mirror is delivered before the sender joins"),Bridge->DeliverGift(PendingMirror));
     Verify(TEXT("A pending weapon gift does not invent a viewer or fighter"),Game->Viewers.Num()==0&&Game->Match.fighters.empty());
     Verify(TEXT("Pending unlock is keyed by stable sender ID"),(Game->Progress->WeaponUnlocks.FindRef(Game->ProgressKey(UserB))&gw::weaponBit(gw::WeaponKind::Sniper))!=0);
@@ -57,10 +69,10 @@ bool FArenaGiftCombatTest::RunTest(const FString&)
     Verify(TEXT("Joining restores the sender's previously saved sniper unlock"),Unlocked(IdB,gw::WeaponKind::Sniper)&&!Unlocked(IdA,gw::WeaponKind::Sniper));
     Comment(UserB,TEXT("武器+4"));Verify(TEXT("Restored pending sniper can be selected by comment"),Equipped(IdB,gw::WeaponKind::Sniper));
 
-    Game->Match.weaponCrates.push_back({{4000,4000},gw::WeaponKind::MachineGun,true,0});
-    Verify(TEXT("Destroying a500HP weapon crate equips its last attacker's temporary gun without unlocking it"),Game->Match.damageWeaponCrate(IdA,0,500)&&!Game->Match.weaponCrates[0].active&&Equipped(IdA,gw::WeaponKind::MachineGun)&&!Unlocked(IdA,gw::WeaponKind::MachineGun));
+    Game->Match.weaponCrates.push_back({{gw::World::Size*.5,gw::World::Size*.5},gw::WeaponKind::MachineGun,true,0});
+    Verify(TEXT("Destroying a500HP weapon crate gives right temporary gun without changing permanent left or unlocking it"),Game->Match.damageWeaponCrate(IdA,0,500)&&!Game->Match.weaponCrates[0].active&&Equipped(IdA,gw::WeaponKind::Pistol)&&Game->Match.findFighter(IdA)->temporaryWeaponKind==gw::WeaponKind::MachineGun&&!Unlocked(IdA,gw::WeaponKind::MachineGun));
     Comment(UserA,TEXT("武器+1"));Comment(UserA,TEXT("武器+5"));
-    Verify(TEXT("Comment switching can return to an active temporary gun"),Equipped(IdA,gw::WeaponKind::MachineGun));
+    Verify(TEXT("Comment cannot select a right-only temporary gun in the left hand"),Equipped(IdA,gw::WeaponKind::Pistol)&&Game->Match.findFighter(IdA)->temporaryWeaponKind==gw::WeaponKind::MachineGun&&Game->Match.findFighter(IdA)->temporaryWeaponRemaining>0);
     Verify(TEXT("Saving while a temporary gun is equipped succeeds"),Game->SaveProgress());
     auto* LeaseSave=Cast<UArenaProgressSave>(UGameplayStatics::LoadGameFromSlot(TestSlot,0));
     Verify(TEXT("Temporary gun is excluded from persisted weapon entitlements"),LeaseSave&&(LeaseSave->WeaponUnlocks.FindRef(Game->ProgressKey(UserA))&gw::weaponBit(gw::WeaponKind::MachineGun))==0);
@@ -71,7 +83,7 @@ bool FArenaGiftCombatTest::RunTest(const FString&)
 
     Verify(TEXT("Magic mirror equips sniper through actual gift delegate"),Bridge->DeliverGift(NewGift(UserA,TEXT("魔法镜")))&&Equipped(IdA,gw::WeaponKind::Sniper));
     Verify(TEXT("Donut equips machinegun through actual gift delegate"),Bridge->DeliverGift(NewGift(UserA,TEXT("甜甜圈")))&&Equipped(IdA,gw::WeaponKind::MachineGun));
-    const FDouyinGift Battery=NewGift(UserA,TEXT("能量电池"));
+    const FLiveGift Battery=NewGift(UserA,TEXT("能量电池"));
     Verify(TEXT("Energy battery equips rocket launcher through actual gift delegate"),Bridge->DeliverGift(Battery)&&Equipped(IdA,gw::WeaponKind::RocketLauncher));
     auto* Fighter=Game->Match.findFighter(IdA);Fighter->ammo=0;Fighter->reloadRemaining=4;
     const int32 QueuedBeforeReplay=Game->GiftNoticeQueue.Num();
@@ -87,8 +99,26 @@ bool FArenaGiftCombatTest::RunTest(const FString&)
     }
     Verify(TEXT("Unknown gift cannot load an arbitrary icon path"),Game->GetGiftIcon(TEXT("不支持的礼物"))==nullptr);
 
+    // The gift must change the living recipient through the production delegate,
+    // while a replay must not count the same paid units twice.
+    Game->Match.findFighter(IdA)->shapeCooldown=0;
+    Game->Match.changeShape(IdA,gw::Shape::Circle);
+    Game->Match.findFighter(IdA)->hp=200;
+    const FLiveGift LivingWands=NewGift(UserA,TEXT("仙女棒"),2);
+    Verify(TEXT("Two living wands add60 maximum and current health through the real delegate"),Bridge->DeliverGift(LivingWands)&&Near(Game->Match.findFighter(IdA)->maxHp,360)&&Near(Game->Match.findFighter(IdA)->hp,260));
+    Verify(TEXT("Living wand replay cannot stack the health bonus again"),!Bridge->DeliverGift(LivingWands)&&Near(Game->Match.findFighter(IdA)->maxHp,360));
+    Game->Match.grantEvolution(IdA);
+    Verify(TEXT("Evolution doubles the gift-enhanced life instead of discarding it"),Near(Game->Match.findFighter(IdA)->maxHp,720)&&Near(Game->Match.findFighter(IdA)->hp,520));
+    FLiveGift TestWand=NewGift(UserA,TEXT("仙女棒"));TestWand.bIsTestData=true;
+    Verify(TEXT("Platform test wand applies the same evolved health gain"),Bridge->DeliverGift(TestWand)&&Near(Game->Match.findFighter(IdA)->maxHp,780)&&Near(Game->Match.findFighter(IdA)->hp,580));
+    Game->Match.damageEnvironment(IdA,100000);
+    Verify(TEXT("Death clears all wand life gain immediately"),!Game->Match.findFighter(IdA)->alive&&Near(Game->Match.findFighter(IdA)->maxHp,300));
+    const FLiveGift DeadWands=NewGift(UserA,TEXT("仙女棒"),3);
+    Verify(TEXT("Dead batch uses one wand to revive and the remaining two for health"),Bridge->DeliverGift(DeadWands)&&Game->Match.findFighter(IdA)->alive&&Near(Game->Match.findFighter(IdA)->maxHp,360)&&Near(Game->Match.findFighter(IdA)->hp,360));
+    Verify(TEXT("Replayed dead batch cannot add health after reviving"),!Bridge->DeliverGift(DeadWands)&&Near(Game->Match.findFighter(IdA)->maxHp,360));
+
     auto& RedBase=Game->Match.bases[1];RedBase.hp=1800;
-    const FDouyinGift Pills=NewGift(UserA,TEXT("能力药丸"),2);
+    const FLiveGift Pills=NewGift(UserA,TEXT("能力药丸"),2);
     Verify(TEXT("Ability pills are delivered as two new units"),Bridge->DeliverGift(Pills));
     Verify(TEXT("Two pills add2000 to both living base current and maximum health"),Near(RedBase.hp,3800)&&Near(RedBase.maxHp,4500));
     Verify(TEXT("Ability pill event cannot be replayed"),!Bridge->DeliverGift(Pills));
@@ -102,7 +132,7 @@ bool FArenaGiftCombatTest::RunTest(const FString&)
     Verify(TEXT("Sprint entry revives a dead top-ranked viewer and grants hero health and armor"),Game->Match.findFighter(IdA)->alive&&Game->Match.findFighter(IdA)->heroBuff&&Near(Game->Match.findFighter(IdA)->hp,2100)&&Near(Game->Match.findFighter(IdA)->armor,300));
     Game->Match.damageEnvironment(IdA,100000);Game->Match.step(20);
     Verify(TEXT("Sprint leaves a dead viewer waiting and blocks ordinary revival"),!Game->Match.findFighter(IdA)->alive&&!Game->Match.revive(IdA));
-    const FDouyinGift Wand=NewGift(UserA,TEXT("仙女棒"));
+    const FLiveGift Wand=NewGift(UserA,TEXT("仙女棒"));
     Verify(TEXT("Fairy wand gift explicitly revives during Sprint"),Bridge->DeliverGift(Wand)&&Game->Match.findFighter(IdA)->alive);
     Verify(TEXT("Fairy wand preserves the revived viewer's hero stats"),Game->Match.findFighter(IdA)->heroBuff&&Near(Game->Match.findFighter(IdA)->hp,2100)&&Near(Game->Match.findFighter(IdA)->armor,300));
     Game->Match.damageEnvironment(IdA,100000);
@@ -163,20 +193,22 @@ bool FArenaGiftCombatTest::RunTest(const FString&)
     Verify(TEXT("Scrolling feed exposes the viewer and selected weapon"),VisibleSwitch);
     Comment(UserA,TEXT("武器+3"));
     Verify(TEXT("Selecting the equipped weapon cannot enqueue another switch message"),Game->GetFeed().pending()==0);
-    Bridge->SimulateShare(UserA,Name);
-    Verify(TEXT("Sharing adds the sixth permanent weapon to gift and code unlocks"),Game->Match.findFighter(IdA)->unlockedWeapons==0x3f);
+    for(int32 I=0;I<10;++I)Bridge->SimulateLike(UserA,Name,100);
+    Verify(TEXT("1000 personal likes add sixth permanent weapon to gift and code unlocks"),Game->Match.findFighter(IdA)->unlockedWeapons==0x3f);
 
-    Game->GiftNotice=FGiftNotice{};Game->GiftNoticeQueue.Reset();Game->bSimulationPaused=true;Game->SetDemoSpeed(4);
+    Game->GiftNotice=FGiftNotice{};Game->GiftNotices.Reset();Game->GiftNoticeQueue.Reset();Game->bSimulationPaused=true;Game->SetDemoSpeed(4);
     Bridge->DeliverGift(NewGift(UserA,TEXT("魔法镜")));Bridge->DeliverGift(NewGift(UserA,TEXT("甜甜圈")));Bridge->DeliverGift(NewGift(UserA,TEXT("能量电池")));
-    Verify(TEXT("Three weapon gifts show the first notice and queue two"),Game->GetGiftNotice().GiftName==TEXT("魔法镜")&&Game->GiftNoticeQueue.Num()==2);
+    Verify(TEXT("Three weapon gifts occupy three independent lanes"),Game->GetGiftNotice().GiftName==TEXT("魔法镜")&&Game->GiftNotices.Num()==3&&Game->GiftNoticeQueue.IsEmpty());
+    Bridge->DeliverGift(NewGift(UserB,TEXT("能量电池")));
+    Verify(TEXT("Fourth sender waits in FIFO queue"),Game->GiftNoticeQueue.Num()==1);
     for(int32 I=0;I<7;++I)Game->Tick(.25f);
     Verify(TEXT("Gift notice remains on screen through1.75 display seconds despite4x simulation speed"),Game->GetGiftNotice().Active&&Game->GetGiftNotice().GiftName==TEXT("魔法镜")&&Near(Game->GetGiftNotice().Age,1.75));
     Game->Tick(.25f);
-    Verify(TEXT("First notice hands off at exactly two display seconds"),Game->GetGiftNotice().GiftName==TEXT("甜甜圈")&&Near(Game->GetGiftNotice().Age,0)&&Game->GiftNoticeQueue.Num()==1);
-    for(int32 I=0;I<8;++I)Game->Tick(.25f);
-    Verify(TEXT("Second notice hands off to the battery in FIFO order"),Game->GetGiftNotice().GiftName==TEXT("能量电池")&&Game->GiftNoticeQueue.IsEmpty());
-    for(int32 I=0;I<8;++I)Game->Tick(.25f);
-    Verify(TEXT("Last notice clears after its own full two second lifetime"),!Game->GetGiftNotice().Active&&Game->GiftNoticeQueue.IsEmpty());
+    Verify(TEXT("Gift lanes retain full2.8 second display lifetime"),Game->GetGiftNotice().GiftName==TEXT("魔法镜")&&Near(Game->GetGiftNotice().Age,2));
+    for(int32 I=0;I<4;++I)Game->Tick(.25f);
+    Verify(TEXT("Free lane hands off to oldest waiting sender"),Game->GetGiftNotice().GiftName==TEXT("能量电池")&&Game->GetGiftNotice().UserId==UserB&&Near(Game->GetGiftNotice().Age,0)&&Game->GiftNoticeQueue.IsEmpty());
+    for(int32 I=0;I<12;++I)Game->Tick(.25f);
+    Verify(TEXT("Last notice clears after full lifetime"),!Game->GetGiftNotice().Active&&Game->GiftNoticeQueue.IsEmpty());
     Game->CameraCenter=FVector2D::ZeroVector;Game->FocusBodyId=-1;
     Game->FocusLocalViewer(TEXT(" ")+Name+TEXT(" "));
     const auto* FocusBody=Game->Match.world.find(IdA);
@@ -185,7 +217,7 @@ bool FArenaGiftCombatTest::RunTest(const FString&)
     // Block the writer flag instead of using an invalid filesystem path. The
     // bridge must still retain this paid entitlement after consuming the ID.
     const FString RetryUser=TEXT("gift-storage-retry-id"),RetryKey=Game->ProgressKey(RetryUser);
-    const FDouyinGift RetriedGift=NewGift(RetryUser,TEXT("魔法镜"));
+    const FLiveGift RetriedGift=NewGift(RetryUser,TEXT("魔法镜"));
     Game->bProgressWritable=false;
     AddExpectedError(TEXT("Weapon progress save failed in slot"),EAutomationExpectedErrorFlags::Contains,1);
     Verify(TEXT("A storage failure still accepts a new real gift event"),Bridge->DeliverGift(RetriedGift));
@@ -219,6 +251,19 @@ bool FArenaGiftCombatTest::RunTest(const FString&)
             Game->Match.startNextRound();Verify(TEXT("Disk-restored weapons remain owned through another round"),Game->Match.findFighter(ReloadA)->unlockedWeapons==0x3f&&Equipped(ReloadA,gw::WeaponKind::RocketLauncher));
         }
     }
+    const FString IsolationPlatform=TEXT("rifle-isolation-test");
+    Verify(TEXT("Register isolated production provider"),FLiveInteractionProviderRegistry::Register(IsolationPlatform,[]{return MakeShared<FRifleIsolationProvider>();}));
+    Verify(TEXT("Switch from local codes to a production session"),Bridge->StartPlatform(IsolationPlatform)&&Bridge->IsConnected());
+    FLiveComment LiveJoin;LiveJoin.Session=Bridge->GetCurrentSession();LiveJoin.MessageId=TEXT("production-join");LiveJoin.UserId=UserA;LiveJoin.Content=TEXT("1");
+    Verify(TEXT("Production identity joins using a current provider event"),Bridge->DeliverComment(LiveJoin)&&Game->Viewers.Contains(UserA));
+    FLiveComment LiveRedeem=LiveJoin;LiveRedeem.MessageId=TEXT("production-redeem");LiveRedeem.Content=TEXT("步枪")+UnusedSavedCode;
+    Verify(TEXT("Production comment is delivered for handling"),Bridge->DeliverComment(LiveRedeem));
+    const auto* LiveViewer=Game->Viewers.Find(UserA);
+    Verify(TEXT("Local saved code cannot unlock a production rifle"),LiveViewer&&!Unlocked(LiveViewer->BodyId,gw::WeaponKind::Rifle));
+    Verify(TEXT("Rejected production redemption preserves the local code"),Game->Progress->UnusedRifleCodes.Contains(UnusedSavedCode));
+    Verify(TEXT("Rejected production redemption writes no production entitlement"),Game->Progress->WeaponUnlocks.FindRef(Game->ProgressKey(UserA))==0);
+    Bridge->StartPlatform(TEXT("automation-provider-does-not-exist"));
+    FLiveInteractionProviderRegistry::Unregister(IsolationPlatform);
     // Preserve failed fixture evidence for diagnosis. Never delete the normal
     // player slot or a slot supplied by the application's command line.
     Verify(TEXT("The storage failure emitted exactly the expected warning"),HasMetExpectedErrors());

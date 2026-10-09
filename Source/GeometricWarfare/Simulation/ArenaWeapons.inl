@@ -23,14 +23,14 @@ inline double wallFraction(Vec from,Vec delta) {
     axis(from.x,delta.x);axis(from.y,delta.y);return std::clamp(fraction,0.0,1.0);
 }
 }
-inline void Match::launchProjectile(int index,Vec direction) {
+inline void Match::launchProjectile(int index,Vec direction,WeaponKind kind,double damage,bool rightHand) {
     if(projectiles.size()>=WeaponProjectileCapacity)return;
     const auto& f=fighters[index];const auto& body=world.bodies[index];
-    const bool rocket=f.weaponKind==WeaponKind::RocketLauncher;
-    const double speed=rocket?2000:(f.weaponKind==WeaponKind::Sniper?10000:2200);
-    WeaponProjectile projectile;projectile.position=projectile.previous=body.position+direction*(28*body.scale);
-    projectile.velocity=direction*speed;projectile.maxDistance=f.weaponKind==WeaponKind::MachineGun?4400:std::numeric_limits<double>::infinity();
-    projectile.radius=rocket?8:3;projectile.damage=weaponFor(f).damage;projectile.ownerId=f.id;projectile.team=f.team;projectile.kind=f.weaponKind;
+    const bool rocket=kind==WeaponKind::RocketLauncher;
+    const double speed=rocket?2000:(kind==WeaponKind::Sniper?10000:2200);
+    WeaponProjectile projectile;projectile.position=projectile.previous=weaponMuzzle(body,direction,rightHand,!f.isHost&&f.temporaryWeaponRemaining>0);
+    projectile.velocity=direction*speed;projectile.maxDistance=kind==WeaponKind::MachineGun?4400:std::numeric_limits<double>::infinity();
+    projectile.radius=rocket?8:3;projectile.damage=damage;projectile.ownerId=f.id;projectile.team=f.team;projectile.kind=kind;projectile.rightHand=rightHand;
     projectiles.push_back(projectile);
 }
 inline void Match::explodeRocket(const WeaponProjectile& projectile) {

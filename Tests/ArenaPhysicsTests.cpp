@@ -12,10 +12,10 @@ static bool close(gw::Vec a, gw::Vec b) { return (a-b).length()<0.0001; }
 int main() {
     gw::World w;
     int spawned=0;
-    for(int i=0;i<5000;++i) if(w.add(i,static_cast<gw::Shape>(i%4))) ++spawned;
-    check(spawned==5000, "all 5000 players can spawn");
-    if(spawned!=5000) return 1;
-    check(!w.add(5001,gw::Shape::Circle), "capacity is enforced after 5000 players");
+    for(int i=0;i<500;++i) if(w.add(i,static_cast<gw::Shape>(i%4))) ++spawned;
+    check(spawned==500, "all 500 players can spawn");
+    if(spawned!=500) return 1;
+    check(!w.add(501,gw::Shape::Circle), "capacity is enforced after 500 players");
     bool nonoverlap=true;
     std::vector<int> nearby;
     for(size_t i=0;i<w.bodies.size();++i) {
@@ -25,21 +25,21 @@ int main() {
             nonoverlap=nonoverlap && !gw::overlap(w.bodies[i],w.bodies[j],n,d);
         }
     }
-    check(nonoverlap, "5000-player spawn leaves physical separation");
-    check(w.find(4999)==&w.bodies[4999], "lookup resolves final player to stable index");
+    check(nonoverlap, "500-player spawn leaves physical separation");
+    check(w.find(499)==&w.bodies[499], "lookup resolves final player to stable index");
     check(!w.add(1,gw::Shape::Square), "duplicate id cannot replace an existing player");
     check(!w.find(7000), "missing player lookup returns null");
     const gw::World& cw=w;
-    check(cw.find(2500)==&w.bodies[2500], "const lookup resolves player");
+    check(cw.find(250)==&w.bodies[250], "const lookup resolves player");
     for(int i=0;i<240;++i) w.step(1.0/120);
     bool bounded=true;
     for(const auto& b:w.bodies) {
         bounded=bounded && std::isfinite(b.position.x) && std::isfinite(b.position.y)
             && std::isfinite(b.velocity.x) && std::isfinite(b.velocity.y) && b.velocity.length()<=280.001;
-        for(auto p:gw::vertices(b)) bounded=bounded && p.x>=-0.01 && p.y>=-0.01 && p.x<=8000.01 && p.y<=8000.01;
+        for(auto p:gw::vertices(b)) bounded=bounded && p.x>=-0.01 && p.y>=-0.01 && p.x<=gw::World::Size+.01 && p.y<=gw::World::Size+.01;
     }
-    check(bounded, "5000 moving players remain finite and inside the enlarged arena");
-    for(gw::Vec center: {gw::Vec{0,0},gw::Vec{4000,4000},gw::Vec{7900,7900}}) {
+    check(bounded, "500 moving players remain finite and inside the compact arena");
+    for(gw::Vec center: {gw::Vec{0,0},gw::Vec{gw::World::Size*.5,gw::World::Size*.5},gw::Vec{gw::World::Size-100,gw::World::Size-100}}) {
         w.query(center,975,nearby);
         std::set<int> actual(nearby.begin(),nearby.end()), expected;
         for(size_t i=0;i<w.bodies.size();++i) {
@@ -49,8 +49,8 @@ int main() {
         check(actual==expected && actual.size()==nearby.size(), "spatial query matches full scan after simulation");
     }
     w.reset();
-    check(w.bodies.empty() && w.contacts.empty() && !w.find(2500), "reset clears bodies, contacts and id lookup");
-    w.query({4000,4000},8000,nearby);
+    check(w.bodies.empty() && w.contacts.empty() && !w.find(250), "reset clears bodies, contacts and id lookup");
+    w.query({gw::World::Size*.5,gw::World::Size*.5},gw::World::Size,nearby);
     check(nearby.empty(), "reset clears spatial query results");
     check(!w.add(-1,gw::Shape::Circle), "negative viewer id rejected");
     check(!w.add(1,static_cast<gw::Shape>(100)), "invalid shape rejected");
@@ -83,12 +83,12 @@ int main() {
     w.step(1.0/120);
     check(close(w.bodies[1].position,deadPosition) && w.contacts.empty(), "inactive players do not integrate or collide");
     check(w.reshape(202,gw::Shape::Triangle) && !w.bodies[1].active, "shape changes preserve inactive state");
-    w.bodies[1].active=true; w.bodies[1].position={7000,7000};
+    w.bodies[1].active=true; w.bodies[1].position={gw::World::Size-200,gw::World::Size-200};
     w.rebuildSpatial();
-    w.query({7000,7000},0,nearby);
+    w.query({gw::World::Size-200,gw::World::Size-200},0,nearby);
     check(nearby.size()==1 && nearby[0]==1, "rebuild indexes teleported and revived players");
     check(w.find(202)==&w.bodies[1], "death and revival retain body index");
-    w.query({7000,7000},-1,nearby); check(nearby.empty(), "negative query radius gives no matches");
+    w.query({gw::World::Size-200,gw::World::Size-200},-1,nearby); check(nearby.empty(), "negative query radius gives no matches");
     w.query({NAN,0},100,nearby); check(nearby.empty(), "invalid query center gives no matches");
 
     gw::Body rect,circle; rect.shape=gw::Shape::Rectangle; rect.position={100,100};
@@ -119,25 +119,25 @@ int main() {
     solid.reset();check(solid.obstacles.empty(), "world reset clears static scenery and its spatial index");
 
     w.reset();
-    for(int i=0;i<5000;++i) w.add(i,static_cast<gw::Shape>(i%4));
-    for(auto& body:w.bodies) body.position={4000,4000};
+    for(int i=0;i<500;++i) w.add(i,static_cast<gw::Shape>(i%4));
+    for(auto& body:w.bodies) body.position={gw::World::Size*.5,gw::World::Size*.5};
     w.bodies[0].active=false;
     w.rebuildSpatial();
-    w.queryLimited({4000,4000},100,nearby,64);
+    w.queryLimited({gw::World::Size*.5,gw::World::Size*.5},100,nearby,64);
     check(nearby.size()==64 && std::find(nearby.begin(),nearby.end(),0)==nearby.end(), "bounded query caps results and excludes inactive players");
-    w.queryLimited({4000,4000},100,nearby,0);
+    w.queryLimited({gw::World::Size*.5,gw::World::Size*.5},100,nearby,0);
     check(nearby.empty(), "zero bounded query budget produces no results");
-    w.query({4000,4000},100,nearby);
-    check(nearby.size()==4999, "exact query remains complete in a dense crowd");
-    w.queryLimitedFiltered({4000,4000},100,nearby,[](int index){return index==1;},128);
-    check(nearby.size()==1&&nearby[0]==1, "filtered targeting finds an enemy hidden behind thousands of rejected allies");
-    w.queryLimitedFiltered({4000,4000},100,nearby,[](int index){return index%2==0;},7);
+    w.query({gw::World::Size*.5,gw::World::Size*.5},100,nearby);
+    check(nearby.size()==499, "exact query remains complete in a dense crowd");
+    w.queryLimitedFiltered({gw::World::Size*.5,gw::World::Size*.5},100,nearby,[](int index){return index==1;},128);
+    check(nearby.size()==1&&nearby[0]==1, "filtered targeting finds an enemy hidden behind hundreds of rejected allies");
+    w.queryLimitedFiltered({gw::World::Size*.5,gw::World::Size*.5},100,nearby,[](int index){return index%2==0;},7);
     check(nearby.size()==7&&std::all_of(nearby.begin(),nearby.end(),[](int index){return index!=0&&index%2==0;}), "filtered targeting limits matching active results rather than scanned bodies");
     w.bodies[0].active=true;
     for(int i=0;i<12;++i) w.step(1.0/120);
     bool finite=true;
     for(const auto& body:w.bodies) finite=finite && std::isfinite(body.position.x) && std::isfinite(body.position.y);
-    check(finite && w.contacts.size()<=80000, "fully overlapping crowd stays finite with bounded contact work");
+    check(finite && w.contacts.size()<=gw::World::Capacity*16, "fully overlapping crowd stays finite with bounded contact work");
 
     gw::World a,b; a.add(1,gw::Shape::Triangle); b.add(1,gw::Shape::Triangle);
     for(int i=0;i<60;++i) a.step(1.0/60);

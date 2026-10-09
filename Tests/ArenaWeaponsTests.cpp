@@ -8,7 +8,8 @@ static void check(bool condition,const char* message){++assertions;if(!condition
 static bool eq(double a,double b){return std::abs(a-b)<1e-6;}
 static Match quiet(){MatchConfig c;c.autoCombat=false;c.autoCollect=false;c.naturalOrbs=0;c.npcCount=0;return Match(c);}
 static void locate(Match& m,int index,Vec position){auto& b=m.world.bodies[index];b.position=position;b.angle=b.spin=0;b.velocity={90,0};m.world.rebuildSpatial();}
-static void pinnedDuel(Match& m,double seconds,double distance=700){while(seconds>1e-8){locate(m,0,{2000,1000});locate(m,1,{2000+distance,1000});m.world.bodies[0].velocity=m.world.bodies[1].velocity={};const double dt=std::min(.005,seconds);m.step(dt);seconds-=dt;}}
+static Vec diagonalTarget(double distance){return Vec{100,100}+Vec{.7071067811865475,.7071067811865475}*distance;}
+static void pinnedDuel(Match& m,double seconds,double distance=700){while(seconds>1e-8){locate(m,0,{100,100});locate(m,1,diagonalTarget(distance));m.world.bodies[0].velocity=m.world.bodies[1].velocity={};const double dt=std::min(.005,seconds);m.step(dt);seconds-=dt;}}
 static WeaponProjectile projectile(int owner,int team,WeaponKind kind,Vec position,Vec velocity,double damage){WeaponProjectile p;p.ownerId=owner;p.team=team;p.kind=kind;p.position=p.previous=position;p.velocity=velocity;p.damage=damage;p.radius=kind==WeaponKind::RocketLauncher?8:3;p.maxDistance=kind==WeaponKind::MachineGun?4400:std::numeric_limits<double>::infinity();return p;}
 static void balanceBehavior(){
     Match pistol=quiet();pistol.add(1,Shape::Square,1);pistol.add(2,Shape::Rectangle,2);locate(pistol,0,{1000,1000});locate(pistol,1,{1100,1000});
@@ -16,7 +17,7 @@ static void balanceBehavior(){
     check(p.ammo==9&&eq(pistol.fighters[1].hp,190),"pistol starts with10 rounds and its first shot deals10 damage");
     pistol.step(.999);check(p.ammo==9,"pistol cannot fire again before one second");pistol.step(.001);check(p.ammo==8,"pistol fires its next round at one second");
     check(eq(pistol.world.bodies[0].speedScale,1.2),"pistol equipment grants twenty percent movement speed");
-    Match rifle=quiet();rifle.add(1,Shape::Square,1);rifle.add(2,Shape::Rectangle,2);locate(rifle,0,{1000,1000});locate(rifle,1,{2700,1000});rifle.grantWeapon(1,WeaponKind::Rifle);
+    Match rifle=quiet();rifle.add(1,Shape::Square,1);rifle.add(2,Shape::Rectangle,2);locate(rifle,0,{100,500});locate(rifle,1,{1800,500});rifle.grantWeapon(1,WeaponKind::Rifle);
     auto& r=rifle.fighters[0];r.targetKind=1;r.targetIndex=1;r.acquisitionRemaining=100;r.aimRemaining=0;rifle.fighters[1].shotRemaining=100;rifle.config.autoCombat=true;rifle.step(.001);
     check(r.ammo==44&&eq(rifle.world.bodies[0].speedScale,1.5),"rifle starts with45 rounds, reaches1700 and grants fifty percent movement speed");
     Match host=quiet();host.addHost(9,1);host.step(.001);check(eq(host.fighters[0].maxHp,3000)&&eq(host.world.bodies[0].speedScale,.75),"host has3000 hp and rifle speed stacks with its half-speed baseline");
@@ -73,7 +74,7 @@ static void sweptGeometryAndTargets(){
     npc.projectiles.push_back(projectile(4,1,WeaponKind::MachineGun,p-Vec{100,0},{200000,0},7));npc.step(.001);
     check(eq(npc.npcs[0].hp,182.5),"swept NPC collision applies square neutral multiplier exactly once");
     Match b=quiet();b.add(7,Shape::Square,1);locate(b,0,{100,100});b.boss.active=b.boss.spawned=true;b.fighters[0].bossBuffEligible=true;b.teamBuffRemaining[1]=60;
-    const double bossHp=b.boss.hp;b.projectiles.push_back(projectile(7,1,WeaponKind::Sniper,{3800,4000},{200000,0},200));b.step(.001);
+    const double bossHp=b.boss.hp;b.projectiles.push_back(projectile(7,1,WeaponKind::Sniper,{World::Size*.5-200,World::Size*.5},{200000,0},200));b.step(.001);
     check(eq(b.boss.hp,bossHp-600),"boss collision applies square and boss reward multipliers exactly once");
 }
 static void rocketsAndLifetimes(){
@@ -89,31 +90,40 @@ static void rocketsAndLifetimes(){
     base.projectiles.push_back(projectile(1,1,WeaponKind::RocketLauncher,base.bases[2].position-Vec{200,0},{200000,0},1000));base.step(.001);
     check(eq(base.bases[2].hp,2000)&&eq(base.fighters[0].baseDamage,3000),"rocket base hit combines2.5base bonus and1.2boss buff once");
     Match wall=quiet();wall.add(1,Shape::Rectangle,1);locate(wall,0,{100,100});
-    wall.projectiles.push_back(projectile(1,1,WeaponKind::Sniper,{1000,1000},{1000,0},200));wall.step(4.3);
-    check(wall.projectiles.size()==1&&wall.projectiles[0].travelled>4200,"sniper projectile continues after acquisition range");wall.step(2.71);check(wall.projectiles.empty(),"sniper projectile disappears at the world wall");
-    wall.projectiles.push_back(projectile(1,1,WeaponKind::MachineGun,{1000,1000},{1000,0},7));wall.step(4.39);check(wall.projectiles.size()==1,"machinegun projectile remains just before4400 travel");wall.step(.01);check(wall.projectiles.empty(),"machinegun projectile expires at100 normal diameters");
-    wall.projectiles.push_back(projectile(1,1,WeaponKind::RocketLauncher,{7990,1000},{1000,0},500));wall.step(.01);check(wall.projectiles.empty(),"rocket without a target also terminates at world wall");
+    // Infinite sniper flight is bounded by actual compact world walls. A captured
+    // distance beyond acquisition range must not expire the projectile mid-map.
+    auto longFlight=projectile(1,1,WeaponKind::Sniper,{1000,1000},{1000,0},200);longFlight.travelled=4300;
+    wall.projectiles.push_back(longFlight);wall.step(.01);
+    check(wall.projectiles.size()==1&&wall.projectiles[0].travelled>4300,"sniper projectile continues after acquisition range");wall.step((World::Size-1010)/1000+.001);check(wall.projectiles.empty(),"sniper projectile disappears at the world wall");
+    // Seed accumulated travel so the unchanged4400 expiry boundary can be
+    // exercised without the compact wall ending the flight first.
+    auto nearExpiry=projectile(1,1,WeaponKind::MachineGun,{1000,1000},{1000,0},7);nearExpiry.travelled=4390;
+    wall.projectiles.push_back(nearExpiry);wall.step(.009);check(wall.projectiles.size()==1,"machinegun projectile remains just before4400 travel");wall.step(.001);check(wall.projectiles.empty(),"machinegun projectile expires at100 normal diameters");
+    wall.projectiles.push_back(projectile(1,1,WeaponKind::RocketLauncher,{World::Size-10,World::Size*.5},{1000,0},500));wall.step(.01);check(wall.projectiles.empty(),"rocket without a target also terminates at world wall");
 }
 static void machineGunAndReload(){
-    Match m=quiet();m.add(1,Shape::Square,1);m.add(2,Shape::Square,2);locate(m,0,{2000,2000});locate(m,1,{3500,2000});m.grantWeapon(1,WeaponKind::MachineGun);
+    Match m=quiet();m.add(1,Shape::Square,1);m.add(2,Shape::Square,2);locate(m,0,{200,700});locate(m,1,{1700,700});m.grantWeapon(1,WeaponKind::MachineGun);
     auto& f=m.fighters[0];f.targetKind=1;f.targetIndex=1;f.acquisitionRemaining=100;f.aimRemaining=0;f.ammo=1;m.fighters[1].acquisitionRemaining=100;m.config.autoCombat=true;m.step(.001);
     check(m.projectiles.size()==7&&f.ammo==0&&eq(f.reloadRemaining,8),"machinegun consumes one trigger ammo for seven real projectiles and starts8second reload");
     for(const auto& p:m.projectiles)check(std::abs(std::atan2(p.velocity.y,p.velocity.x))<=.2617993878&&eq(p.damage,3),"each machinegun pellet stays within15degree half-angle and carries3base damage");
     check(eq(m.world.bodies[0].speedScale,.8),"equipping machinegun reduces movement by twenty percent");
     m.switchWeapon(1,WeaponKind::Pistol);m.step(.1);m.switchWeapon(1,WeaponKind::MachineGun);check(f.ammo==0&&eq(f.reloadRemaining,8),"holstering pauses the independent reload without bypassing it");
     m.fighters[1].hp=m.fighters[1].maxHp=1e9;m.step(7.99);check(f.ammo==0&&f.reloadRemaining>0,"ordinary machinegun reload does not finish early");m.step(.01);check(f.ammo==149||f.ammo==150,"eight second reload restores full150 shot magazine before next trigger");
-    Match fire=quiet();fire.add(1,Shape::Square,1);locate(fire,0,{4200,4000});fire.grantWeapon(1,WeaponKind::MachineGun);fire.boss.active=fire.boss.spawned=true;fire.boss.attack=BossAttack::StompRest;fire.boss.attackInitialized=true;fire.config.autoCombat=true;fire.step(.001);
+    Match fire=quiet();fire.add(1,Shape::Square,1);locate(fire,0,{World::Size*.5+200,World::Size*.5});fire.grantWeapon(1,WeaponKind::MachineGun);fire.boss.active=fire.boss.spawned=true;fire.boss.attack=BossAttack::StompRest;fire.boss.attackInitialized=true;fire.config.autoCombat=true;fire.step(.001);
     check(eq(fire.world.bodies[0].speedScale,.64),"boss fire and machinegun movement penalties multiply");
-    Match rocket=quiet();rocket.add(1,Shape::Circle,1);rocket.add(2,Shape::Rectangle,2);locate(rocket,0,{1000,2000});locate(rocket,1,{2000,2000});rocket.fighters[1].hp=1e9;rocket.fighters[1].shotRemaining=100;
+    Match rocket=quiet();rocket.add(1,Shape::Circle,1);rocket.add(2,Shape::Rectangle,2);locate(rocket,0,{500,700});locate(rocket,1,{1500,700});rocket.fighters[1].hp=1e9;rocket.fighters[1].shotRemaining=100;
     rocket.grantWeapon(1,WeaponKind::RocketLauncher);auto& r=rocket.fighters[0];r.targetKind=1;r.targetIndex=1;r.aimRemaining=0;r.acquisitionRemaining=100;rocket.config.autoCombat=true;rocket.step(.001);
     check(r.ammo==0&&eq(r.reloadRemaining,2.5),"circle rocket starts a half-length reload after its single shot");
     rocket.step(2.5);check(r.ammo==0&&r.reloadRemaining>2.49,"circle may fire again when its2.5second reload completes");
 }
 static void boundedBurstPools(){
     Match m=quiet();m.boss.active=m.boss.spawned=true;m.boss.attack=BossAttack::LaserWindup;m.boss.attackInitialized=true;
-    for(int i=0;i<1250;++i){check(m.add(i,Shape::Square,1),"burst participant joins");m.grantWeapon(i,WeaponKind::MachineGun);auto& f=m.fighters.back();f.targetKind=4;f.targetIndex=0;f.aimRemaining=0;f.acquisitionRemaining=999;auto& b=m.world.bodies.back();b.position={2500,4000};b.velocity={90,0};b.spin=0;}
+    // Preexisting in-flight projectiles plus the full legal red team overflow the
+    // same8192-slot pool without exceeding compact viewer admission limits.
+    for(int i=0;i<7000;++i)m.projectiles.push_back(projectile(0,1,WeaponKind::MachineGun,{100,100},{0,1},3));
+    for(int i=0;i<Match::TeamCapacity(1);++i){check(m.add(i,Shape::Square,1),"burst participant joins");m.grantWeapon(i,WeaponKind::MachineGun);auto& f=m.fighters.back();f.targetKind=4;f.targetIndex=0;f.aimRemaining=0;f.acquisitionRemaining=999;auto& b=m.world.bodies.back();b.position={World::Size*.5-700,World::Size*.5};b.velocity={90,0};b.spin=0;}
     m.world.rebuildSpatial();m.config.autoCombat=true;m.step(.001);
-    check(m.projectiles.size()==8192,"simultaneous8750 pellet launch stays within8192 projectile slots");
+    check(m.projectiles.size()==8192,"existing7000 projectiles plus1400 pellet launch stays within8192 projectile slots");
     check(m.events.size()<=512&&m.damageEvents.size()<=512,"large weapon gift burst keeps public feedback bounded");
     Match blast=quiet();blast.add(1,Shape::Rectangle,1);blast.add(2,Shape::Rectangle,2);locate(blast,0,{100,100});locate(blast,1,{1000,1000});blast.fighters[1].hp=1e9;
     for(int i=0;i<200;++i)blast.projectiles.push_back(projectile(1,1,WeaponKind::RocketLauncher,{800,1000},{200000,0},1000));blast.step(.001);
@@ -123,15 +133,15 @@ static void newWeaponBehavior(){
     Match m=quiet();m.add(1,Shape::Square,1);m.add(2,Shape::Square,2);
     auto& shooter=m.fighters[0];shooter.weaponKind=static_cast<WeaponKind>(3);shooter.ammo=5;
     m.fighters[1].hp=m.fighters[1].maxHp=10000;m.fighters[1].shotRemaining=100;m.config.autoCombat=true;
-    pinnedDuel(m,1.499,3600);check(shooter.ammo==5,"sniper at3600 must aim for one and a half seconds before firing");
-    pinnedDuel(m,.001,3600);check(shooter.ammo==4,"sniper fires exactly at its interpolated1.5second aim endpoint");
+    pinnedDuel(m,1.049,2520);check(shooter.ammo==5,"sniper at2520 must aim for1.05seconds before firing");
+    pinnedDuel(m,.001,2520);check(shooter.ammo==4,"sniper fires exactly at its interpolated1.05second aim endpoint");
     check(eq(m.fighters[1].hp,10000),"sniper bullet cannot apply distant damage at launch");
     check(!m.projectiles.empty()&&eq(m.projectiles[0].velocity.length(),10000)&&eq(m.projectiles[0].damage,300),"sniper launches at10000 speed and captures its far-band300damage");
-    pinnedDuel(m,.4,3600);check(eq(m.fighters[1].hp,9700),"traveling far sniper applies exactly300 damage on collision");
+    pinnedDuel(m,.4,2520);check(eq(m.fighters[1].hp,9700),"traveling far sniper applies exactly300 damage on collision");
 }
 static void sniperReloadThenAim(){
     for(Shape shape:{Shape::Square,Shape::Rectangle}){
-        Match m=quiet();m.add(1,shape,1);m.add(2,Shape::Square,2);locate(m,0,{2000,1000});locate(m,1,{2700,1000});
+        Match m=quiet();m.add(1,shape,1);m.add(2,Shape::Square,2);locate(m,0,{100,100});locate(m,1,diagonalTarget(700));
         m.fighters[1].hp=m.fighters[1].maxHp=1e9;m.fighters[1].shotRemaining=1000;m.grantWeapon(1,WeaponKind::Sniper);
         auto& sniper=m.fighters[0];sniper.targetKind=1;sniper.targetIndex=1;sniper.acquisitionRemaining=1000;
         const double aim=shape==Shape::Rectangle?.5:1;sniper.aimRemaining=aim;m.config.autoCombat=true;
@@ -152,22 +162,37 @@ static void sniperDistanceBands(){
         Match m=quiet();m.add(1,shape,1);m.add(2,Shape::Square,2);m.grantWeapon(1,WeaponKind::Sniper);
         auto& sniper=m.fighters[0];sniper.targetKind=1;sniper.targetIndex=1;sniper.acquisitionRemaining=1000;
         m.fighters[1].hp=m.fighters[1].maxHp=10000;m.fighters[1].shotRemaining=1000;
-        locate(m,0,{2000,1000});locate(m,1,{4399.999,1000});check(eq(m.weaponFor(sniper).aimTime,1)&&eq(m.weaponFor(sniper).damage,200),"sniper below2400 uses one second base aim and200damage");
-        locate(m,1,{4400,1000});check(eq(m.weaponFor(sniper).aimTime,1)&&eq(m.weaponFor(sniper).damage,300),"sniper exactly2400 retains one second aim and gains far damage");
-        locate(m,1,{5600,1000});check(eq(m.weaponFor(sniper).aimTime,1.5),"sniper aim interpolates linearly to1.5seconds at3600");
-        locate(m,1,{6800,1000});check(eq(m.weaponFor(sniper).range,4800)&&eq(m.weaponFor(sniper).aimTime,2),"sniper at its4800 maximum has two second base aim");
-        const double nearAim=shape==Shape::Rectangle?.5:1,farAim=nearAim*1.5;m.config.autoCombat=true;
+        locate(m,0,{100,100});locate(m,1,diagonalTarget(2399.999));check(eq(m.weaponFor(sniper).aimTime,1)&&eq(m.weaponFor(sniper).damage,200),"sniper below2400 uses one second base aim and200damage");
+        locate(m,1,diagonalTarget(2400));check(eq(m.weaponFor(sniper).aimTime,1)&&eq(m.weaponFor(sniper).damage,300),"sniper exactly2400 retains one second aim and gains far damage");
+        locate(m,1,diagonalTarget(3600));check(eq(m.weaponFor(sniper).aimTime,1.5),"sniper aim interpolates linearly to1.5seconds at3600");
+        locate(m,1,diagonalTarget(4800));check(eq(m.weaponFor(sniper).range,4800)&&eq(m.weaponFor(sniper).aimTime,2),"sniper at its4800 maximum has two second base aim");
+        //3600/4800 above are synthetic formula checks; live motion stays in bounds.
+        const double nearAim=shape==Shape::Rectangle?.5:1,farAim=nearAim*1.05;m.config.autoCombat=true;
         pinnedDuel(m,nearAim-.1,2300);check(sniper.ammo==5,"near sniper cannot fire before its shape-adjusted aim completes");
-        pinnedDuel(m,.1,3600);check(sniper.ammo==5&&eq(sniper.aimRemaining,farAim-nearAim),"moving farther extends aim smoothly while retaining elapsed tracking time");
-        pinnedDuel(m,farAim-nearAim-.001,3600);check(sniper.ammo==5&&sniper.aimRemaining>0,"far distance does not inherit a prematurely completed near aim");
-        pinnedDuel(m,.001,3600);check(sniper.ammo==4&&m.projectiles.size()==1&&eq(m.projectiles[0].damage,300),"far shot starts exactly after the full interpolated aim with300 captured damage");
-        locate(m,1,{2300,1000});m.step(.08);check(eq(m.fighters[1].hp,9700),"a far shot keeps300 damage when its target moves into the near band during flight");
+        pinnedDuel(m,.1,2520);check(sniper.ammo==5&&eq(sniper.aimRemaining,farAim-nearAim),"moving farther extends aim smoothly while retaining elapsed tracking time");
+        pinnedDuel(m,farAim-nearAim-.001,2520);check(sniper.ammo==5&&sniper.aimRemaining>0,"far distance does not inherit a prematurely completed near aim");
+        pinnedDuel(m,.001,2520);check(sniper.ammo==4&&m.projectiles.size()==1&&eq(m.projectiles[0].damage,300),"far shot starts exactly after the full interpolated aim with300 captured damage");
+        locate(m,1,diagonalTarget(300));m.step(.08);check(eq(m.fighters[1].hp,9700),"a far shot keeps300 damage when its target moves into the near band during flight");
         check(eq(m.weaponFor(sniper).damage,200)&&eq(sniper.sniperAimDuration,nearAim),"next sniper aim follows the current near band");
         check(eq(m.world.bodies[0].speedScale,.4),"sniper movement is forty percent of normal speed");
     }
 }
+static void batchedBaseGifts(){
+    for(bool destroyed:{false,true})for(int64_t count:{1LL,2LL,101LL,1000LL}){
+        Match batch=quiet(),sequential=quiet();batch.bases[1].hp=sequential.bases[1].hp=1800;
+        if(destroyed){batch.bases[1].alive=sequential.bases[1].alive=false;batch.bases[1].hp=sequential.bases[1].hp=0;}
+        check(batch.rebuildOrFortifyBase(1,count),"positive batch accepted");
+        for(int64_t i=0;i<count;++i)check(sequential.rebuildOrFortifyBase(1),"reference single unit accepted");
+        check(eq(batch.bases[1].hp,sequential.bases[1].hp)&&eq(batch.bases[1].maxHp,sequential.bases[1].maxHp)&&batch.bases[1].alive==sequential.bases[1].alive,"batch exactly matches single unit hp/max/rebuild semantics");
+        check(batch.events.size()<=2,"batch emits constant number of base events");
+    }
+    Match m=quiet();check(!m.rebuildOrFortifyBase(1,0)&&!m.rebuildOrFortifyBase(1,-1)&&!m.rebuildOrFortifyBase(0,1000),"invalid batch or gray base rejected");
+    check(m.rebuildOrFortifyBase(1,std::numeric_limits<int64_t>::max())&&std::isfinite(m.bases[1].hp),"maximum int64 batch applies without integer overflow or iteration");
+    m.phase=Phase::Sprint;check(!m.rebuildOrFortifyBase(1,1000),"sprint still rejects batched gifts");
+}
 int main(){int failures=0;
     const std::pair<const char*,void(*)()> tests[]={{"balance behavior",balanceBehavior},{"new weapon behavior",newWeaponBehavior},{"sniper reload then aim",sniperReloadThenAim},{"sniper distance bands",sniperDistanceBands},{"inventory and timers",inventoryAndTimers},{"sprint and base gifts",sprintAndBaseGifts},{"swept geometry and targets",sweptGeometryAndTargets},{"rockets and lifetimes",rocketsAndLifetimes},{"machinegun and reload",machineGunAndReload},{"bounded burst pools",boundedBurstPools}};
+    try{batchedBaseGifts();std::cout<<"PASS batched base gifts\n";}catch(const std::exception& e){++failures;std::cerr<<"FAIL batched base gifts: "<<e.what()<<'\n';}
     for(const auto& test:tests)try{test.second();std::cout<<"PASS "<<test.first<<'\n';}catch(const std::exception& e){++failures;std::cerr<<"FAIL "<<test.first<<": "<<e.what()<<'\n';}
     std::cout<<assertions<<" assertions, "<<failures<<" failed groups\n";return failures?1:0;
 }

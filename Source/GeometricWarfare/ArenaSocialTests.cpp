@@ -1,4 +1,5 @@
 #include "ArenaGameMode.h"
+#include "LiveInteractionTestAdapter.h"
 #include "Engine/Engine.h"
 #include "Engine/GameInstance.h"
 #include "Engine/World.h"
@@ -11,6 +12,7 @@ bool FArenaSocialCombatTest::RunTest(const FString&)
 {
     auto* Instance=NewObject<UGameInstance>(GEngine);
     Instance->InitializeStandalone(FName(TEXT("SocialCombatWorld")));
+    FLiveInteractionTestAdapter::EnableLocalTest(*Instance->GetSubsystem<ULiveInteractionSubsystem>());
     UWorld* World=Instance->GetWorld();
     FURL Url;Url.AddOption(TEXT("game=/Script/GeometricWarfare.ArenaGameMode"));
     World->SetGameMode(Url);World->InitializeActorsForPlay(Url);World->BeginPlay();
@@ -27,7 +29,7 @@ bool FArenaSocialCombatTest::RunTest(const FString&)
     auto& Match=const_cast<gw::Match&>(Game->GetMatch());
     auto* Fighter=Match.findFighter(Id);Fighter->hp=100;
     const double MaxHp=Fighter->maxHp;
-    FDouyinLike Like;Like.MessageId=TEXT("single-like");Like.UserId=TEXT("social-1");Like.Count=1;
+    FLiveLike Like;Like.MessageId=TEXT("single-like");Like.UserId=TEXT("social-1");Like.Count=1;Like.Session=Bridge->GetCurrentSession();
     Bridge->DeliverLike(Like);
     TestTrue(TEXT("Like reaches actual GameMode and restores max HP times five percent"),FMath::IsNearlyEqual(Fighter->hp,100+MaxHp*.05,.00001));
     const auto& Numbers=Game->GetDamageNumbers();
@@ -46,12 +48,15 @@ bool FArenaSocialCombatTest::RunTest(const FString&)
     Bridge->SimulateLike(TEXT("social-1"),TEXT("互动观众"),100);
     TestEqual(TEXT("Like batches clamp at maximum HP"),Fighter->hp,MaxHp);
     Bridge->SimulateShare(TEXT("social-1"),TEXT("互动观众"));
-    TestTrue(TEXT("Share grants shotgun through real delegate"),Fighter->weaponKind==gw::WeaponKind::Shotgun);
+    TestFalse(TEXT("Share no longer grants shotgun"),(Fighter->unlockedWeapons&gw::weaponBit(gw::WeaponKind::Shotgun))!=0);
+    for(int32 N=0;N<8;++N)Bridge->SimulateLike(TEXT("social-1"),TEXT("互动观众"),100);
+    Bridge->SimulateLike(TEXT("social-1"),TEXT("互动观众"),99);
+    TestTrue(TEXT("1000 likes grant shotgun through real delegate"),Fighter->weaponKind==gw::WeaponKind::Shotgun);
     TestEqual(TEXT("Shotgun initially holds five volleys"),Fighter->ammo,5);
     Fighter->ammo=0;Fighter->reloadRemaining=4;
-    Bridge->SimulateShare(TEXT("social-1"),TEXT("互动观众"));
-    TestEqual(TEXT("Repeated share cannot refill ammunition"),Fighter->ammo,0);
-    TestEqual(TEXT("Repeated share cannot shorten reload"),Fighter->reloadRemaining,4.0);
+    Bridge->SimulateLike(TEXT("social-1"),TEXT("互动观众"),100);
+    TestEqual(TEXT("Post-unlock likes cannot refill ammunition"),Fighter->ammo,0);
+    TestEqual(TEXT("Post-unlock likes cannot shorten reload"),Fighter->reloadRemaining,4.0);
     Game->DemoAction(TEXT("host-red"));
     int HostId=-1;for(const auto& F:Match.fighters)if(F.isHost)HostId=F.id;
     if(TestTrue(TEXT("Local host control enters one special fighter"),HostId>=0)) {

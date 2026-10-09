@@ -16,21 +16,24 @@ static void report(const char* name, std::vector<double> samples) {
         << " p95_ms=" << samples[samples.size()*95/100] << " max_ms=" << samples.back() << '\n';
 }
 static bool run(const char* name, bool crowded, bool coincident) {
+    constexpr int players=gw::World::Capacity-1;
+    constexpr int perCrowd=players/4;
+    constexpr int queriesPerFrame=(players+29)/30;
     gw::World world;
     const auto spawnStart=Clock::now();
-    for(int i=0;i<5000;++i) if(!world.add(i,static_cast<gw::Shape>(i%4))) {
+    for(int i=0;i<players;++i) if(!world.add(i,static_cast<gw::Shape>(i%4))) {
         std::cerr << "Spawn failed at " << i << '\n'; return false;
     }
     std::cout << "scenario=" << name << " players=" << world.bodies.size()
         << " map=" << gw::World::Size << " spawn_ms=" << milliseconds(spawnStart) << '\n';
-    if(crowded) for(int i=0;i<5000;++i) {
-        const int group=i/1250, local=i%1250;
-        const gw::Vec base={1500.0+(group%2)*4000,1500.0+(group/2)*4000};
-        world.bodies[i].position=coincident?gw::Vec{4000,4000}:base+gw::Vec{(local%36)*32.0,(local/36)*32.0};
+    if(crowded) for(int i=0;i<players;++i) {
+        const int group=i/perCrowd, local=i%perCrowd;
+        const gw::Vec base={gw::World::Size*.2+(group%2)*gw::World::Size*.5,gw::World::Size*.2+(group/2)*gw::World::Size*.5};
+        world.bodies[i].position=coincident?gw::Vec{gw::World::Size*.5,gw::World::Size*.5}:base+gw::Vec{(local%12)*32.0,(local/12)*32.0};
     }
     world.rebuildSpatial();
     std::vector<double> physics,query,limitedQuery;
-    std::vector<int> nearby; nearby.reserve(5000);
+    std::vector<int> nearby; nearby.reserve(players);
     size_t queryHits=0,limitedHits=0,peakContacts=0;
     // Ordinary runs warm caches; the coincident test includes its initial surge.
     if(!coincident) for(int i=0;i<60;++i) world.step(1.0/60);
@@ -39,21 +42,22 @@ static bool run(const char* name, bool crowded, bool coincident) {
         auto begin=Clock::now(); world.step(1.0/60); physics.push_back(milliseconds(begin));
         peakContacts=std::max(peakContacts,world.contacts.size());
         begin=Clock::now();
-        // 167 staggered targeting queries/frame approximates one query/player/0.5s.
-        for(int k=0;k<167;++k) {
-            const auto& body=world.bodies[(frame*167+k)%5000];
+        // At60Hz, one query per player per0.5s scales with admitted viewers.
+        for(int k=0;k<queriesPerFrame;++k) {
+            const auto& body=world.bodies[(frame*queriesPerFrame+k)%players];
             world.query(body.position,k%4==0?975:650,nearby); queryHits+=nearby.size();
         }
         query.push_back(milliseconds(begin));
         begin=Clock::now();
-        for(int k=0;k<167;++k) {
-            const auto& body=world.bodies[(frame*167+k)%5000];
+        for(int k=0;k<queriesPerFrame;++k) {
+            const auto& body=world.bodies[(frame*queriesPerFrame+k)%players];
             world.queryLimited(body.position,k%4==0?975:650,nearby,128); limitedHits+=nearby.size();
         }
         limitedQuery.push_back(milliseconds(begin));
     }
-    report("physics_60hz_frame",physics); report("167_radius_queries",query);
-    report("167_bounded_radius_queries",limitedQuery);
+    std::cout << "targeting_queries_per_frame=" << queriesPerFrame << '\n';
+    report("physics_60hz_frame",physics); report("radius_queries",query);
+    report("bounded_radius_queries",limitedQuery);
     std::cout << "peak_unique_contacts=" << peakContacts << " query_hits=" << queryHits << " bounded_query_hits=" << limitedHits << '\n';
     for(const auto& body:world.bodies)
         if(!std::isfinite(body.position.x) || !std::isfinite(body.position.y)) return false;

@@ -10,3 +10,9 @@
 *.mp4 binary
 *.docx binary
 *.pdf binary
+*.wav binary
+*.dll binary
+*.lib binary
+# Preserve vendored upstream bytes and their recorded SHA256 values.
+Plugins/LiveSpoutOutput/Source/ThirdParty/** -text -whitespace
+Plugins/LiveSpoutOutput/Licenses/** -text -whitespace

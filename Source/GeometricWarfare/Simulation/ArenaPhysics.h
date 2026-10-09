@@ -152,8 +152,8 @@ struct StaticObstacle {
 };
 class World {
 public:
-    static constexpr double Size=8000;
-    static constexpr int Capacity=5001;
+    static constexpr double Size=2000;
+    static constexpr int Capacity=501;
     // Keep indices and ids stable: deactivate bodies; never erase/reorder them.
     // After external position/active changes, call rebuildSpatial once per batch.
     std::vector<Body> bodies;
@@ -301,7 +301,7 @@ public:
     }
 private:
     static constexpr double CellSize=80;
-    static constexpr int GridWidth=100;
+    static constexpr int GridWidth=static_cast<int>((Size+CellSize-1)/CellSize);
     static constexpr size_t MaxContacts=Capacity*16;
     // Two solver passes, at most 64 visited neighbors per body per pass.
     // In extremely crowded cells this deliberately samples contacts rather than
@@ -325,16 +325,25 @@ private:
         next[index]=heads[c]; heads[c]=index;
     }
     double random() { seed^=seed<<13; seed^=seed>>17; seed^=seed<<5; return static_cast<double>(seed)/4294967295.0; }
-    bool free(const Body& b) const {
+    bool free(const Body& b,bool keepSpawnSpacing=true) const {
         const auto g=detail::geometry(b);
         if(b.position.x+g.minx<4 || b.position.y+g.miny<4 || b.position.x+g.maxx>Size-4 || b.position.y+g.maxy>Size-4) return false;
         const int minx=cell(b.position.x-72), maxx=cell(b.position.x+72);
         const int miny=cell(b.position.y-72), maxy=cell(b.position.y+72);
-        for(int y=miny;y<=maxy;++y) for(int x=minx;x<=maxx;++x)
-            for(int i=heads[y*GridWidth+x];i!=-1;i=next[i]) {
-                const Body& other=bodies[i]; const Vec delta=other.position-b.position;
-                if(other.active && other.id!=b.id && delta.dot(delta)<72*72) return false;
+        if(keepSpawnSpacing) {
+            for(int y=miny;y<=maxy;++y) for(int x=minx;x<=maxx;++x)
+                for(int i=heads[y*GridWidth+x];i!=-1;i=next[i]) {
+                    const Body& other=bodies[i]; const Vec delta=other.position-b.position;
+                    if(other.active && other.id!=b.id && delta.dot(delta)<72*72) return false;
+                }
+        } else {
+            // Dense admission may exhaust the preferred72-unit center spacing.
+            // Use actual physical shapes at fallback sites, retaining their size.
+            for(const auto& other:bodies)if(other.active&&other.id!=b.id) {
+                Vec normal;double depth;
+                if(detail::overlap(b,g,other,detail::geometry(other),normal,depth))return false;
             }
+        }
         for(int y=cell(b.position.y+g.miny);y<=cell(b.position.y+g.maxy);++y)
             for(int x=cell(b.position.x+g.minx);x<=cell(b.position.x+g.maxx);++x)
                 for(int i:obstacleCells[y*GridWidth+x]){const auto& o=obstacles[i];if(!o.active)continue;
@@ -347,11 +356,11 @@ private:
             b.position={40+random()*(Size-80),40+random()*(Size-80)};
             if(free(b)) return true;
         }
-        constexpr int side=105;
+        constexpr int side=static_cast<int>((Size-80)/76)+1;
         for(int i=0;i<side*side;++i) {
             const int slot=placementCursor++%(side*side);
             b.position={40.0+76*(slot%side),40.0+76*(slot/side)};
-            if(free(b)) return true;
+            if(free(b,false)) return true;
         }
         return false;
     }
@@ -422,7 +431,7 @@ private:
                             resolve(j);
                         }
                 // Only the one extra host has a wider envelope. Handle its
-                // rare second-cell contacts without widening all5000 queries.
+                // rare second-cell contacts without widening all viewer queries.
                 if(a.scale<=1)for(int j:largeBodies)if(std::max(std::abs(cell(bodies[j].position.x)-cx),std::abs(cell(bodies[j].position.y)-cy))>1)resolve(j);
             }
             for(size_t i=0;i<bodies.size();++i) if(bodies[i].active) {resolveObstacles(bodies[i],cached[i]);walls(bodies[i],cached[i]);}

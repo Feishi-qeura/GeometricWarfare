@@ -18,7 +18,9 @@ if(Test-Path $frames){
     if(-not $resolvedFrames.StartsWith($workspacePrefix,[StringComparison]::OrdinalIgnoreCase) -or -not $resolvedBackup.StartsWith($workspacePrefix,[StringComparison]::OrdinalIgnoreCase)){throw 'Capture paths must remain inside the project workspace.'}
     Move-Item -LiteralPath $frames -Destination $backup
 }
-& (Join-Path $EngineRoot 'Engine\Binaries\Win64\UnrealEditor-Cmd.exe') (Join-Path $projectRoot 'GeometricWarfare.uproject') /Engine/Maps/Entry -game -unattended -nop4 -nosplash -nosound -windowed -ForceRes -ResX=1920 -ResY=1080 -RenderOffscreen -DDC-ForceMemoryCache '-DisablePlugins=RiderLink' -GWRecordDemo "-GWRecordSpeed=$Speed" "-abslog=$projectRoot\Saved\RecordDemo.log"
+# Recording requires an explicit development simulation session; it is not a platform SDK session.
+Write-Output 'Recording the development demo with explicit -GWLocalTest.'
+& (Join-Path $EngineRoot 'Engine\Binaries\Win64\UnrealEditor-Cmd.exe') (Join-Path $projectRoot 'GeometricWarfare.uproject') /Engine/Maps/Entry -game -unattended -nop4 -nosplash -nosound -windowed -ForceRes -ResX=1920 -ResY=1080 -RenderOffscreen -DDC-ForceMemoryCache '-DisablePlugins=RiderLink' -GWLocalTest -GWRecordDemo "-GWRecordSpeed=$Speed" "-abslog=$projectRoot\Saved\RecordDemo.log"
 if($LASTEXITCODE -ne 0){throw 'Unreal demo recording failed.'}
 $count=(Get-ChildItem -LiteralPath $frames -Filter 'Frame_*.png').Count
 if($count -lt (1000*4/$Speed)){throw "Incomplete recording: $count frames. Inspect Saved/RecordDemo.log."}
