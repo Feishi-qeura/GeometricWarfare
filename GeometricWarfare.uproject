@@ -9,12 +9,17 @@
 			"Name": "GeometricWarfare",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "GeometricWarfareEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
-		{ "Name": "LiveInteraction", "Enabled": true },
-		{ "Name": "DouyinLiveProvider", "Enabled": true },
-		{ "Name": "LiveSpoutOutput", "Enabled": true },
+		{ "Name": "FUOnlineSession", "Enabled": true },
+		{ "Name": "OnlineSubsystem", "Enabled": true },
+		{ "Name": "Niagara", "Enabled": true },
 		{
 			"Name": "ModelingToolsEditorMode",
 			"Enabled": true,

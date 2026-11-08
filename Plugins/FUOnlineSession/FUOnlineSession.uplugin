@@ -1,0 +1,79 @@
+{
+	"FileVersion": 3,
+	"Version": 4,
+	"VersionName": "2.1.1",
+	"EngineVersion": "5.8.0",
+	"FriendlyName": "FU Online Session",
+	"Description": "支持 Steam 大厅、EOS（Epic Online Services）大厅及 NULL LAN 会话",
+	"Category": "Networking",
+	"CanContainContent": true,
+	"SupportedTargetPlatforms": [
+		"Win64"
+	],
+	"Plugins": [
+		{
+			"Name": "OnlineSubsystem",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemNull",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemSteam",
+			"Enabled": true
+		},
+		{
+			"Name": "SteamSockets",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemUtils",
+			"Enabled": true
+		},
+		{
+			"Name": "EOSShared",
+			"Enabled": true
+		},
+		{
+			"Name": "OnlineSubsystemEOS",
+			"Enabled": true
+		},
+		{
+			"Name": "SocketSubsystemEOS",
+			"Enabled": true
+		}
+	],
+	"Modules": [
+		{
+			"Name": "FUOnlineSession",
+			"Type": "Runtime",
+			"LoadingPhase": "PreDefault",
+			"PlatformAllowList": [
+				"Win64"
+			],
+			"PlatformArchitectureDenyList": [
+				"Win64:arm64"
+			]
+		},
+		{
+			"Name": "FUOnlineSessionEditor",
+			"Type": "Editor",
+			"LoadingPhase": "PostEngineInit",
+			"PlatformAllowList": [
+				"Win64"
+			],
+			"PlatformArchitectureDenyList": [
+				"Win64:arm64"
+			]
+		}
+	],
+	"CreatedBy": "feishi",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false
+}

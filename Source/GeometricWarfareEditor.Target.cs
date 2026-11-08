@@ -10,6 +10,6 @@ public class GeometricWarfareEditorTarget : TargetRules
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V7;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_8;
-		ExtraModuleNames.Add("GeometricWarfare");
+		ExtraModuleNames.AddRange(new string[] { "GeometricWarfare", "GeometricWarfareEditor" });
 	}
 }
