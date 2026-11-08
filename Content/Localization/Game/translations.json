@@ -1,0 +1,2422 @@
+{
+  "cultures": [
+    "en",
+    "zh-Hans",
+    "ja",
+    "de"
+  ],
+  "strings": {
+    "Game.Title": [
+      "GEOMETRIC WARFARE",
+      "几何战争",
+      "ジオメトリック・ウォーフェア",
+      "GEOMETRIC WARFARE"
+    ],
+    "Game.Subtitle": [
+      "Draw the maze. Hold the line. Bring friends.",
+      "在方格纸上画迷宫，守住核心，叫上朋友。",
+      "方眼紙に迷路を描き、コアを守り抜け。仲間も呼ぼう。",
+      "Zeichne das Labyrinth. Halte die Linie. Bring Freunde mit."
+    ],
+    "Menu.Single": [
+      "Single player",
+      "单人游戏",
+      "シングルプレイ",
+      "Einzelspieler"
+    ],
+    "Menu.Create": [
+      "Create room",
+      "创建房间",
+      "ルーム作成",
+      "Raum erstellen"
+    ],
+    "Menu.Settings": [
+      "Settings",
+      "设置",
+      "設定",
+      "Einstellungen"
+    ],
+    "Menu.Quit": [
+      "Quit",
+      "退出游戏",
+      "終了",
+      "Beenden"
+    ],
+    "Menu.Back": [
+      "Back",
+      "返回",
+      "戻る",
+      "Zurück"
+    ],
+    "Menu.Start": [
+      "Start game",
+      "开始游戏",
+      "ゲーム開始",
+      "Spiel starten"
+    ],
+    "Menu.Ready": [
+      "Ready / unready",
+      "准备 / 取消准备",
+      "準備 / 解除",
+      "Bereit / nicht bereit"
+    ],
+    "Menu.Continue": [
+      "Return to game",
+      "返回游戏",
+      "ゲームに戻る",
+      "Zurück zum Spiel"
+    ],
+    "Menu.Leave": [
+      "Leave game",
+      "离开对局",
+      "ゲームを退出",
+      "Spiel verlassen"
+    ],
+    "Menu.Lobby": [
+      "Return to lobby",
+      "返回准备界面",
+      "ロビーに戻る",
+      "Zurück zur Lobby"
+    ],
+    "Room.Name": [
+      "Room name",
+      "房间名称",
+      "ルーム名",
+      "Raumname"
+    ],
+    "Room.Password": [
+      "Password (optional)",
+      "房间密码（可选）",
+      "パスワード（任意）",
+      "Passwort (optional)"
+    ],
+    "Room.Steam": [
+      "Steam",
+      "Steam 联机",
+      "Steam",
+      "Steam"
+    ],
+    "Room.Refresh": [
+      "Refresh",
+      "刷新",
+      "更新",
+      "Aktualisieren"
+    ],
+    "Room.Join": [
+      "Join selected room",
+      "加入选中房间",
+      "選択したルームに参加",
+      "Ausgewähltem Raum beitreten"
+    ],
+    "Room.Host": [
+      "Host",
+      "房主",
+      "ホスト",
+      "Gastgeber"
+    ],
+    "Room.Ready": [
+      "Ready",
+      "已准备",
+      "準備完了",
+      "Bereit"
+    ],
+    "Room.Waiting": [
+      "Waiting",
+      "未准备",
+      "準備待ち",
+      "Wartet"
+    ],
+    "Room.Next": [
+      "Next page",
+      "下一页",
+      "次のページ",
+      "Nächste Seite"
+    ],
+    "Room.Previous": [
+      "Previous page",
+      "上一页",
+      "前のページ",
+      "Vorherige Seite"
+    ],
+    "Settings.Language": [
+      "Language",
+      "语言",
+      "言語",
+      "Sprache"
+    ],
+    "Settings.Music": [
+      "Music volume",
+      "音乐音量",
+      "音楽音量",
+      "Musiklautstärke"
+    ],
+    "Settings.Effects": [
+      "Effects volume",
+      "音效音量",
+      "効果音音量",
+      "Effektlautstärke"
+    ],
+    "Settings.Quality": [
+      "Graphics quality",
+      "画面质量",
+      "画質",
+      "Grafikqualität"
+    ],
+    "Settings.Resolution": [
+      "Resolution",
+      "分辨率",
+      "解像度",
+      "Auflösung"
+    ],
+    "Settings.Window": [
+      "Window / fullscreen",
+      "窗口 / 全屏",
+      "ウィンドウ / 全画面",
+      "Fenster / Vollbild"
+    ],
+    "Control.Move": [
+      "WASD move · mouse aim · left click fire",
+      "WASD 移动 · 鼠标瞄准 · 左键射击",
+      "WASDで移動・マウスで照準・左クリックで射撃",
+      "WASD bewegen · Maus zielen · Linksklick schießen"
+    ],
+    "Control.Tail": [
+      "E recruit · Hold Q / release: throw first ally · Wheel zoom · Esc settings",
+      "E 招募队友 · 按住 Q 蓄力，松开投掷首名队友 · 滚轮缩放 · Esc 设置",
+      "Eで仲間に・Q長押し／離す：先頭の仲間を投げる・ホイール：ズーム・Esc：設定",
+      "E rekrutieren · Q halten/loslassen: ersten Begleiter werfen · Mausrad: Zoom · Esc: Einstellungen"
+    ],
+    "Combat.Recruit": [
+      "[E] Recruit ally",
+      "[E] 招募队友",
+      "[E] 仲間にする",
+      "[E] Verbündeten rekrutieren"
+    ],
+    "Combat.Tail": [
+      "Companions: {Count}",
+      "尾巴队友：{Count}",
+      "仲間：{Count}",
+      "Begleiter: {Count}"
+    ],
+    "Combat.Health": [
+      "Health",
+      "生命",
+      "体力",
+      "Gesundheit"
+    ],
+    "Combat.Armor": [
+      "Armor",
+      "护甲",
+      "アーマー",
+      "Rüstung"
+    ],
+    "Combat.NoRespawn": [
+      "No respawns · spectating your team",
+      "无法复活 · 正在观战队友",
+      "復活不可・味方を観戦中",
+      "Keine Wiederbelebung · Team beobachten"
+    ],
+    "Combat.Level": [
+      "Team level {Level}",
+      "团队等级 {Level}",
+      "チームレベル {Level}",
+      "Teamstufe {Level}"
+    ],
+    "Combat.Upgrade": [
+      "Choose an upgrade",
+      "选择本次进化",
+      "アップグレードを選択",
+      "Verbesserung wählen"
+    ],
+    "Combat.AirDrop": [
+      "Weapon airdrop",
+      "空投武器箱",
+      "武器補給",
+      "Waffenabwurf"
+    ],
+    "Combat.Boss": [
+      "BOSS",
+      "BOSS",
+      "ボス",
+      "BOSS"
+    ],
+    "Result.Victory": [
+      "VICTORY",
+      "胜利",
+      "勝利",
+      "SIEG"
+    ],
+    "Result.Defeat": [
+      "DEFEAT",
+      "失败",
+      "敗北",
+      "NIEDERLAGE"
+    ],
+    "Result.Survived": [
+      "Survival complete",
+      "生存挑战完成",
+      "生存チャレンジ達成",
+      "Überlebensziel erreicht"
+    ],
+    "Network.Creating": [
+      "Creating room…",
+      "正在创建房间…",
+      "ルームを作成中…",
+      "Raum wird erstellt…"
+    ],
+    "Network.Searching": [
+      "Searching…",
+      "正在搜索…",
+      "検索中…",
+      "Suche läuft…"
+    ],
+    "Network.Joining": [
+      "Joining room…",
+      "正在加入房间…",
+      "ルームに参加中…",
+      "Raumbeitritt läuft…"
+    ],
+    "Network.NoRooms": [
+      "No rooms found. Try refreshing.",
+      "未找到房间，请尝试刷新。",
+      "ルームが見つかりません。更新してください。",
+      "Keine Räume gefunden. Bitte aktualisieren."
+    ],
+    "Network.RoomsFound": [
+      "Select a room to join.",
+      "请选择要加入的房间。",
+      "参加するルームを選択。",
+      "Wähle einen Raum zum Beitreten."
+    ],
+    "Network.CreateFailed": [
+      "Could not create the room. Please retry.",
+      "创建房间失败，请重试。",
+      "ルームを作成できませんでした。再試行してください。",
+      "Raum konnte nicht erstellt werden. Bitte erneut versuchen."
+    ],
+    "Network.SearchFailed": [
+      "Room search failed. Please retry.",
+      "搜索房间失败，请重试。",
+      "ルーム検索に失敗しました。再試行してください。",
+      "Raumsuche fehlgeschlagen. Bitte erneut versuchen."
+    ],
+    "Network.JoinFailed": [
+      "Could not join. The room may be full or closed.",
+      "无法加入，房间可能已满或已关闭。",
+      "参加できません。満員または終了した可能性があります。",
+      "Beitritt fehlgeschlagen. Der Raum ist möglicherweise voll oder geschlossen."
+    ],
+    "Network.BadPassword": [
+      "Incorrect password.",
+      "房间密码错误。",
+      "パスワードが違います。",
+      "Falsches Passwort."
+    ],
+    "Network.LeaveFailed": [
+      "Session cleanup failed. Restart before creating another room.",
+      "房间清理失败，请重启游戏后再创建房间。",
+      "セッションを終了できませんでした。再起動してください。",
+      "Sitzung konnte nicht bereinigt werden. Bitte vor dem nächsten Raum neu starten."
+    ],
+    "Network.ConnectionLost": [
+      "The connection dropped; you are back in your own hub.",
+      "连接已断开，你回到了自己的大厅。",
+      "接続が切れました。自分のロビーに戻りました。",
+      "Die Verbindung ist abgebrochen – du bist zurück in deiner Lobby."
+    ],
+    "Network.MatchFull": [
+      "No playable slot is available. Please wait for the next round.",
+      "当前没有可用名额，请等待下一局。",
+      "参加枠がありません。次のラウンドをお待ちください。",
+      "Kein Spielplatz verfügbar. Bitte auf die nächste Runde warten."
+    ],
+    "Network.NotReady": [
+      "Wait until every player is ready.",
+      "请等待所有玩家准备完成。",
+      "全員の準備完了をお待ちください。",
+      "Warte, bis alle Spieler bereit sind."
+    ],
+    "Weapon.0": [
+      "Pistol",
+      "手枪",
+      "ピストル",
+      "Pistole"
+    ],
+    "Weapon.1": [
+      "Rifle",
+      "步枪",
+      "ライフル",
+      "Gewehr"
+    ],
+    "Weapon.2": [
+      "Shotgun",
+      "霰弹枪",
+      "ショットガン",
+      "Schrotflinte"
+    ],
+    "Weapon.3": [
+      "Sniper",
+      "狙击枪",
+      "スナイパー",
+      "Scharfschützengewehr"
+    ],
+    "Weapon.4": [
+      "Machine gun",
+      "机枪",
+      "マシンガン",
+      "Maschinengewehr"
+    ],
+    "Weapon.5": [
+      "Rocket launcher",
+      "火箭筒",
+      "ロケットランチャー",
+      "Raketenwerfer"
+    ],
+    "Skill.0": [
+      "Piercing rounds",
+      "贯穿弹芯",
+      "貫通弾",
+      "Durchschlagmunition"
+    ],
+    "Skill.1": [
+      "Ricochet",
+      "折射弹道",
+      "跳弾",
+      "Querschläger"
+    ],
+    "Skill.2": [
+      "Armor breach",
+      "破甲刻痕",
+      "装甲破壊",
+      "Panzerbrecher"
+    ],
+    "Skill.3": [
+      "Fragmentation",
+      "终点碎裂",
+      "破片弾",
+      "Splittermunition"
+    ],
+    "Skill.4": [
+      "Electric core",
+      "电荷核心",
+      "電撃コア",
+      "Elektrokern"
+    ],
+    "Skill.5": [
+      "Conductive bridge",
+      "导电桥",
+      "伝導ブリッジ",
+      "Leitbrücke"
+    ],
+    "Skill.6": [
+      "High voltage",
+      "高压储能",
+      "高電圧蓄積",
+      "Hochspannung"
+    ],
+    "Skill.7": [
+      "Electromagnetic resonance",
+      "电磁共鸣",
+      "電磁共鳴",
+      "Elektromagnetische Resonanz"
+    ],
+    "Skill.8": [
+      "Burning rounds",
+      "灼热弹药",
+      "焼夷弾",
+      "Brandmunition"
+    ],
+    "Skill.9": [
+      "Spreading fire",
+      "焦油蔓延",
+      "延焼",
+      "Feuerausbreitung"
+    ],
+    "Skill.10": [
+      "Combustion core",
+      "燃爆核心",
+      "燃焼コア",
+      "Verbrennungskern"
+    ],
+    "Skill.11": [
+      "Pressurized flame",
+      "加压燃烧",
+      "加圧燃焼",
+      "Druckflamme"
+    ],
+    "Skill.12": [
+      "Ice rounds",
+      "冰屑弹药",
+      "氷結弾",
+      "Eismunition"
+    ],
+    "Skill.13": [
+      "Deep freeze",
+      "凝结冻结",
+      "急速凍結",
+      "Tiefenfrost"
+    ],
+    "Skill.14": [
+      "Shatter",
+      "碎冰冲击",
+      "氷砕衝撃",
+      "Eissplitter"
+    ],
+    "Skill.15": [
+      "Permafrost",
+      "永冻残域",
+      "永久凍土",
+      "Permafrost"
+    ],
+    "Skill.16": [
+      "Shield battery",
+      "缓冲电池",
+      "シールド電池",
+      "Schildbatterie"
+    ],
+    "Skill.17": [
+      "Repair recovery",
+      "维修回收",
+      "自己修復",
+      "Selbstreparatur"
+    ],
+    "Skill.18": [
+      "Magnetic shield",
+      "隔舱磁场",
+      "磁気シールド",
+      "Magnetschild"
+    ],
+    "Skill.19": [
+      "Emergency transfer",
+      "应急转流",
+      "緊急回復",
+      "Notfallversorgung"
+    ],
+    "Combat.Charge": [
+      "Hold Q to charge · Release to throw",
+      "按住 Q 蓄力 · 松开投掷",
+      "Q長押しでチャージ・離して投げる",
+      "Q halten: aufladen · Loslassen: werfen"
+    ],
+    "Skill.0.Description": [
+      "Each rank lets shots pierce 1 more enemy. Sniper shots already pierce once.",
+      "每级让弹丸多穿透 1 名敌人；狙击枪自带 1 次穿透。",
+      "ランクごとに弾が敵をさらに1体貫通。狙撃弾は最初から1体を貫通。",
+      "Pro Rang durchschlagen Schüsse 1 weiteren Gegner. Scharfschützen haben bereits 1 Durchschlag."
+    ],
+    "Skill.1.Description": [
+      "Each rank adds 1 wall ricochet. Rockets still explode on impact.",
+      "每级增加 1 次墙面弹射；火箭弹碰撞后仍会爆炸。",
+      "ランクごとに壁での跳弾回数+1。ロケットは衝突時に爆発する。",
+      "Pro Rang 1 zusätzlicher Wandabpraller. Raketen explodieren weiterhin beim Aufprall."
+    ],
+    "Skill.2.Description": [
+      "Projectile damage +15% per rank, added to the bonus from Burning rounds.",
+      "每级增加 15% 弹丸伤害，与灼热弹药的增伤相加。",
+      "ランクごとに弾のダメージ+15%。焼夷弾の補正に加算。",
+      "Pro Rang +15% Projektilschaden, addiert zum Bonus der Brandmunition."
+    ],
+    "Skill.3.Description": [
+      "Hits explode for 25% of projectile damage per rank. Radius: 120 + 20 per rank.",
+      "命中时爆炸，每级造成弹丸伤害的 25%；范围半径为 120 + 每级 20。",
+      "命中時に爆発し、ランクごとに弾の25%ダメージ。半径120+ランク×20。",
+      "Treffer explodieren für 25% Projektilschaden pro Rang. Radius: 120 + 20 pro Rang."
+    ],
+    "Skill.4.Description": [
+      "Hits arc to 1 nearby enemy for 30% projectile damage. Unlocks range and extra-target synergies.",
+      "命中后电弧攻击附近 1 名敌人，造成弹丸伤害的 30%；可搭配导电桥与电磁共鸣扩展。",
+      "命中時、近くの敵1体に弾の30%ダメージ。射程と追加標的の強化と連携。",
+      "Treffer springen auf 1 nahen Gegner über: 30% Projektilschaden. Kombinierbar mit Reichweite und weiteren Zielen."
+    ],
+    "Skill.5.Description": [
+      "Requires Electric core to deal chain damage. Each rank increases arc range by 60 from a base of 220.",
+      "需搭配电荷核心；电弧基础范围 220，每级增加 60。",
+      "電撃コアが必要。連鎖の基本射程220、ランクごとに+60。",
+      "Benötigt Elektrokern. Lichtbogenreichweite: Basis 220, +60 pro Rang."
+    ],
+    "Skill.6.Description": [
+      "Every 2 seconds, strike all enemies within 210 for 8 damage per rank.",
+      "每 2 秒攻击半径 210 内的所有敌人，每级造成 8 点伤害。",
+      "2秒ごとに半径210内の全敵を攻撃。ランクごとに8ダメージ。",
+      "Alle 2 Sekunden werden alle Gegner im Radius 210 getroffen: 8 Schaden pro Rang."
+    ],
+    "Skill.7.Description": [
+      "Requires Electric core. Each rank adds 1 chain target to the base of 1.",
+      "需搭配电荷核心；基础连锁 1 名目标，每级额外增加 1 名。",
+      "電撃コアが必要。基本の連鎖標的1体に、ランクごとに+1体。",
+      "Benötigt Elektrokern. Pro Rang 1 zusätzliches Kettenziel zum Grundwert von 1."
+    ],
+    "Skill.8.Description": [
+      "Projectile damage +10% per rank. Hits burn for 2 seconds at 2 + 2 damage per rank each second.",
+      "每级增加 10% 弹丸伤害；命中灼烧 2 秒，每秒伤害为 2 + 每级 2。",
+      "ランクごとに弾のダメージ+10%。命中で2秒炎上、毎秒2+ランク×2ダメージ。",
+      "Pro Rang +10% Projektilschaden. Treffer brennen 2 Sekunden lang für 2 + 2 Schaden pro Rang und Sekunde."
+    ],
+    "Skill.9.Description": [
+      "Requires Burning rounds. Each rank adds 1 second of burn. Burn kills spread a 2-second burn within 200.",
+      "需搭配灼热弹药；每级延长灼烧 1 秒，灼烧击杀会向半径 200 内传播 2 秒灼烧。",
+      "焼夷弾が必要。炎上時間がランクごとに+1秒。炎上で倒すと半径200へ2秒の炎上を拡散。",
+      "Benötigt Brandmunition. Pro Rang +1 Sekunde Brenndauer. Brandtötungen verbreiten 2 Sekunden Feuer im Radius 200."
+    ],
+    "Skill.10.Description": [
+      "Requires Burning rounds. Burn kills explode within 180 for 6 times burn DPS per rank.",
+      "需搭配灼热弹药；灼烧击杀产生半径 180 的爆炸，每级伤害为灼烧秒伤的 6 倍。",
+      "焼夷弾が必要。炎上撃破で半径180に爆発し、ランクごとに炎上秒間ダメージの6倍。",
+      "Benötigt Brandmunition. Brandtötungen explodieren im Radius 180: 6-facher Brandschaden pro Sekunde und Rang."
+    ],
+    "Skill.11.Description": [
+      "Requires Burning rounds. Each projectile hit deals 4 additional burn damage per rank immediately.",
+      "需搭配灼热弹药；弹丸命中时，每级立即追加 4 点灼烧伤害。",
+      "焼夷弾が必要。弾の命中時、ランクごとに4の炎上ダメージを即座に追加。",
+      "Benötigt Brandmunition. Jeder Projektiltreffer verursacht sofort 4 zusätzlichen Brandschaden pro Rang."
+    ],
+    "Skill.12.Description": [
+      "Hits slow enemies by 50% for 1 second. Deep freeze extends this duration.",
+      "命中使敌人减速 50%，持续 1 秒；凝结冻结可延长持续时间。",
+      "命中で敵を1秒間50%減速。急速凍結で持続時間を延長。",
+      "Treffer verlangsamen Gegner 1 Sekunde lang um 50%. Tiefenfrost verlängert die Dauer."
+    ],
+    "Skill.13.Description": [
+      "Requires Ice rounds. Each rank extends its slow by 0.4 seconds.",
+      "需搭配冰屑弹药；每级延长其减速持续时间 0.4 秒。",
+      "氷結弾が必要。減速時間がランクごとに0.4秒延長。",
+      "Benötigt Eismunition. Pro Rang hält deren Verlangsamung 0,4 Sekunden länger an."
+    ],
+    "Skill.14.Description": [
+      "Projectile kills explode within 180 for 20% of projectile damage per rank.",
+      "弹丸击杀产生半径 180 的爆炸，每级造成弹丸伤害的 20%。",
+      "弾での撃破時に半径180へ爆発。ランクごとに弾の20%ダメージ。",
+      "Projektiltötungen explodieren im Radius 180 für 20% Projektilschaden pro Rang."
+    ],
+    "Skill.15.Description": [
+      "Hits slow enemies by 50% for 2 seconds in a radius of 120 + 30 per rank.",
+      "命中后，使半径 120 + 每级 30 内敌人减速 50%，持续 2 秒。",
+      "命中地点の半径120+ランク×30にいる敵を2秒間50%減速。",
+      "Treffer verlangsamen Gegner 2 Sekunden um 50% im Radius 120 + 30 pro Rang."
+    ],
+    "Skill.16.Description": [
+      "Gain 70 armor now. Each rank raises your armor regeneration cap by 40. Armor absorbs 70% of incoming damage.",
+      "立即获得 70 护甲；每级增加 40 护甲恢复上限。护甲承担所受伤害的 70%。",
+      "即座に装甲70獲得。回復上限がランクごとに+40。装甲は被ダメージの70%を吸収。",
+      "Sofort 70 Rüstung. Pro Rang +40 auf das Regenerationslimit. Rüstung absorbiert 70% des eingehenden Schadens."
+    ],
+    "Skill.17.Description": [
+      "Each rank adds 35 base maximum health and 0.8 health regeneration per second. Heal 70 now. Evolution doubles the health bonus.",
+      "每级增加 35 基础生命上限，并每秒恢复 0.8 生命；立即治疗 70。进化状态会翻倍生命上限加成。",
+      "ランクごとに基本最大HP+35、毎秒HP回復+0.8。即座に70回復。進化中は最大HP補正が2倍。",
+      "Pro Rang +35 Basis-Maximalleben und +0,8 Lebensregeneration pro Sekunde. Sofort 70 Heilung. Evolution verdoppelt den Lebensbonus."
+    ],
+    "Skill.18.Description": [
+      "Regenerate 1.5 armor per second per rank, up to 100 + 40 per rank of Shield battery.",
+      "每级每秒恢复 1.5 护甲；恢复上限为 100 + 缓冲电池每级 40。",
+      "ランクごとに毎秒装甲1.5回復。上限は100+シールド電池のランク×40。",
+      "Pro Rang regenerieren 1,5 Rüstung pro Sekunde, bis zu 100 + 40 pro Rang der Schildbatterie."
+    ],
+    "Skill.19.Description": [
+      "When health is below 25%, heal 15% maximum health and gain 40 armor per rank. Checks every 2 seconds; cooldown 30 seconds.",
+      "生命低于 25% 时，恢复最大生命的 15%，并获得每级 40 护甲。每 2 秒检测，冷却 30 秒。",
+      "HP25%未満で最大HPの15%を回復し、ランクごとに装甲40獲得。2秒ごとに判定、再使用30秒。",
+      "Unter 25% Leben: 15% des Maximallebens heilen und 40 Rüstung pro Rang erhalten. Prüfung alle 2 Sekunden, Abklingzeit 30 Sekunden."
+    ],
+    "Combat.WorldPaused": [
+      "WORLD PAUSED · Choose an upgrade",
+      "世界已暂停 · 请选择技能",
+      "世界停止中・スキルを選択",
+      "WELT ANGEHALTEN · Verbesserung wählen"
+    ],
+    "Combat.WaitingUpgrades": [
+      "Waiting for teammates to choose…",
+      "等待队友选择技能…",
+      "仲間のスキル選択を待っています…",
+      "Warte auf die Auswahl deiner Mitspieler…"
+    ],
+    "Combat.SkillRank": [
+      "Rank {Current} → {Next} / 5",
+      "等级 {Current} → {Next} / 5",
+      "ランク {Current} → {Next} / 5",
+      "Rang {Current} → {Next} / 5"
+    ],
+    "Combat.JoinSquad": [
+      "E · Join this player’s squad",
+      "E · 加入这名玩家的队伍",
+      "E・このプレイヤーの部隊に参加",
+      "E · Der Gruppe dieses Spielers beitreten"
+    ],
+    "Combat.LeaveSquad": [
+      "E · Leave squad",
+      "E · 离开当前队伍",
+      "E・部隊から離脱",
+      "E · Gruppe verlassen"
+    ],
+    "Skill.Recovery": [
+      "Field recovery",
+      "战地恢复",
+      "戦地回復",
+      "Feldversorgung"
+    ],
+    "Skill.Recovery.Description": [
+      "All skills are maxed. Restore 25% maximum health and gain 50 armor.",
+      "所有技能已满级。恢复最大生命的 25%，获得 50 护甲。",
+      "全スキルが最大。最大HPの25%を回復し装甲50獲得。",
+      "Alle Fertigkeiten sind maximal. 25% Maximalleben und 50 Rüstung erhalten."
+    ],
+    "Combat.LifeWeapon": [
+      "Weapon equipped for this life",
+      "武器已装备，本条命永久持有",
+      "この命の間は武器を保持",
+      "Waffe bleibt für dieses Leben ausgerüstet"
+    ],
+    "Combat.ChooseHint": [
+      "Click a card or press 1 / 2 / 3",
+      "点击卡片或按 1 / 2 / 3 选择",
+      "カードをクリック、または 1 / 2 / 3 キー",
+      "Karte anklicken oder 1 / 2 / 3 drücken"
+    ],
+    "Combat.LevelUp": [
+      "LEVEL UP!",
+      "升级！",
+      "レベルアップ！",
+      "STUFE AUFGESTIEGEN!"
+    ],
+    "Combat.Reload": [
+      "Reloading",
+      "装填中",
+      "リロード中",
+      "Nachladen"
+    ],
+    "Combat.Squad": [
+      "Squad",
+      "小队",
+      "部隊",
+      "Trupp"
+    ],
+    "Combat.Waiting.Count": [
+      "{Count} player(s) still choosing",
+      "还有 {Count} 名玩家正在选择",
+      "あと {Count} 人が選択中",
+      "{Count} Spieler wählen noch"
+    ],
+    "Combat.XP": [
+      "XP",
+      "经验",
+      "経験値",
+      "EP"
+    ],
+    "Key.Aim": [
+      "Aim",
+      "瞄准",
+      "照準",
+      "Zielen"
+    ],
+    "Key.Fire": [
+      "Fire",
+      "射击",
+      "射撃",
+      "Feuern"
+    ],
+    "Key.LMB": [
+      "LMB",
+      "左键",
+      "左クリック",
+      "LMT"
+    ],
+    "Key.Menu": [
+      "Menu",
+      "菜单",
+      "メニュー",
+      "Menü"
+    ],
+    "Key.Mouse": [
+      "Mouse",
+      "鼠标",
+      "マウス",
+      "Maus"
+    ],
+    "Key.Move": [
+      "Move",
+      "移动",
+      "移動",
+      "Bewegen"
+    ],
+    "Key.Recruit": [
+      "Recruit",
+      "招募",
+      "勧誘",
+      "Rekrutieren"
+    ],
+    "Key.Leave": [
+      "Leave squad",
+      "离开队伍",
+      "部隊を離脱",
+      "Gruppe verlassen"
+    ],
+    "Key.Join": [
+      "Join squad",
+      "加入队伍",
+      "部隊に参加",
+      "Gruppe beitreten"
+    ],
+    "Key.Throw": [
+      "Hold to throw",
+      "按住投掷",
+      "長押しで投擲",
+      "Halten zum Werfen"
+    ],
+    "Key.Wheel": [
+      "Wheel",
+      "滚轮",
+      "ホイール",
+      "Mausrad"
+    ],
+    "Key.Zoom": [
+      "Zoom",
+      "缩放",
+      "ズーム",
+      "Zoom"
+    ],
+    "Result.Reached": [
+      "Reached team level {Level}",
+      "团队达到 {Level} 级",
+      "チームレベル {Level} に到達",
+      "Teamstufe {Level} erreicht"
+    ],
+    "Result.Survival": [
+      "Survived {Seconds}s",
+      "生存 {Seconds} 秒",
+      "{Seconds} 秒生存",
+      "{Seconds} s überlebt"
+    ],
+    "Settings.Fullscreen": [
+      "Fullscreen",
+      "全屏",
+      "フルスクリーン",
+      "Vollbild"
+    ],
+    "Settings.Windowed": [
+      "Windowed",
+      "窗口",
+      "ウィンドウ",
+      "Fenster"
+    ],
+    "Settings.Paused": [
+      "Game paused",
+      "游戏已暂停",
+      "一時停止中",
+      "Spiel pausiert"
+    ],
+    "Settings.Quality.0": [
+      "Low",
+      "低",
+      "低",
+      "Niedrig"
+    ],
+    "Settings.Quality.1": [
+      "Medium",
+      "中",
+      "中",
+      "Mittel"
+    ],
+    "Settings.Quality.2": [
+      "High",
+      "高",
+      "高",
+      "Hoch"
+    ],
+    "Settings.Quality.3": [
+      "Epic",
+      "极致",
+      "最高",
+      "Episch"
+    ],
+    "Skill.New": [
+      "NEW",
+      "新",
+      "NEW",
+      "NEU"
+    ],
+    "Skill.Family.0": [
+      "Ballistics",
+      "弹道",
+      "弾道",
+      "Ballistik"
+    ],
+    "Skill.Family.1": [
+      "Charge",
+      "电荷",
+      "電荷",
+      "Ladung"
+    ],
+    "Skill.Family.2": [
+      "Fire",
+      "火焰",
+      "炎",
+      "Feuer"
+    ],
+    "Skill.Family.3": [
+      "Frost",
+      "冰霜",
+      "氷",
+      "Frost"
+    ],
+    "Skill.Family.4": [
+      "Shield",
+      "护盾",
+      "シールド",
+      "Schild"
+    ],
+    "Menu.Multiplayer": [
+      "Multiplayer",
+      "多人游戏",
+      "マルチプレイ",
+      "Mehrspieler"
+    ],
+    "Menu.Saves": [
+      "Saves",
+      "存档",
+      "セーブデータ",
+      "Spielstände"
+    ],
+    "Menu.Intro": [
+      "Introduction",
+      "介绍",
+      "ゲーム紹介",
+      "Einführung"
+    ],
+    "Menu.Footer": [
+      "Hub and line defense · chapter 1",
+      "大厅与守线 · 第 1 章",
+      "ロビーとライン防衛・第1章",
+      "Lobby und Linienverteidigung · Kapitel 1"
+    ],
+    "Online.Subtitle": [
+      "Play together on Steam or Epic. Up to 10 players per room.",
+      "通过 Steam 或 Epic 与好友合作，每个房间最多 10 人。",
+      "Steam または Epic で一緒に遊ぼう。1ルーム最大10人。",
+      "Gemeinsam über Steam oder Epic – bis zu 10 Spieler pro Raum."
+    ],
+    "Room.Epic": [
+      "Epic (EOS)",
+      "Epic 联机",
+      "Epic（EOS）",
+      "Epic (EOS)"
+    ],
+    "Room.CreateTitle": [
+      "Create a room",
+      "创建房间",
+      "ルームを作成",
+      "Raum erstellen"
+    ],
+    "Room.ListTitle": [
+      "Open rooms",
+      "房间列表",
+      "ルーム一覧",
+      "Offene Räume"
+    ],
+    "Room.JoinPassword": [
+      "Room password",
+      "加入密码",
+      "参加パスワード",
+      "Raumpasswort"
+    ],
+    "Room.NameHint": [
+      "Name your room",
+      "给房间起个名字",
+      "ルーム名を入力",
+      "Raumname eingeben"
+    ],
+    "Room.PasswordHint": [
+      "Leave empty for an open room",
+      "留空即为公开房间",
+      "空欄なら公開ルーム",
+      "Leer lassen für einen offenen Raum"
+    ],
+    "Room.JoinHint": [
+      "Only needed for locked rooms",
+      "仅带锁的房间需要填写",
+      "鍵付きルームのみ必要",
+      "Nur für gesperrte Räume nötig"
+    ],
+    "Room.CapacityNote": [
+      "Co-op for up to 8 players · friendly bullets push, never hurt",
+      "最多 8 人合作 · 友军子弹只推开、不伤害",
+      "最大8人で協力 · 味方の弾は押すだけでダメージなし",
+      "Koop für bis zu 8 Spieler · eigene Kugeln schubsen nur"
+    ],
+    "Room.Empty": [
+      "No rooms yet. Refresh, or create one for your friends.",
+      "暂时没有房间。刷新一下，或为好友创建一个。",
+      "ルームがありません。更新するか、新しく作成してください。",
+      "Noch keine Räume. Aktualisieren oder selbst einen erstellen."
+    ],
+    "Room.EmptyOffline": [
+      "Sign in to this platform to see its rooms.",
+      "登录该平台后即可查看房间。",
+      "このプラットフォームにサインインするとルームが表示されます。",
+      "Melde dich bei dieser Plattform an, um ihre Räume zu sehen."
+    ],
+    "Room.Lobby": [
+      "Room",
+      "房间大厅",
+      "ルーム",
+      "Raum"
+    ],
+    "Room.Players": [
+      "Players ({Count}/8)",
+      "玩家（{Count}/8）",
+      "プレイヤー（{Count}/8）",
+      "Spieler ({Count}/8)"
+    ],
+    "Room.RunTitle": [
+      "Line defense",
+      "守线",
+      "ライン防衛",
+      "Liniendefensive"
+    ],
+    "Room.RunInfo": [
+      "The host picks a page and deploys once everyone is ready. Every player carries their own ink for drawing walls.",
+      "房主选好关卡，等所有人准备后出击。每个人都有自己的墨水用来画墙。",
+      "ホストがページを選び、全員の準備ができたら出撃。墨（インク）は各自が持ち、壁を描ける。",
+      "Der Host wählt eine Seite und rückt aus, sobald alle bereit sind. Jeder hat eigene Tinte zum Wändezeichnen."
+    ],
+    "Room.ResumeTitle": [
+      "Continuing a saved run",
+      "继续联机存档",
+      "セーブから再開",
+      "Gespeicherter Durchgang"
+    ],
+    "Room.ResumeInfo": [
+      "Team level {Level} · survived {Time}",
+      "团队等级 {Level} · 已坚持 {Time}",
+      "チームレベル {Level} · 経過 {Time}",
+      "Teamlevel {Level} · überlebt {Time}"
+    ],
+    "Room.ResumeNote": [
+      "Each friend gets their own character back when they join with the same account.",
+      "队友用同一平台账号加入后，会自动取回自己的角色。",
+      "同じアカウントで参加した仲間は自分のキャラクターを引き継ぎます。",
+      "Wer mit demselben Konto beitritt, bekommt seine eigene Figur zurück."
+    ],
+    "Platform.Ready": [
+      "Ready",
+      "已就绪",
+      "準備完了",
+      "Bereit"
+    ],
+    "Platform.SignedInAs": [
+      "Signed in as {Name}",
+      "已登录：{Name}",
+      "サインイン中：{Name}",
+      "Angemeldet als {Name}"
+    ],
+    "Platform.SteamOffline": [
+      "Steam is not running. Start Steam and sign in.",
+      "Steam 未运行，请启动并登录 Steam。",
+      "Steam が起動していません。起動してサインインしてください。",
+      "Steam läuft nicht. Starte Steam und melde dich an."
+    ],
+    "Platform.EpicSignIn": [
+      "Not signed in to Epic.",
+      "尚未登录 Epic 账号。",
+      "Epic にサインインしていません。",
+      "Nicht bei Epic angemeldet."
+    ],
+    "Platform.EpicSignInButton": [
+      "Sign in to Epic",
+      "登录 Epic",
+      "Epic にサインイン",
+      "Bei Epic anmelden"
+    ],
+    "Platform.EpicSigningIn": [
+      "Signing in to Epic…",
+      "正在登录 Epic…",
+      "Epic にサインイン中…",
+      "Anmeldung bei Epic …"
+    ],
+    "Platform.EpicSignedIn": [
+      "Signed in to Epic.",
+      "已登录 Epic。",
+      "Epic にサインインしました。",
+      "Bei Epic angemeldet."
+    ],
+    "Platform.EpicFailed": [
+      "Epic sign-in failed. Please try again.",
+      "Epic 登录失败，请重试。",
+      "Epic のサインインに失敗しました。もう一度お試しください。",
+      "Epic-Anmeldung fehlgeschlagen. Bitte erneut versuchen."
+    ],
+    "Platform.EpicNotConfigured": [
+      "Epic online is not configured in this build (EOS product credentials missing).",
+      "此版本尚未配置 Epic 联机（缺少 EOS 产品凭据）。",
+      "このビルドでは Epic オンラインが未設定です（EOS の認証情報がありません）。",
+      "Epic-Online ist in diesem Build nicht eingerichtet (EOS-Zugangsdaten fehlen)."
+    ],
+    "Platform.Unavailable": [
+      "This platform is unavailable right now.",
+      "该平台暂不可用。",
+      "このプラットフォームは現在利用できません。",
+      "Diese Plattform ist gerade nicht verfügbar."
+    ],
+    "Save.Title": [
+      "Save progress",
+      "保存进度",
+      "進行状況を保存",
+      "Fortschritt speichern"
+    ],
+    "Save.HostOnly": [
+      "Only the host can save a co-op run.",
+      "联机进度只能由房主保存。",
+      "協力プレイの進行状況はホストのみ保存できます。",
+      "Nur der Host kann einen Koop-Durchgang speichern."
+    ],
+    "Save.Saved": [
+      "Progress saved.",
+      "进度已保存。",
+      "保存しました。",
+      "Fortschritt gespeichert."
+    ],
+    "Save.Failed": [
+      "Could not save. Check disk space and try again.",
+      "保存失败，请检查磁盘空间后重试。",
+      "保存できませんでした。空き容量を確認して再試行してください。",
+      "Speichern fehlgeschlagen. Speicherplatz prüfen und erneut versuchen."
+    ],
+    "Save.LoadFailed": [
+      "This save could not be loaded.",
+      "该存档无法读取。",
+      "このセーブデータを読み込めませんでした。",
+      "Dieser Spielstand konnte nicht geladen werden."
+    ],
+    "Saves.Subtitle": [
+      "Each save is one player profile: stickers, stars and the pages you have opened.",
+      "每个存档是一份玩家档案：贴纸、星星和已解锁的关卡。",
+      "セーブはプレイヤープロフィール。ステッカー、星、解放したページを記録する。",
+      "Jeder Spielstand ist ein Spielerprofil: Sticker, Sterne und freigeschaltete Seiten."
+    ],
+    "Saves.Slot": [
+      "Slot {Slot}",
+      "存档 {Slot}",
+      "スロット {Slot}",
+      "Platz {Slot}"
+    ],
+    "Saves.Empty": [
+      "Empty",
+      "空存档",
+      "空き",
+      "Leer"
+    ],
+    "Saves.EmptyHint": [
+      "Press Esc during a run and choose a slot under “Save progress”.",
+      "对局中按 Esc，在“保存进度”里选择这个存档位。",
+      "プレイ中に Esc を押し、「進行状況を保存」でこのスロットを選びます。",
+      "Drücke im Durchgang Esc und wähle unter „Fortschritt speichern“ diesen Platz."
+    ],
+    "Saves.ModeSolo": [
+      "Single player",
+      "单人游戏",
+      "シングルプレイ",
+      "Einzelspieler"
+    ],
+    "Saves.ModeSteam": [
+      "Steam co-op",
+      "Steam 联机",
+      "Steam 協力",
+      "Steam-Koop"
+    ],
+    "Saves.ModeEpic": [
+      "Epic co-op",
+      "Epic 联机",
+      "Epic 協力",
+      "Epic-Koop"
+    ],
+    "Saves.Survived": [
+      "Survived {Time}",
+      "已坚持 {Time}",
+      "経過時間 {Time}",
+      "Überlebt: {Time}"
+    ],
+    "Saves.Players": [
+      "{Count} player(s)",
+      "{Count} 名玩家",
+      "プレイヤー {Count} 人",
+      "{Count} Spieler"
+    ],
+    "Saves.SoloTeam": [
+      "You + {Count} AI teammates",
+      "你 + {Count} 名 AI 队友",
+      "あなた + AI 仲間 {Count} 人",
+      "Du + {Count} KI-Teamkameraden"
+    ],
+    "Saves.Continue": [
+      "Continue",
+      "继续",
+      "続ける",
+      "Fortsetzen"
+    ],
+    "Saves.Host": [
+      "Host & continue",
+      "开房继续",
+      "ホストして再開",
+      "Hosten & fortsetzen"
+    ],
+    "Saves.Delete": [
+      "Delete",
+      "删除",
+      "削除",
+      "Löschen"
+    ],
+    "Saves.Cancel": [
+      "Cancel",
+      "取消",
+      "キャンセル",
+      "Abbrechen"
+    ],
+    "Saves.ConfirmDelete": [
+      "Delete this save for good?",
+      "确定要永久删除这个存档吗？",
+      "このセーブデータを削除しますか？",
+      "Diesen Spielstand endgültig löschen?"
+    ],
+    "Saves.OnlineNote": [
+      "Co-op saves live only on the host's computer: guests never write a copy, so a run always has exactly one version. Each player is stored by their Steam or Epic account, so when the host reopens the room, every friend who joins with the same account gets their own character, skills and squad back.",
+      "联机存档只保存在房主的电脑上，队友不会另存副本，因此一局游戏永远只有一份进度。每名玩家按其 Steam / Epic 账号记录，房主重新开房后，队友用同一账号加入即可取回自己的角色、技能和伙伴。",
+      "協力プレイのセーブはホストのPCにのみ保存され、参加者は複製を作りません。そのため進行状況は常に1つだけです。各プレイヤーは Steam / Epic アカウントで記録されるので、ホストがルームを開き直すと、同じアカウントで参加した仲間は自分のキャラクター・スキル・仲間を引き継げます。",
+      "Koop-Spielstände liegen nur auf dem PC des Hosts – Gäste speichern keine Kopie, daher gibt es immer genau eine Version eines Durchgangs. Jeder Spieler wird über sein Steam- oder Epic-Konto gespeichert: Öffnet der Host den Raum erneut, erhält jeder, der mit demselben Konto beitritt, seine Figur, Fähigkeiten und Gefährten zurück."
+    ],
+    "Intro.Subtitle": [
+      "Everything you need for your first run.",
+      "第一次出发前需要知道的一切。",
+      "最初のプレイに必要なことすべて。",
+      "Alles für deinen ersten Durchgang."
+    ],
+    "Intro.GoalTitle": [
+      "Goal",
+      "目标",
+      "目的",
+      "Ziel"
+    ],
+    "Intro.Goal": [
+      "Hold the paper arena for 10 minutes. Monster waves keep growing and elite blocks arrive at 2, 5 and 9 minutes. If every player falls, the run is lost.",
+      "在纸面竞技场坚持 10 分钟。怪物潮会越来越强，第 2、5、9 分钟还会出现精英方块。所有玩家倒下即失败。",
+      "紙のアリーナで10分間耐え抜こう。モンスターの波はどんどん強くなり、2・5・9分にはエリートが現れる。全員が倒れたら失敗。",
+      "Halte die Papierarena 10 Minuten lang. Die Monsterwellen werden stärker, bei 2, 5 und 9 Minuten erscheinen Elite-Blöcke. Fallen alle Spieler, ist der Durchgang verloren."
+    ],
+    "Intro.GrowthTitle": [
+      "Level up together",
+      "共同成长",
+      "みんなで成長",
+      "Gemeinsam aufsteigen"
+    ],
+    "Intro.Growth": [
+      "Every kill adds to one shared team level. When it rises the world pauses and each player picks one of three skill cards: 20 skills in 5 families, each up to rank 5.",
+      "每次击杀都会累积团队经验。团队升级时世界暂停，每人从三张技能卡中选一张：共 5 个系列、20 种技能，每种最高 5 级。",
+      "撃破ごとにチーム共通のレベルが上がる。レベルアップで世界が止まり、各自3枚のスキルカードから1枚を選ぶ。5系統20種、各最大ランク5。",
+      "Jeder Treffer füllt ein gemeinsames Teamlevel. Steigt es, pausiert die Welt und jeder wählt eine von drei Fähigkeitskarten: 20 Fähigkeiten in 5 Familien, je bis Rang 5."
+    ],
+    "Intro.SquadTitle": [
+      "Companions",
+      "伙伴",
+      "仲間",
+      "Gefährten"
+    ],
+    "Intro.Squad": [
+      "Press E near a wandering companion to add it to your tail; it follows you and fires with you. Hold Q to charge and release to throw your first companion at the enemy.",
+      "靠近游荡的伙伴按 E，把它加入你的队尾，它会跟随你并一起开火。按住 Q 蓄力，松开即可把队首伙伴投掷出去。",
+      "さまよう仲間に近づいて E で列に加えよう。ついてきて一緒に撃つ。Q 長押しで溜め、離すと先頭の仲間を敵に投げつける。",
+      "Drücke E bei einem umherstreifenden Gefährten, um ihn an deinen Schweif zu hängen – er folgt dir und feuert mit. Halte Q zum Aufladen und lass los, um den ersten Gefährten zu werfen."
+    ],
+    "Intro.WeaponsTitle": [
+      "Weapon drops",
+      "武器空投",
+      "武器の投下",
+      "Waffenabwürfe"
+    ],
+    "Intro.Weapons": [
+      "Supply crates fall every 40 seconds. Walk over one to arm yourself and your whole squad with a rifle, shotgun, sniper, machine gun or rocket launcher.",
+      "每 40 秒会空投一个补给箱，走过去即可为自己和整支队伍换上步枪、霰弹枪、狙击枪、机枪或火箭筒。",
+      "40秒ごとに補給箱が落ちてくる。上を通ると自分と列全体がライフル・ショットガン・スナイパー・機関銃・ロケットランチャーに持ち替わる。",
+      "Alle 40 Sekunden fallen Versorgungskisten. Lauf darüber, um dich und deinen ganzen Trupp mit Gewehr, Schrotflinte, Scharfschützengewehr, MG oder Raketenwerfer auszurüsten."
+    ],
+    "Intro.TeamTitle": [
+      "Teammates",
+      "队友",
+      "チームメイト",
+      "Teamkameraden"
+    ],
+    "Intro.Team": [
+      "Single player brings three AI teammates who fight, level up and pick skills on their own. Bullets never hurt teammates, but they do shove them along the shot, so mind your line of fire.",
+      "单人游戏会配备 3 名 AI 队友，它们会自行战斗、升级并挑选技能。子弹不会伤害队友，但会沿弹道把队友推开，注意射击线路。",
+      "シングルプレイでは AI の仲間3人が自分で戦い、成長し、スキルを選ぶ。弾は味方を傷つけないが、弾道に沿って押し出すので射線に注意。",
+      "Im Einzelspieler kämpfen drei KI-Teamkameraden mit, steigen auf und wählen selbst Fähigkeiten. Kugeln verletzen Teamkameraden nie, schubsen sie aber entlang der Flugbahn – achte auf deine Schusslinie."
+    ],
+    "Intro.OnlineTitle": [
+      "Multiplayer",
+      "联机",
+      "マルチプレイ",
+      "Mehrspieler"
+    ],
+    "Intro.Online": [
+      "Create or join rooms on Steam or Epic (EOS) for up to 10 players. The host can save a co-op run and continue it later with the same friends.",
+      "可在 Steam 或 Epic（EOS）上创建或加入房间，最多 10 人。房主可以保存联机进度，之后与同一批好友继续。",
+      "Steam または Epic（EOS）で最大10人のルームを作成・参加できる。ホストは協力プレイを保存し、同じ仲間と後で続けられる。",
+      "Erstelle oder betritt Räume auf Steam oder Epic (EOS) für bis zu 10 Spieler. Der Host kann einen Koop-Durchgang speichern und später mit denselben Freunden fortsetzen."
+    ],
+    "Key.Pick": [
+      "Pick skill",
+      "选技能",
+      "スキル選択",
+      "Fähigkeit wählen"
+    ],
+    "Team.Bot": [
+      "AI {Index}",
+      "AI 队友 {Index}",
+      "AI 仲間 {Index}",
+      "KI {Index}"
+    ],
+    "Combat.Team": [
+      "Teammates",
+      "队友",
+      "チームメイト",
+      "Team"
+    ],
+    "Board.Title": [
+      "Mission board",
+      "任务板",
+      "ミッションボード",
+      "Missionsbrett"
+    ],
+    "Board.Subtitle": [
+      "Line defense · draw walls into a maze, then fight on the field yourself.",
+      "守线 · 在方格纸上画墙造迷宫，再亲自下场战斗。",
+      "ライン防衛 · 壁を描いて迷路を作り、自分も戦場で戦う。",
+      "Liniendefensive · zeichne Wände zu einem Labyrinth und kämpfe selbst mit."
+    ],
+    "Board.Chapter": [
+      "Chapter 1 · The first notebook",
+      "第 1 章 · 第一本笔记本",
+      "第1章 · 最初のノート",
+      "Kapitel 1 · Das erste Heft"
+    ],
+    "Level.1-1": [
+      "First page",
+      "第一页",
+      "最初のページ",
+      "Erste Seite"
+    ],
+    "Level.1-2": [
+      "Two doors",
+      "两道门",
+      "ふたつの扉",
+      "Zwei Türen"
+    ],
+    "Level.1-3": [
+      "Long hall",
+      "长走廊",
+      "長い廊下",
+      "Langer Flur"
+    ],
+    "Board.Waves": [
+      "{Count} waves",
+      "{Count} 波",
+      "{Count} ウェーブ",
+      "{Count} Wellen"
+    ],
+    "Board.Locked": [
+      "Clear the page before it first",
+      "先通关上一页",
+      "前のページをクリアしよう",
+      "Erst die vorige Seite schaffen"
+    ],
+    "Board.Play": [
+      "Deploy",
+      "出击",
+      "出撃",
+      "Ausrücken"
+    ],
+    "Board.Bots": [
+      "AI teammates",
+      "AI 队友",
+      "AIの仲間",
+      "KI-Mitspieler"
+    ],
+    "Board.BotsNote": [
+      "Solo is balanced without AI; bringing AI teammates gives up the third star.",
+      "单人按不带 AI 平衡；带上 AI 队友就拿不到第三颗星。",
+      "ソロはAIなしで調整済み。AIを連れると3つ目の星は取れない。",
+      "Solo ist ohne KI ausbalanciert; mit KI-Mitspielern gibt es den dritten Stern nicht."
+    ],
+    "Board.Friends": [
+      "Play with friends",
+      "和好友联机",
+      "フレンドと遊ぶ",
+      "Mit Freunden spielen"
+    ],
+    "Board.Profile": [
+      "Profile {Slot}",
+      "档案 {Slot}",
+      "プロフィール {Slot}",
+      "Profil {Slot}"
+    ],
+    "Board.Stickers": [
+      "{Count} stickers",
+      "{Count} 张贴纸",
+      "ステッカー {Count} 枚",
+      "{Count} Sticker"
+    ],
+    "Board.Change": [
+      "Change profile",
+      "切换档案",
+      "プロフィール変更",
+      "Profil wechseln"
+    ],
+    "Star.0": [
+      "Core untouched",
+      "核心不掉血",
+      "コア無傷",
+      "Kern unversehrt"
+    ],
+    "Star.1": [
+      "Lose fewer than 20 wall cells",
+      "墙体损失少于 20 格",
+      "壁の損失20マス未満",
+      "Weniger als 20 Wandfelder verlieren"
+    ],
+    "Star.2": [
+      "No AI teammates",
+      "不带 AI 队友",
+      "AIの仲間なし",
+      "Ohne KI-Mitspieler"
+    ],
+    "Profile.Use": [
+      "Use this profile",
+      "使用此档案",
+      "このプロフィールを使う",
+      "Dieses Profil nutzen"
+    ],
+    "Profile.Active": [
+      "In use",
+      "使用中",
+      "使用中",
+      "Aktiv"
+    ],
+    "Profile.New": [
+      "New profile",
+      "新建档案",
+      "新規プロフィール",
+      "Neues Profil"
+    ],
+    "Profile.Empty": [
+      "Empty slot",
+      "空槽位",
+      "空きスロット",
+      "Leerer Platz"
+    ],
+    "Profile.Cleared": [
+      "{Count} pages cleared",
+      "已通关 {Count} 页",
+      "{Count} ページクリア",
+      "{Count} Seiten geschafft"
+    ],
+    "Profile.Stars": [
+      "{Count} stars",
+      "{Count} 颗星",
+      "星 {Count} 個",
+      "{Count} Sterne"
+    ],
+    "Profile.ConfirmDelete": [
+      "Delete this profile for good?",
+      "确定永久删除这份档案？",
+      "このプロフィールを完全に削除する？",
+      "Dieses Profil endgültig löschen?"
+    ],
+    "Profile.Note": [
+      "Profiles stay on this PC and come with you into friends' rooms. The host works out rewards; your own machine writes them.",
+      "档案保存在本机，跟着你进入好友的房间。奖励由房主计算，由你自己的电脑写入。",
+      "プロフィールはこのPCに保存され、フレンドの部屋にも持ち込める。報酬はホストが計算し、書き込むのは自分のPC。",
+      "Profile bleiben auf diesem PC und kommen mit in die Räume von Freunden. Der Host berechnet Belohnungen, gespeichert werden sie auf deinem Rechner."
+    ],
+    "Defense.Wave": [
+      "Wave {Wave} / {Count}",
+      "第 {Wave} / {Count} 波",
+      "ウェーブ {Wave} / {Count}",
+      "Welle {Wave} / {Count}"
+    ],
+    "Defense.Build": [
+      "Build phase",
+      "布防阶段",
+      "準備フェーズ",
+      "Bauphase"
+    ],
+    "Defense.Fight": [
+      "Wave incoming",
+      "波次进行中",
+      "ウェーブ進行中",
+      "Welle läuft"
+    ],
+    "Defense.Core": [
+      "Core",
+      "核心",
+      "コア",
+      "Kern"
+    ],
+    "Defense.Enemies": [
+      "{Count} enemies left",
+      "剩余敌人 {Count}",
+      "残りの敵 {Count}",
+      "{Count} Gegner übrig"
+    ],
+    "Defense.StartWave": [
+      "Start wave",
+      "提前开波",
+      "ウェーブ開始",
+      "Welle starten"
+    ],
+    "Defense.HostStarts": [
+      "The host starts the wave",
+      "由房主开波",
+      "ホストがウェーブを開始する",
+      "Der Host startet die Welle"
+    ],
+    "Defense.Ink": [
+      "Ink",
+      "墨水",
+      "インク",
+      "Tinte"
+    ],
+    "Defense.BuildHint": [
+      "Right-drag on the paper to draw walls (10 ink a cell); right-drag a wall to erase it. Enemies take the shortest open road to the core.",
+      "按住右键在方格纸上拖动画墙（每格 10 墨水），在墙上拖动则擦掉。敌人会走通往核心的最短通路。",
+      "右ドラッグで紙に壁を描く（1マス10インク）。壁の上をドラッグすると消える。敵はコアへの最短ルートを通る。",
+      "Rechts ziehen zeichnet Wände (10 Tinte pro Feld), über einer Wand löscht es sie. Gegner nehmen den kürzesten offenen Weg zum Kern."
+    ],
+    "Defense.TurretHint": [
+      "Throw a square or bigger onto open paper to pin it as a turret. E recruits triangles, F merges the last one forward.",
+      "把方块及以上的多边形投到空地上，它会钉成炮台。E 招募三角形，F 把末尾的三角形并入前一个。",
+      "四角形以上を空き地に投げると砲台として固定される。Eで三角形を集め、Fで最後尾を前に合成。",
+      "Wirf ein Quadrat oder größer auf freies Papier, dann wird es ein Geschütz. E sammelt Dreiecke, F verschmilzt das letzte nach vorn."
+    ],
+    "Defense.WaveBanner": [
+      "Wave {Wave}!",
+      "第 {Wave} 波来袭！",
+      "ウェーブ {Wave}！",
+      "Welle {Wave}!"
+    ],
+    "Defense.ClearBanner": [
+      "Wave cleared · +{Count} stickers",
+      "波次完成 · 贴纸 +{Count}",
+      "ウェーブクリア · ステッカー +{Count}",
+      "Welle geschafft · +{Count} Sticker"
+    ],
+    "Defense.Respawn": [
+      "Back beside the core in {Seconds} s",
+      "{Seconds} 秒后在核心旁复活",
+      "{Seconds} 秒後にコアの横で復活",
+      "In {Seconds} s zurück am Kern"
+    ],
+    "Defense.Denied.1": [
+      "Not enough ink",
+      "墨水不够",
+      "インクが足りない",
+      "Nicht genug Tinte"
+    ],
+    "Defense.Denied.2": [
+      "That stroke would seal the core off — enemies always need a road",
+      "这一笔会封死通路——敌人必须始终有路可走",
+      "その線ではコアが塞がる。敵には常に通り道が必要",
+      "Dieser Strich würde den Kern abriegeln — Gegner brauchen immer einen Weg"
+    ],
+    "Defense.Denied.3": [
+      "Someone is standing there",
+      "那里有人站着",
+      "そこに誰かがいる",
+      "Dort steht jemand"
+    ],
+    "Defense.Objectives": [
+      "Stars",
+      "星级目标",
+      "星の目標",
+      "Sterne"
+    ],
+    "Defense.StartFailed": [
+      "The page could not be opened",
+      "关卡无法开始",
+      "ページを開けなかった",
+      "Die Seite ließ sich nicht öffnen"
+    ],
+    "Defense.Turrets": [
+      "Turrets {Count}",
+      "炮台 {Count}",
+      "砲台 {Count}",
+      "Geschütze {Count}"
+    ],
+    "Key.RMB": [
+      "RMB",
+      "右键",
+      "右クリック",
+      "RMT"
+    ],
+    "Key.Draw": [
+      "Draw walls",
+      "画墙",
+      "壁を描く",
+      "Wände zeichnen"
+    ],
+    "Key.Merge": [
+      "Merge",
+      "合成",
+      "合成",
+      "Verschmelzen"
+    ],
+    "Key.Enter": [
+      "Enter",
+      "回车",
+      "Enter",
+      "Enter"
+    ],
+    "Result.Waves": [
+      "Waves held: {Count}",
+      "守住波数：{Count}",
+      "防いだウェーブ：{Count}",
+      "Gehaltene Wellen: {Count}"
+    ],
+    "Result.Stickers": [
+      "Stickers earned: {Count}",
+      "获得贴纸：{Count}",
+      "獲得ステッカー：{Count}",
+      "Verdiente Sticker: {Count}"
+    ],
+    "Result.FirstClear": [
+      "First clear bonus +{Count}",
+      "首次通关奖励 +{Count}",
+      "初クリアボーナス +{Count}",
+      "Erstabschluss-Bonus +{Count}"
+    ],
+    "Result.Retry": [
+      "Try again",
+      "再来一次",
+      "もう一度",
+      "Nochmal"
+    ],
+    "Result.Next": [
+      "Next page",
+      "下一页",
+      "次のページ",
+      "Nächste Seite"
+    ],
+    "Result.CoreLost": [
+      "The core fell.",
+      "核心被攻破了。",
+      "コアが落ちた。",
+      "Der Kern ist gefallen."
+    ],
+    "Result.Held": [
+      "Every wave held.",
+      "守住了全部波次。",
+      "全ウェーブを防ぎ切った。",
+      "Alle Wellen gehalten."
+    ],
+    "Prank.Title": [
+      "Trolling level",
+      "整活强度",
+      "おふざけ度",
+      "Unfug-Stufe"
+    ],
+    "Prank.0": [
+      "Off",
+      "关闭",
+      "オフ",
+      "Aus"
+    ],
+    "Prank.1": [
+      "Friendly",
+      "友好",
+      "フレンドリー",
+      "Freundlich"
+    ],
+    "Prank.2": [
+      "Chaos",
+      "混乱",
+      "カオス",
+      "Chaos"
+    ],
+    "Prank.0.Note": [
+      "Nobody can be grabbed or thrown, and friendly fire never shoves.",
+      "谁都不能被抓起或投掷，友军子弹也不会推人。",
+      "誰もつかまれず、投げられない。味方の弾も押さない。",
+      "Niemand kann gepackt oder geworfen werden, und Eigenbeschuss schubst nie."
+    ],
+    "Prank.1.Note": [
+      "Only players who allow it can be grabbed and thrown; friendly fire shoves a little.",
+      "只有打开“可被投掷”的人才能被抓起和投掷；友军子弹轻推。",
+      "許可した人だけをつかんで投げられる。味方の弾は少し押す。",
+      "Nur wer es erlaubt, kann gepackt und geworfen werden; Eigenbeschuss schubst leicht."
+    ],
+    "Prank.2.Note": [
+      "Anyone can be grabbed and thrown at any time; friendly fire shoves hard.",
+      "任何人随时都能被抓起和投掷；友军子弹大力推人。",
+      "誰でもいつでもつかんで投げられる。味方の弾は強く押す。",
+      "Jeder kann jederzeit gepackt und geworfen werden; Eigenbeschuss schubst kräftig."
+    ],
+    "Throwable.On": [
+      "Teammates may throw me: on",
+      "允许队友投掷我：开",
+      "味方に投げられてもOK：オン",
+      "Mitspieler dürfen mich werfen: an"
+    ],
+    "Throwable.Off": [
+      "Teammates may throw me: off",
+      "允许队友投掷我：关",
+      "味方に投げられてもOK：オフ",
+      "Mitspieler dürfen mich werfen: aus"
+    ],
+    "Throwable.Tag": [
+      "throwable",
+      "可投掷",
+      "投げOK",
+      "werfbar"
+    ],
+    "Room.Kick": [
+      "Kick",
+      "踢出",
+      "キック",
+      "Entfernen"
+    ],
+    "Network.Kicked": [
+      "The host removed you from the room.",
+      "你被房主移出了房间。",
+      "ホストによってルームから外されました。",
+      "Der Gastgeber hat dich aus dem Raum entfernt."
+    ],
+    "Key.Grab": [
+      "Grab",
+      "抓起",
+      "つかむ",
+      "Packen"
+    ],
+    "Key.Roll": [
+      "Roll free",
+      "翻滚挣脱",
+      "転がって脱出",
+      "Freirollen"
+    ],
+    "Key.Wriggle": [
+      "Wriggle free",
+      "挣脱",
+      "振りほどく",
+      "Losreißen"
+    ],
+    "Key.ThrowMate": [
+      "Throw {Name}",
+      "扔出 {Name}",
+      "{Name} を投げる",
+      "{Name} werfen"
+    ],
+    "Bait.Tag": [
+      "BAIT",
+      "诱饵",
+      "おとり",
+      "KÖDER"
+    ],
+    "Bait.Countdown": [
+      "BAIT {Seconds}s · pulling {Count}",
+      "诱饵 {Seconds} 秒 · 拖住 {Count}",
+      "おとり {Seconds}秒 · {Count}体",
+      "KÖDER {Seconds}s · zieht {Count}"
+    ],
+    "Bait.Hint": [
+      "You landed as bait: nearby enemies come for you and you take half damage. Shoot back, or press E to roll free.",
+      "你被扔成了诱饵：附近的敌人都会冲你来，你只受一半伤害。可以还击，也可以按 E 翻滚挣脱。",
+      "おとりとして着地した。近くの敵が向かってくるが、受けるダメージは半分。撃ち返すか、E で転がって脱出。",
+      "Du bist als Köder gelandet: Gegner in der Nähe kommen zu dir, du nimmst halben Schaden. Schieß zurück oder roll dich mit E frei."
+    ],
+    "Carried.Tag": [
+      "CARRIED",
+      "被抓",
+      "抱えられ中",
+      "GETRAGEN"
+    ],
+    "Carried.Hint": [
+      "{Name} is carrying you. Q throws you; E wriggles you free.",
+      "{Name} 抓着你：Q 会把你扔出去，按 E 挣脱。",
+      "{Name} があなたを抱えている。Q で投げられる。E で振りほどく。",
+      "{Name} trägt dich. Q wirft dich; E reißt dich los."
+    ],
+    "Award.MVP": [
+      "MVP",
+      "MVP",
+      "MVP",
+      "MVP"
+    ],
+    "Award.MVP.Detail": [
+      "{Count} damage dealt",
+      "造成 {Count} 伤害",
+      "{Count} ダメージ",
+      "{Count} Schaden verursacht"
+    ],
+    "Award.Bait": [
+      "Best bait",
+      "最佳诱饵",
+      "ベストおとり",
+      "Bester Köder"
+    ],
+    "Award.Bait.Detail": [
+      "held {Count} enemies",
+      "拖住 {Count} 个敌人",
+      "{Count}体を引きつけた",
+      "{Count} Gegner gebunden"
+    ],
+    "Award.Cannonball": [
+      "Human cannonball",
+      "人体炮弹",
+      "人間大砲",
+      "Menschliche Kanonenkugel"
+    ],
+    "Award.Cannonball.Detail": [
+      "thrown {Count} times",
+      "被投 {Count} 次",
+      "{Count}回投げられた",
+      "{Count}-mal geworfen"
+    ],
+    "Award.Walls": [
+      "Wall artist",
+      "墙艺大师",
+      "壁の芸術家",
+      "Mauerkünstler"
+    ],
+    "Award.Walls.Detail": [
+      "drew {Count} wall cells",
+      "画了 {Count} 格墙",
+      "{Count}マスの壁を描いた",
+      "{Count} Wandfelder gezeichnet"
+    ],
+    "Award.Scapegoat": [
+      "Scapegoat",
+      "背锅侠",
+      "戦犯",
+      "Sündenbock"
+    ],
+    "Award.Scapegoat.Detail": [
+      "shoved teammates {Count} times",
+      "推挤队友 {Count} 次",
+      "味方を{Count}回押した",
+      "Mitspieler {Count}-mal geschubst"
+    ],
+    "Settings.Comfort": [
+      "Readability",
+      "画面与互动",
+      "見やすさ",
+      "Lesbarkeit"
+    ],
+    "Settings.Shake": [
+      "Screen shake",
+      "震屏",
+      "画面の揺れ",
+      "Wackeln"
+    ],
+    "Settings.Flash": [
+      "Hit flash",
+      "受击闪光",
+      "被弾フラッシュ",
+      "Trefferblitz"
+    ],
+    "Settings.Numbers": [
+      "Damage numbers",
+      "伤害数字",
+      "ダメージ数値",
+      "Schadenszahlen"
+    ],
+    "Settings.Throwable": [
+      "Throwable",
+      "可被投掷",
+      "投げられOK",
+      "Werfbar"
+    ],
+    "Result.BaitStickers": [
+      "Bait stickers: {Count}",
+      "诱饵贴纸：{Count}",
+      "おとりステッカー：{Count}",
+      "Köder-Sticker: {Count}"
+    ],
+    "Station.0": [
+      "Mission board",
+      "任务板",
+      "ミッションボード",
+      "Missionsbrett"
+    ],
+    "Station.1": [
+      "Achievement wall",
+      "成就墙",
+      "実績ウォール",
+      "Erfolgswand"
+    ],
+    "Station.2": [
+      "Shop",
+      "商店",
+      "ショップ",
+      "Laden"
+    ],
+    "Station.3": [
+      "Research desk",
+      "研究台",
+      "研究デスク",
+      "Forschungstisch"
+    ],
+    "Station.4": [
+      "Wardrobe",
+      "衣柜",
+      "衣装棚",
+      "Garderobe"
+    ],
+    "Station.5": [
+      "Invite friends",
+      "邀请好友",
+      "フレンドを招待",
+      "Freunde einladen"
+    ],
+    "Station.6": [
+      "Training corner",
+      "训练角落",
+      "トレーニングコーナー",
+      "Trainingsecke"
+    ],
+    "Station.0.Note": [
+      "Pick the mode and the page; only the host deploys.",
+      "选模式和关卡；只有房主能出击。",
+      "モードとページを選ぶ。出撃できるのはホストだけ。",
+      "Modus und Seite wählen – nur der Host startet die Mission."
+    ],
+    "Station.1.Note": [
+      "Everyone in the room, and what each of them has achieved.",
+      "房间里的每个人，和各自达成的成就。",
+      "ルームの全員と、それぞれが達成した実績。",
+      "Alle im Raum und was alle jeweils erreicht haben."
+    ],
+    "Station.2.Note": [
+      "Unlock weapons and wall types; buy items for one run.",
+      "解锁武器和墙型，购买单局道具。",
+      "武器と壁の種類を解放し、1回分のアイテムを買う。",
+      "Waffen und Wandtypen freischalten, Gegenstände für einen Einsatz kaufen."
+    ],
+    "Station.3.Note": [
+      "Spend stickers on your attributes, five ranks each.",
+      "用贴纸升级属性，每项 5 级。",
+      "ステッカーで能力を強化（各5段階）。",
+      "Sticker in Eigenschaften stecken, je fünf Stufen."
+    ],
+    "Station.4.Note": [
+      "Outfits and party titles.",
+      "换外观和派对称号。",
+      "見た目とパーティー称号。",
+      "Outfits und Partytitel."
+    ],
+    "Station.5.Note": [
+      "Your room holds up to eight players.",
+      "这个房间最多 8 人，由你邀请。",
+      "このルームは最大8人。招待はあなたから。",
+      "Bis zu acht Leute passen in deinen Raum."
+    ],
+    "Station.6.Note": [
+      "Targets, a bullseye and every key in one place.",
+      "靶子、靶心和所有按键，都在这里。",
+      "的、ブルズアイ、全部のキーがここに。",
+      "Zielscheiben, ein Bullseye und alle Tasten an einem Ort."
+    ],
+    "Hub.Mine": [
+      "My hub",
+      "我的大厅",
+      "自分のロビー",
+      "Meine Lobby"
+    ],
+    "Hub.Title": [
+      "{Name}'s hub",
+      "{Name} 的大厅",
+      "{Name} のロビー",
+      "Lobby von {Name}"
+    ],
+    "Hub.Kind.0": [
+      "Offline · only you",
+      "离线 · 只有你",
+      "オフライン・あなただけ",
+      "Offline · nur du"
+    ],
+    "Hub.Kind.1": [
+      "Steam room · friends only",
+      "Steam 房间 · 仅好友",
+      "Steamルーム・フレンドのみ",
+      "Steam-Raum · nur Freunde"
+    ],
+    "Hub.Kind.2": [
+      "Direct room (testing)",
+      "直连房间（测试）",
+      "直接接続ルーム（テスト）",
+      "Direktraum (Test)"
+    ],
+    "Hub.Seats": [
+      "{Count} / 8 players",
+      "{Count} / 8 人",
+      "{Count} / 8 人",
+      "{Count} / 8 Spieler"
+    ],
+    "Hub.Invite": [
+      "Invite friends",
+      "邀请好友",
+      "フレンドを招待",
+      "Freunde einladen"
+    ],
+    "Hub.Here": [
+      "In the room ({Count}/8)",
+      "在场（{Count}/8）",
+      "ルーム内（{Count}/8）",
+      "Im Raum ({Count}/8)"
+    ],
+    "Hub.Open": [
+      "open",
+      "打开",
+      "開く",
+      "öffnen"
+    ],
+    "Hub.Deploying": [
+      "{Page} · deploying in {Seconds}",
+      "{Page} · {Seconds} 秒后出击",
+      "{Page}・{Seconds}秒後に出撃",
+      "{Page} · Start in {Seconds}"
+    ],
+    "Hub.CancelDeploy": [
+      "Cancel",
+      "取消出击",
+      "出撃を取り消す",
+      "Abbrechen"
+    ],
+    "Hub.HostDeploys": [
+      "The host picks the page and deploys. Get ready in the hub meanwhile.",
+      "房主选关并出击。等的时候可以在大厅里随便逛逛。",
+      "ページ選びと出撃はホストが行います。それまでロビーで準備を。",
+      "Der Host wählt die Seite und startet. Mach dich solange in der Lobby bereit."
+    ],
+    "Hub.LeaveRoom": [
+      "Leave the room",
+      "离开房间",
+      "ルームを出る",
+      "Raum verlassen"
+    ],
+    "Hub.ToTitle": [
+      "Back to the title",
+      "回到标题",
+      "タイトルに戻る",
+      "Zum Titelbildschirm"
+    ],
+    "Hub.Abandon": [
+      "Give up the mission",
+      "放弃任务",
+      "ミッションを放棄",
+      "Mission aufgeben"
+    ],
+    "Hub.Back": [
+      "Back to the hub",
+      "回大厅",
+      "ロビーに戻る",
+      "Zurück zur Lobby"
+    ],
+    "Hub.InviteUnavailable": [
+      "Invites need a Steam room; this hub is not one right now.",
+      "邀请需要 Steam 房间，这个大厅现在不是。",
+      "招待にはSteamルームが必要です。今のロビーは違います。",
+      "Einladungen brauchen einen Steam-Raum – diese Lobby ist gerade keiner."
+    ],
+    "Hub.DeployHostOnly": [
+      "Only the host can deploy.",
+      "只有房主能出击。",
+      "出撃できるのはホストだけです。",
+      "Nur der Host kann starten."
+    ],
+    "Board.Mode.0": [
+      "Line defense",
+      "守线",
+      "ライン防衛",
+      "Linienverteidigung"
+    ],
+    "Board.Mode.1": [
+      "Expedition (soon)",
+      "远征（即将开放）",
+      "遠征（近日公開）",
+      "Expedition (bald)"
+    ],
+    "Board.Mode.2": [
+      "Party playlist (soon)",
+      "派对轮盘（即将开放）",
+      "パーティー（近日公開）",
+      "Partyrunde (bald)"
+    ],
+    "Board.ModeSoon": [
+      "This mode opens in a later update.",
+      "这个模式会在后续版本开放。",
+      "このモードは今後のアップデートで開放されます。",
+      "Dieser Modus kommt mit einem späteren Update."
+    ],
+    "Board.BotsFriends": [
+      "With friends in the room, no AI teammates come along.",
+      "房间里有朋友时不带 AI 队友。",
+      "フレンドがいるときはAIの仲間は同行しません。",
+      "Mit Freunden im Raum kommen keine KI-Mitspieler mit."
+    ],
+    "Coming.Stamp": [
+      "Opening soon",
+      "即将开张",
+      "近日オープン",
+      "Bald geöffnet"
+    ],
+    "Coming.Stickers": [
+      "Your stickers: {Count}",
+      "你的贴纸：{Count} 张",
+      "ステッカー：{Count}枚",
+      "Deine Sticker: {Count}"
+    ],
+    "Coming.1": [
+      "Every player's achievements will hang here, the ones done and the ones still missing. For now the wall knows who is in the room.",
+      "这里会挂上每个人已达成和未达成的成就。现在墙上先记下了房间里的人。",
+      "ここに全員の達成済み・未達成の実績が並びます。今はルームにいる人だけが分かります。",
+      "Hier hängen bald die Erfolge aller – erreichte und noch fehlende. Vorerst kennt die Wand nur, wer im Raum ist."
+    ],
+    "Coming.2": [
+      "Spend stickers to unlock weapons and wall types, and buy items for a single run (two per run at most).",
+      "用贴纸解锁武器和墙型，再买单局用的道具，每局最多带 2 个。",
+      "ステッカーで武器と壁の種類を解放し、1回分のアイテムも買えます（1回につき2個まで）。",
+      "Mit Stickern schaltest du Waffen und Wandtypen frei und kaufst Gegenstände für einen Einsatz (höchstens zwei)."
+    ],
+    "Coming.3": [
+      "Raise health, damage, ink capacity, throw power, speed and pickup range, five ranks each. In someone else's room your ranks are capped by the room's difficulty.",
+      "升级生命、伤害、墨水上限、投掷力、移速和拾取范围，每项 5 级。进别人的房间时，按房间难度封顶。",
+      "体力・攻撃力・インク上限・投てき力・移動速度・回収範囲を各5段階で強化。他の人のルームでは難易度に合わせて上限がかかります。",
+      "Steigere Leben, Schaden, Tintenvorrat, Wurfkraft, Tempo und Sammelradius um je fünf Stufen. In fremden Räumen begrenzt der Schwierigkeitsgrad deine Stufen."
+    ],
+    "Coming.4": [
+      "Change your outfit and pick a party title. Looks only: nothing here changes a fight.",
+      "换外观、挑选派对称号。只是好看，不影响战斗。",
+      "見た目を変えて、パーティー称号を選ぶ。戦闘には影響しません。",
+      "Outfit wechseln und einen Partytitel wählen. Nur Optik – am Kampf ändert das nichts."
+    ],
+    "Npc.2": [
+      "Pentagon at the counter: “The crates are still on their way. Save up your stickers!”",
+      "五边形店主：“货还在路上，先把贴纸攒着！”",
+      "カウンターのペンタゴン：「荷物はまだ届いていないんだ。ステッカーを貯めておいて！」",
+      "Fünfeck am Ladentisch: „Die Kisten sind noch unterwegs. Spar deine Sticker!“"
+    ],
+    "Npc.3": [
+      "Triangle at the desk: “Formulas first, upgrades later. Come back soon.”",
+      "三角研究员：“公式还没算完，升级马上就来。”",
+      "デスクのトライアングル：「まだ計算中。強化はもうすぐ。」",
+      "Dreieck am Forschungstisch: „Erst die Formeln, dann die Upgrades. Komm bald wieder.“"
+    ],
+    "Npc.4": [
+      "Square at the wardrobe: “Hats are coming. Every shape deserves a good hat.”",
+      "方块裁缝：“帽子在做了，每种形状都配得上一顶好帽子。”",
+      "衣装棚のスクエア：「帽子を作っているところ。どの形にもいい帽子を。」",
+      "Quadrat an der Garderobe: „Hüte sind in Arbeit. Jede Form verdient einen guten Hut.“"
+    ],
+    "Door.0": [
+      "Steam is not connected, so only you can be in this hub. Start Steam and press the button below: the hub reopens as a room your friends can join.",
+      "Steam 没有连接，现在只有你能进这个大厅。打开 Steam 后点下面的按钮，大厅会重新以房间打开，好友就能进来了。",
+      "Steamに接続していないため、今このロビーにはあなたしか入れません。Steamを起動して下のボタンを押すと、フレンドが入れるルームとして開き直します。",
+      "Steam ist nicht verbunden, deshalb bist nur du in dieser Lobby. Starte Steam und drück unten auf den Knopf: Die Lobby öffnet sich neu als Raum, dem deine Freunde beitreten können."
+    ],
+    "Door.1": [
+      "This hub is a Steam room: your Steam friends can join, up to eight players. Send invites from the Steam overlay.",
+      "这个大厅是 Steam 房间：你的 Steam 好友可以加入，最多 8 人。用 Steam 浮窗发邀请。",
+      "このロビーはSteamルームです。Steamのフレンドが最大8人まで参加できます。招待はSteamオーバーレイから。",
+      "Diese Lobby ist ein Steam-Raum: Deine Steam-Freunde können beitreten, bis zu acht Leute. Einladungen verschickst du über das Steam-Overlay."
+    ],
+    "Door.2": [
+      "This is a direct room for testing; invites need a Steam room.",
+      "这是测试用的直连房间；邀请需要 Steam 房间。",
+      "これはテスト用の直接接続ルームです。招待にはSteamルームが必要です。",
+      "Das ist ein Direktraum zum Testen; Einladungen brauchen einen Steam-Raum."
+    ],
+    "Door.Reconnect": [
+      "Reopen with Steam",
+      "用 Steam 重开大厅",
+      "Steamで開き直す",
+      "Mit Steam neu öffnen"
+    ],
+    "Door.OpenInvite": [
+      "Open Steam invites",
+      "打开 Steam 邀请",
+      "Steamの招待を開く",
+      "Steam-Einladungen öffnen"
+    ],
+    "Door.Friends": [
+      "Friends can also right-click you in their Steam friends list and choose Join game.",
+      "好友也可以在 Steam 好友列表里右键你，选“加入游戏”。",
+      "フレンドはSteamのフレンドリストであなたを右クリックし「ゲームに参加」でも入れます。",
+      "Freunde können dich auch in ihrer Steam-Freundesliste rechtsklicken und „Spiel beitreten“ wählen."
+    ],
+    "Door.Busy": [
+      "Nobody can join during a mission; they get in once everyone is back in the hub.",
+      "任务进行中谁也进不来；大家回到大厅后就能加入。",
+      "ミッション中は誰も参加できません。全員がロビーに戻ったら入れます。",
+      "Während einer Mission kann niemand beitreten – erst wenn alle zurück in der Lobby sind."
+    ],
+    "Door.Full": [
+      "A room holds eight players; a ninth is turned away.",
+      "房间最多 8 人，第 9 个人进不来。",
+      "ルームは8人まで。9人目は入れません。",
+      "Ein Raum fasst acht Leute, eine neunte Person wird abgewiesen."
+    ],
+    "Training.Move": [
+      "Walk",
+      "移动",
+      "移動",
+      "Laufen"
+    ],
+    "Training.Fire": [
+      "Hold to shoot (the targets stand up again)",
+      "按住射击（靶子打碎会自己立起来）",
+      "長押しで射撃（的は壊れてもまた立つ）",
+      "Halten zum Schießen (Ziele stehen wieder auf)"
+    ],
+    "Training.Recruit": [
+      "Recruit a triangle into your tail; use a station",
+      "把三角形招进尾巴；在设施前打开它",
+      "三角形をしっぽに加える／施設を使う",
+      "Dreieck in den Schwanz holen; Station benutzen"
+    ],
+    "Training.Merge": [
+      "Merge the last triangle into the shape before it",
+      "尾巴末端的三角形并入前一个",
+      "最後尾の三角形を前の形に合体",
+      "Letztes Dreieck mit der Form davor verschmelzen"
+    ],
+    "Training.Throw": [
+      "Hold to charge, release to throw (aim for the bullseye)",
+      "按住蓄力，松开投出（瞄准靶心）",
+      "長押しでため、離して投げる（ブルズアイを狙え）",
+      "Halten zum Aufladen, loslassen zum Werfen (aufs Bullseye zielen)"
+    ],
+    "Training.Draw": [
+      "In line defense: drag to draw walls",
+      "守线中：按住拖动画墙",
+      "ライン防衛で：ドラッグして壁を描く",
+      "In der Linienverteidigung: ziehen, um Wände zu zeichnen"
+    ],
+    "Training.Wave": [
+      "In line defense: call the next wave early",
+      "守线中：提前开波",
+      "ライン防衛で：次のウェーブを早めに呼ぶ",
+      "In der Linienverteidigung: nächste Welle früher rufen"
+    ],
+    "Training.Menu": [
+      "Settings and leaving",
+      "设置和离开",
+      "設定と退出",
+      "Einstellungen und Verlassen"
+    ],
+    "Training.Intro": [
+      "Nothing here can be lost: broken targets stand up again and the triangles are topped up. A polygon thrown at a target bursts into triangles; one that comes to rest on the bullseye scores.",
+      "这里怎么玩都不会输：靶子碎了会自己立起来，三角形用完会补上。把多边形扔向靶子会碎成三角形；停在靶心上就算命中。",
+      "ここでは何をしても負けません。壊れた的はまた立ち、三角形も補充されます。多角形を的に投げると三角形に割れ、ブルズアイの上で止まれば命中です。",
+      "Hier kann nichts schiefgehen: Kaputte Ziele stehen wieder auf, Dreiecke werden nachgefüllt. Ein Vieleck, das ein Ziel trifft, zerspringt in Dreiecke; was auf dem Bullseye liegen bleibt, zählt als Treffer."
+    ],
+    "Training.Bullseye": [
+      "Bullseyes: you {Mine} · whole room {All}",
+      "靶心命中：你 {Mine} 次 · 全房间 {All} 次",
+      "ブルズアイ：あなた {Mine} 回・ルーム全体 {All} 回",
+      "Bullseyes: du {Mine} · ganzer Raum {All}"
+    ],
+    "Training.Replay": [
+      "Replay the tutorial",
+      "重玩新手引导",
+      "チュートリアルをもう一度",
+      "Tutorial wiederholen"
+    ],
+    "Training.ReplayAlone": [
+      "The tutorial can be replayed while you are alone in the hub.",
+      "只有你一个人在大厅时才能重玩引导。",
+      "チュートリアルはロビーに一人のときだけやり直せます。",
+      "Das Tutorial lässt sich wiederholen, solange du allein in der Lobby bist."
+    ],
+    "Tutorial.Title": [
+      "Tutorial",
+      "新手引导",
+      "チュートリアル",
+      "Tutorial"
+    ],
+    "Tutorial.Step": [
+      "step {Step} of {Count}",
+      "第 {Step} / {Count} 步",
+      "ステップ {Step} / {Count}",
+      "Schritt {Step} von {Count}"
+    ],
+    "Tutorial.0.Title": [
+      "Walk",
+      "移动",
+      "移動",
+      "Laufen"
+    ],
+    "Tutorial.1.Title": [
+      "Shoot",
+      "射击",
+      "射撃",
+      "Schießen"
+    ],
+    "Tutorial.2.Title": [
+      "Recruit",
+      "招募",
+      "仲間にする",
+      "Anwerben"
+    ],
+    "Tutorial.3.Title": [
+      "Merge",
+      "合成",
+      "合体",
+      "Verschmelzen"
+    ],
+    "Tutorial.4.Title": [
+      "Pin a turret",
+      "钉炮台",
+      "砲台を置く",
+      "Geschütz setzen"
+    ],
+    "Tutorial.5.Title": [
+      "Draw walls",
+      "画墙",
+      "壁を描く",
+      "Wände zeichnen"
+    ],
+    "Tutorial.6.Title": [
+      "Hold the line",
+      "守线",
+      "ラインを守る",
+      "Linie halten"
+    ],
+    "Tutorial.0": [
+      "Walk with WASD into the blinking ring.",
+      "用 WASD 走进闪烁的圆圈里。",
+      "WASDで点滅するリングの中へ歩こう。",
+      "Lauf mit WASD in den blinkenden Ring."
+    ],
+    "Tutorial.1": [
+      "Aim with the mouse and hold the left button: break both paper targets.",
+      "用鼠标瞄准，按住左键：打碎两个纸靶。",
+      "マウスで狙って左ボタンを長押し。紙の的を2つ壊そう。",
+      "Mit der Maus zielen und links halten: Zerschieß beide Papierziele."
+    ],
+    "Tutorial.2": [
+      "Walk up to a triangle and press E. Recruit two into your tail.",
+      "走近三角形按 E，把两个招进你的尾巴。",
+      "三角形に近づいてE。2つをしっぽに加えよう。",
+      "Geh zu einem Dreieck und drück E. Hol zwei in deinen Schwanz."
+    ],
+    "Tutorial.3": [
+      "Press F: the last triangle in your tail merges into the one before it and makes a square. Sides are the tier.",
+      "按 F：尾巴末端的三角形并入前一个，变成方块。边数就是等级。",
+      "Fを押すと、最後尾の三角形が前の三角形と合体して四角形に。辺の数がランクです。",
+      "Drück F: Das letzte Dreieck verschmilzt mit dem davor zu einem Quadrat. Die Seitenzahl ist die Stufe."
+    ],
+    "Tutorial.4": [
+      "Hold Q to charge and release to throw the square onto empty paper: it pins itself as a turret.",
+      "按住 Q 蓄力、松开，把方块扔到空白纸上：它会钉成炮台。",
+      "Qを長押ししてため、離して四角形を空いた紙へ投げよう。砲台として固定されます。",
+      "Halt Q zum Aufladen und lass los, um das Quadrat auf leeres Papier zu werfen: Es setzt sich als Geschütz fest."
+    ],
+    "Tutorial.TurretRetry": [
+      "A square that hits a target bursts into triangles: recruit them and merge again.",
+      "方块砸到靶子会碎成三角形：再招募、再合成就行。",
+      "的に当たった四角形は三角形に割れます。また仲間にして合体しよう。",
+      "Ein Quadrat, das ein Ziel trifft, zerspringt in Dreiecke: wieder anwerben und verschmelzen."
+    ],
+    "Tutorial.5": [
+      "Hold the right button and drag across the blinking cells: three cells of wall make the enemies walk around.",
+      "按住右键，沿着闪烁的格子拖动：画三格墙，敌人就得绕路。",
+      "右ボタンを押したまま、点滅するマスをなぞろう。3マスの壁で敵が回り道します。",
+      "Halt die rechte Taste und zieh über die blinkenden Felder: Drei Felder Wand zwingen die Gegner zum Umweg."
+    ],
+    "Tutorial.6": [
+      "Press Enter for the wave and hold the core: your turret fires with you.",
+      "按 Enter 开波，守住核心：炮台会和你一起开火。",
+      "Enterでウェーブ開始。コアを守ろう。砲台も一緒に撃ちます。",
+      "Drück Enter für die Welle und halte den Kern: Dein Geschütz feuert mit."
+    ],
+    "Tutorial.StepDone": [
+      "Done!",
+      "完成！",
+      "クリア！",
+      "Geschafft!"
+    ],
+    "Tutorial.Skip": [
+      "Skip the tutorial",
+      "跳过引导",
+      "チュートリアルを飛ばす",
+      "Tutorial überspringen"
+    ],
+    "Tutorial.Finished": [
+      "You're ready",
+      "引导完成",
+      "準備完了",
+      "Bereit"
+    ],
+    "Tutorial.FinishedNote": [
+      "That is every move the game has. The training corner in your hub has targets and a bullseye whenever you want more practice, and friends can invite you into their hubs through Steam.",
+      "游戏里的操作你都会了。大厅的训练角落有靶子和靶心，随时可以再练；好友也能通过 Steam 邀请你进他们的大厅。",
+      "これでゲームの操作はすべてです。ロビーのトレーニングコーナーには的とブルズアイがあり、いつでも練習できます。フレンドはSteamからあなたを自分のロビーに招待できます。",
+      "Das waren alle Bewegungen des Spiels. In der Trainingsecke deiner Lobby warten Ziele und ein Bullseye, wann immer du üben willst, und Freunde können dich über Steam in ihre Lobby einladen."
+    ],
+    "Tutorial.Enter": [
+      "Enter the hub",
+      "进入大厅",
+      "ロビーへ",
+      "Zur Lobby"
+    ],
+    "Tutorial.NoClock": [
+      "no timer",
+      "不限时",
+      "時間制限なし",
+      "ohne Zeitlimit"
+    ],
+    "Tutorial.AloneOnly": [
+      "The tutorial starts only when you are alone.",
+      "只有你一个人时才能开始新手引导。",
+      "チュートリアルは一人のときだけ始められます。",
+      "Das Tutorial startet nur, wenn du allein bist."
+    ],
+    "Network.Entering": [
+      "Entering the hub…",
+      "正在进入大厅…",
+      "ロビーに入っています…",
+      "Betrete die Lobby…"
+    ],
+    "Network.RoomBusy": [
+      "Your friends are on a mission; join once they are back in their hub.",
+      "好友正在出击，等他们回到大厅再加入。",
+      "フレンドはミッション中です。ロビーに戻ってから参加してください。",
+      "Deine Freunde sind auf einer Mission – tritt bei, sobald sie zurück in der Lobby sind."
+    ],
+    "Network.RoomFull": [
+      "That room is full (eight players).",
+      "房间已满（8 人）。",
+      "そのルームは満員です（8人）。",
+      "Der Raum ist voll (acht Leute)."
+    ],
+    "Network.HostLeft": [
+      "The host left, so you are back in your own hub.",
+      "房主离开了，你回到了自己的大厅。",
+      "ホストが退出したので、自分のロビーに戻りました。",
+      "Der Host ist weg, du bist zurück in deiner eigenen Lobby."
+    ],
+    "Network.JoiningFriend": [
+      "Joining your friend's hub…",
+      "正在加入好友的大厅…",
+      "フレンドのロビーに参加中…",
+      "Beitritt zur Lobby läuft…"
+    ],
+    "Network.InviteFailed": [
+      "That invite could not be opened; the room may have closed.",
+      "邀请打不开了，房间可能已经关闭。",
+      "招待を開けませんでした。ルームが閉じた可能性があります。",
+      "Die Einladung ließ sich nicht öffnen – der Raum ist vielleicht schon zu."
+    ],
+    "Key.Use": [
+      "Recruit / use",
+      "招募 / 使用",
+      "仲間にする／使う",
+      "Anwerben / benutzen"
+    ]
+  }
+}

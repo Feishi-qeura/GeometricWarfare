@@ -1,0 +1,403 @@
+﻿Key,SourceString
+Game.Title,ジオメトリック・ウォーフェア
+Game.Subtitle,方眼紙に迷路を描き、コアを守り抜け。仲間も呼ぼう。
+Menu.Single,シングルプレイ
+Menu.Create,ルーム作成
+Menu.Settings,設定
+Menu.Quit,終了
+Menu.Back,戻る
+Menu.Start,ゲーム開始
+Menu.Ready,準備 / 解除
+Menu.Continue,ゲームに戻る
+Menu.Leave,ゲームを退出
+Menu.Lobby,ロビーに戻る
+Room.Name,ルーム名
+Room.Password,パスワード（任意）
+Room.Steam,Steam
+Room.Refresh,更新
+Room.Join,選択したルームに参加
+Room.Host,ホスト
+Room.Ready,準備完了
+Room.Waiting,準備待ち
+Room.Next,次のページ
+Room.Previous,前のページ
+Settings.Language,言語
+Settings.Music,音楽音量
+Settings.Effects,効果音音量
+Settings.Quality,画質
+Settings.Resolution,解像度
+Settings.Window,ウィンドウ / 全画面
+Control.Move,WASDで移動・マウスで照準・左クリックで射撃
+Control.Tail,Eで仲間に・Q長押し／離す：先頭の仲間を投げる・ホイール：ズーム・Esc：設定
+Combat.Recruit,[E] 仲間にする
+Combat.Tail,仲間：{Count}
+Combat.Health,体力
+Combat.Armor,アーマー
+Combat.NoRespawn,復活不可・味方を観戦中
+Combat.Level,チームレベル {Level}
+Combat.Upgrade,アップグレードを選択
+Combat.AirDrop,武器補給
+Combat.Boss,ボス
+Result.Victory,勝利
+Result.Defeat,敗北
+Result.Survived,生存チャレンジ達成
+Network.Creating,ルームを作成中…
+Network.Searching,検索中…
+Network.Joining,ルームに参加中…
+Network.NoRooms,ルームが見つかりません。更新してください。
+Network.RoomsFound,参加するルームを選択。
+Network.CreateFailed,ルームを作成できませんでした。再試行してください。
+Network.SearchFailed,ルーム検索に失敗しました。再試行してください。
+Network.JoinFailed,参加できません。満員または終了した可能性があります。
+Network.BadPassword,パスワードが違います。
+Network.LeaveFailed,セッションを終了できませんでした。再起動してください。
+Network.ConnectionLost,接続が切れました。自分のロビーに戻りました。
+Network.MatchFull,参加枠がありません。次のラウンドをお待ちください。
+Network.NotReady,全員の準備完了をお待ちください。
+Weapon.0,ピストル
+Weapon.1,ライフル
+Weapon.2,ショットガン
+Weapon.3,スナイパー
+Weapon.4,マシンガン
+Weapon.5,ロケットランチャー
+Skill.0,貫通弾
+Skill.1,跳弾
+Skill.2,装甲破壊
+Skill.3,破片弾
+Skill.4,電撃コア
+Skill.5,伝導ブリッジ
+Skill.6,高電圧蓄積
+Skill.7,電磁共鳴
+Skill.8,焼夷弾
+Skill.9,延焼
+Skill.10,燃焼コア
+Skill.11,加圧燃焼
+Skill.12,氷結弾
+Skill.13,急速凍結
+Skill.14,氷砕衝撃
+Skill.15,永久凍土
+Skill.16,シールド電池
+Skill.17,自己修復
+Skill.18,磁気シールド
+Skill.19,緊急回復
+Combat.Charge,Q長押しでチャージ・離して投げる
+Skill.0.Description,ランクごとに弾が敵をさらに1体貫通。狙撃弾は最初から1体を貫通。
+Skill.1.Description,ランクごとに壁での跳弾回数+1。ロケットは衝突時に爆発する。
+Skill.2.Description,ランクごとに弾のダメージ+15%。焼夷弾の補正に加算。
+Skill.3.Description,命中時に爆発し、ランクごとに弾の25%ダメージ。半径120+ランク×20。
+Skill.4.Description,命中時、近くの敵1体に弾の30%ダメージ。射程と追加標的の強化と連携。
+Skill.5.Description,電撃コアが必要。連鎖の基本射程220、ランクごとに+60。
+Skill.6.Description,2秒ごとに半径210内の全敵を攻撃。ランクごとに8ダメージ。
+Skill.7.Description,電撃コアが必要。基本の連鎖標的1体に、ランクごとに+1体。
+Skill.8.Description,ランクごとに弾のダメージ+10%。命中で2秒炎上、毎秒2+ランク×2ダメージ。
+Skill.9.Description,焼夷弾が必要。炎上時間がランクごとに+1秒。炎上で倒すと半径200へ2秒の炎上を拡散。
+Skill.10.Description,焼夷弾が必要。炎上撃破で半径180に爆発し、ランクごとに炎上秒間ダメージの6倍。
+Skill.11.Description,焼夷弾が必要。弾の命中時、ランクごとに4の炎上ダメージを即座に追加。
+Skill.12.Description,命中で敵を1秒間50%減速。急速凍結で持続時間を延長。
+Skill.13.Description,氷結弾が必要。減速時間がランクごとに0.4秒延長。
+Skill.14.Description,弾での撃破時に半径180へ爆発。ランクごとに弾の20%ダメージ。
+Skill.15.Description,命中地点の半径120+ランク×30にいる敵を2秒間50%減速。
+Skill.16.Description,即座に装甲70獲得。回復上限がランクごとに+40。装甲は被ダメージの70%を吸収。
+Skill.17.Description,ランクごとに基本最大HP+35、毎秒HP回復+0.8。即座に70回復。進化中は最大HP補正が2倍。
+Skill.18.Description,ランクごとに毎秒装甲1.5回復。上限は100+シールド電池のランク×40。
+Skill.19.Description,HP25%未満で最大HPの15%を回復し、ランクごとに装甲40獲得。2秒ごとに判定、再使用30秒。
+Combat.WorldPaused,世界停止中・スキルを選択
+Combat.WaitingUpgrades,仲間のスキル選択を待っています…
+Combat.SkillRank,ランク {Current} → {Next} / 5
+Combat.JoinSquad,E・このプレイヤーの部隊に参加
+Combat.LeaveSquad,E・部隊から離脱
+Skill.Recovery,戦地回復
+Skill.Recovery.Description,全スキルが最大。最大HPの25%を回復し装甲50獲得。
+Combat.LifeWeapon,この命の間は武器を保持
+Combat.ChooseHint,カードをクリック、または 1 / 2 / 3 キー
+Combat.LevelUp,レベルアップ！
+Combat.Reload,リロード中
+Combat.Squad,部隊
+Combat.Waiting.Count,あと {Count} 人が選択中
+Combat.XP,経験値
+Key.Aim,照準
+Key.Fire,射撃
+Key.LMB,左クリック
+Key.Menu,メニュー
+Key.Mouse,マウス
+Key.Move,移動
+Key.Recruit,勧誘
+Key.Leave,部隊を離脱
+Key.Join,部隊に参加
+Key.Throw,長押しで投擲
+Key.Wheel,ホイール
+Key.Zoom,ズーム
+Result.Reached,チームレベル {Level} に到達
+Result.Survival,{Seconds} 秒生存
+Settings.Fullscreen,フルスクリーン
+Settings.Windowed,ウィンドウ
+Settings.Paused,一時停止中
+Settings.Quality.0,低
+Settings.Quality.1,中
+Settings.Quality.2,高
+Settings.Quality.3,最高
+Skill.New,NEW
+Skill.Family.0,弾道
+Skill.Family.1,電荷
+Skill.Family.2,炎
+Skill.Family.3,氷
+Skill.Family.4,シールド
+Menu.Multiplayer,マルチプレイ
+Menu.Saves,セーブデータ
+Menu.Intro,ゲーム紹介
+Menu.Footer,ロビーとライン防衛・第1章
+Online.Subtitle,Steam または Epic で一緒に遊ぼう。1ルーム最大10人。
+Room.Epic,Epic（EOS）
+Room.CreateTitle,ルームを作成
+Room.ListTitle,ルーム一覧
+Room.JoinPassword,参加パスワード
+Room.NameHint,ルーム名を入力
+Room.PasswordHint,空欄なら公開ルーム
+Room.JoinHint,鍵付きルームのみ必要
+Room.CapacityNote,最大8人で協力 · 味方の弾は押すだけでダメージなし
+Room.Empty,ルームがありません。更新するか、新しく作成してください。
+Room.EmptyOffline,このプラットフォームにサインインするとルームが表示されます。
+Room.Lobby,ルーム
+Room.Players,プレイヤー（{Count}/8）
+Room.RunTitle,ライン防衛
+Room.RunInfo,ホストがページを選び、全員の準備ができたら出撃。墨（インク）は各自が持ち、壁を描ける。
+Room.ResumeTitle,セーブから再開
+Room.ResumeInfo,チームレベル {Level} · 経過 {Time}
+Room.ResumeNote,同じアカウントで参加した仲間は自分のキャラクターを引き継ぎます。
+Platform.Ready,準備完了
+Platform.SignedInAs,サインイン中：{Name}
+Platform.SteamOffline,Steam が起動していません。起動してサインインしてください。
+Platform.EpicSignIn,Epic にサインインしていません。
+Platform.EpicSignInButton,Epic にサインイン
+Platform.EpicSigningIn,Epic にサインイン中…
+Platform.EpicSignedIn,Epic にサインインしました。
+Platform.EpicFailed,Epic のサインインに失敗しました。もう一度お試しください。
+Platform.EpicNotConfigured,このビルドでは Epic オンラインが未設定です（EOS の認証情報がありません）。
+Platform.Unavailable,このプラットフォームは現在利用できません。
+Save.Title,進行状況を保存
+Save.HostOnly,協力プレイの進行状況はホストのみ保存できます。
+Save.Saved,保存しました。
+Save.Failed,保存できませんでした。空き容量を確認して再試行してください。
+Save.LoadFailed,このセーブデータを読み込めませんでした。
+Saves.Subtitle,セーブはプレイヤープロフィール。ステッカー、星、解放したページを記録する。
+Saves.Slot,スロット {Slot}
+Saves.Empty,空き
+Saves.EmptyHint,プレイ中に Esc を押し、「進行状況を保存」でこのスロットを選びます。
+Saves.ModeSolo,シングルプレイ
+Saves.ModeSteam,Steam 協力
+Saves.ModeEpic,Epic 協力
+Saves.Survived,経過時間 {Time}
+Saves.Players,プレイヤー {Count} 人
+Saves.SoloTeam,あなた + AI 仲間 {Count} 人
+Saves.Continue,続ける
+Saves.Host,ホストして再開
+Saves.Delete,削除
+Saves.Cancel,キャンセル
+Saves.ConfirmDelete,このセーブデータを削除しますか？
+Saves.OnlineNote,協力プレイのセーブはホストのPCにのみ保存され、参加者は複製を作りません。そのため進行状況は常に1つだけです。各プレイヤーは Steam / Epic アカウントで記録されるので、ホストがルームを開き直すと、同じアカウントで参加した仲間は自分のキャラクター・スキル・仲間を引き継げます。
+Intro.Subtitle,最初のプレイに必要なことすべて。
+Intro.GoalTitle,目的
+Intro.Goal,紙のアリーナで10分間耐え抜こう。モンスターの波はどんどん強くなり、2・5・9分にはエリートが現れる。全員が倒れたら失敗。
+Intro.GrowthTitle,みんなで成長
+Intro.Growth,撃破ごとにチーム共通のレベルが上がる。レベルアップで世界が止まり、各自3枚のスキルカードから1枚を選ぶ。5系統20種、各最大ランク5。
+Intro.SquadTitle,仲間
+Intro.Squad,さまよう仲間に近づいて E で列に加えよう。ついてきて一緒に撃つ。Q 長押しで溜め、離すと先頭の仲間を敵に投げつける。
+Intro.WeaponsTitle,武器の投下
+Intro.Weapons,40秒ごとに補給箱が落ちてくる。上を通ると自分と列全体がライフル・ショットガン・スナイパー・機関銃・ロケットランチャーに持ち替わる。
+Intro.TeamTitle,チームメイト
+Intro.Team,シングルプレイでは AI の仲間3人が自分で戦い、成長し、スキルを選ぶ。弾は味方を傷つけないが、弾道に沿って押し出すので射線に注意。
+Intro.OnlineTitle,マルチプレイ
+Intro.Online,Steam または Epic（EOS）で最大10人のルームを作成・参加できる。ホストは協力プレイを保存し、同じ仲間と後で続けられる。
+Key.Pick,スキル選択
+Team.Bot,AI 仲間 {Index}
+Combat.Team,チームメイト
+Board.Title,ミッションボード
+Board.Subtitle,ライン防衛 · 壁を描いて迷路を作り、自分も戦場で戦う。
+Board.Chapter,第1章 · 最初のノート
+Level.1-1,最初のページ
+Level.1-2,ふたつの扉
+Level.1-3,長い廊下
+Board.Waves,{Count} ウェーブ
+Board.Locked,前のページをクリアしよう
+Board.Play,出撃
+Board.Bots,AIの仲間
+Board.BotsNote,ソロはAIなしで調整済み。AIを連れると3つ目の星は取れない。
+Board.Friends,フレンドと遊ぶ
+Board.Profile,プロフィール {Slot}
+Board.Stickers,ステッカー {Count} 枚
+Board.Change,プロフィール変更
+Star.0,コア無傷
+Star.1,壁の損失20マス未満
+Star.2,AIの仲間なし
+Profile.Use,このプロフィールを使う
+Profile.Active,使用中
+Profile.New,新規プロフィール
+Profile.Empty,空きスロット
+Profile.Cleared,{Count} ページクリア
+Profile.Stars,星 {Count} 個
+Profile.ConfirmDelete,このプロフィールを完全に削除する？
+Profile.Note,プロフィールはこのPCに保存され、フレンドの部屋にも持ち込める。報酬はホストが計算し、書き込むのは自分のPC。
+Defense.Wave,ウェーブ {Wave} / {Count}
+Defense.Build,準備フェーズ
+Defense.Fight,ウェーブ進行中
+Defense.Core,コア
+Defense.Enemies,残りの敵 {Count}
+Defense.StartWave,ウェーブ開始
+Defense.HostStarts,ホストがウェーブを開始する
+Defense.Ink,インク
+Defense.BuildHint,右ドラッグで紙に壁を描く（1マス10インク）。壁の上をドラッグすると消える。敵はコアへの最短ルートを通る。
+Defense.TurretHint,四角形以上を空き地に投げると砲台として固定される。Eで三角形を集め、Fで最後尾を前に合成。
+Defense.WaveBanner,ウェーブ {Wave}！
+Defense.ClearBanner,ウェーブクリア · ステッカー +{Count}
+Defense.Respawn,{Seconds} 秒後にコアの横で復活
+Defense.Denied.1,インクが足りない
+Defense.Denied.2,その線ではコアが塞がる。敵には常に通り道が必要
+Defense.Denied.3,そこに誰かがいる
+Defense.Objectives,星の目標
+Defense.StartFailed,ページを開けなかった
+Defense.Turrets,砲台 {Count}
+Key.RMB,右クリック
+Key.Draw,壁を描く
+Key.Merge,合成
+Key.Enter,Enter
+Result.Waves,防いだウェーブ：{Count}
+Result.Stickers,獲得ステッカー：{Count}
+Result.FirstClear,初クリアボーナス +{Count}
+Result.Retry,もう一度
+Result.Next,次のページ
+Result.CoreLost,コアが落ちた。
+Result.Held,全ウェーブを防ぎ切った。
+Prank.Title,おふざけ度
+Prank.0,オフ
+Prank.1,フレンドリー
+Prank.2,カオス
+Prank.0.Note,誰もつかまれず、投げられない。味方の弾も押さない。
+Prank.1.Note,許可した人だけをつかんで投げられる。味方の弾は少し押す。
+Prank.2.Note,誰でもいつでもつかんで投げられる。味方の弾は強く押す。
+Throwable.On,味方に投げられてもOK：オン
+Throwable.Off,味方に投げられてもOK：オフ
+Throwable.Tag,投げOK
+Room.Kick,キック
+Network.Kicked,ホストによってルームから外されました。
+Key.Grab,つかむ
+Key.Roll,転がって脱出
+Key.Wriggle,振りほどく
+Key.ThrowMate,{Name} を投げる
+Bait.Tag,おとり
+Bait.Countdown,おとり {Seconds}秒 · {Count}体
+Bait.Hint,おとりとして着地した。近くの敵が向かってくるが、受けるダメージは半分。撃ち返すか、E で転がって脱出。
+Carried.Tag,抱えられ中
+Carried.Hint,{Name} があなたを抱えている。Q で投げられる。E で振りほどく。
+Award.MVP,MVP
+Award.MVP.Detail,{Count} ダメージ
+Award.Bait,ベストおとり
+Award.Bait.Detail,{Count}体を引きつけた
+Award.Cannonball,人間大砲
+Award.Cannonball.Detail,{Count}回投げられた
+Award.Walls,壁の芸術家
+Award.Walls.Detail,{Count}マスの壁を描いた
+Award.Scapegoat,戦犯
+Award.Scapegoat.Detail,味方を{Count}回押した
+Settings.Comfort,見やすさ
+Settings.Shake,画面の揺れ
+Settings.Flash,被弾フラッシュ
+Settings.Numbers,ダメージ数値
+Settings.Throwable,投げられOK
+Result.BaitStickers,おとりステッカー：{Count}
+Station.0,ミッションボード
+Station.1,実績ウォール
+Station.2,ショップ
+Station.3,研究デスク
+Station.4,衣装棚
+Station.5,フレンドを招待
+Station.6,トレーニングコーナー
+Station.0.Note,モードとページを選ぶ。出撃できるのはホストだけ。
+Station.1.Note,ルームの全員と、それぞれが達成した実績。
+Station.2.Note,武器と壁の種類を解放し、1回分のアイテムを買う。
+Station.3.Note,ステッカーで能力を強化（各5段階）。
+Station.4.Note,見た目とパーティー称号。
+Station.5.Note,このルームは最大8人。招待はあなたから。
+Station.6.Note,的、ブルズアイ、全部のキーがここに。
+Hub.Mine,自分のロビー
+Hub.Title,{Name} のロビー
+Hub.Kind.0,オフライン・あなただけ
+Hub.Kind.1,Steamルーム・フレンドのみ
+Hub.Kind.2,直接接続ルーム（テスト）
+Hub.Seats,{Count} / 8 人
+Hub.Invite,フレンドを招待
+Hub.Here,ルーム内（{Count}/8）
+Hub.Open,開く
+Hub.Deploying,{Page}・{Seconds}秒後に出撃
+Hub.CancelDeploy,出撃を取り消す
+Hub.HostDeploys,ページ選びと出撃はホストが行います。それまでロビーで準備を。
+Hub.LeaveRoom,ルームを出る
+Hub.ToTitle,タイトルに戻る
+Hub.Abandon,ミッションを放棄
+Hub.Back,ロビーに戻る
+Hub.InviteUnavailable,招待にはSteamルームが必要です。今のロビーは違います。
+Hub.DeployHostOnly,出撃できるのはホストだけです。
+Board.Mode.0,ライン防衛
+Board.Mode.1,遠征（近日公開）
+Board.Mode.2,パーティー（近日公開）
+Board.ModeSoon,このモードは今後のアップデートで開放されます。
+Board.BotsFriends,フレンドがいるときはAIの仲間は同行しません。
+Coming.Stamp,近日オープン
+Coming.Stickers,ステッカー：{Count}枚
+Coming.1,ここに全員の達成済み・未達成の実績が並びます。今はルームにいる人だけが分かります。
+Coming.2,ステッカーで武器と壁の種類を解放し、1回分のアイテムも買えます（1回につき2個まで）。
+Coming.3,体力・攻撃力・インク上限・投てき力・移動速度・回収範囲を各5段階で強化。他の人のルームでは難易度に合わせて上限がかかります。
+Coming.4,見た目を変えて、パーティー称号を選ぶ。戦闘には影響しません。
+Npc.2,カウンターのペンタゴン：「荷物はまだ届いていないんだ。ステッカーを貯めておいて！」
+Npc.3,デスクのトライアングル：「まだ計算中。強化はもうすぐ。」
+Npc.4,衣装棚のスクエア：「帽子を作っているところ。どの形にもいい帽子を。」
+Door.0,Steamに接続していないため、今このロビーにはあなたしか入れません。Steamを起動して下のボタンを押すと、フレンドが入れるルームとして開き直します。
+Door.1,このロビーはSteamルームです。Steamのフレンドが最大8人まで参加できます。招待はSteamオーバーレイから。
+Door.2,これはテスト用の直接接続ルームです。招待にはSteamルームが必要です。
+Door.Reconnect,Steamで開き直す
+Door.OpenInvite,Steamの招待を開く
+Door.Friends,フレンドはSteamのフレンドリストであなたを右クリックし「ゲームに参加」でも入れます。
+Door.Busy,ミッション中は誰も参加できません。全員がロビーに戻ったら入れます。
+Door.Full,ルームは8人まで。9人目は入れません。
+Training.Move,移動
+Training.Fire,長押しで射撃（的は壊れてもまた立つ）
+Training.Recruit,三角形をしっぽに加える／施設を使う
+Training.Merge,最後尾の三角形を前の形に合体
+Training.Throw,長押しでため、離して投げる（ブルズアイを狙え）
+Training.Draw,ライン防衛で：ドラッグして壁を描く
+Training.Wave,ライン防衛で：次のウェーブを早めに呼ぶ
+Training.Menu,設定と退出
+Training.Intro,ここでは何をしても負けません。壊れた的はまた立ち、三角形も補充されます。多角形を的に投げると三角形に割れ、ブルズアイの上で止まれば命中です。
+Training.Bullseye,ブルズアイ：あなた {Mine} 回・ルーム全体 {All} 回
+Training.Replay,チュートリアルをもう一度
+Training.ReplayAlone,チュートリアルはロビーに一人のときだけやり直せます。
+Tutorial.Title,チュートリアル
+Tutorial.Step,ステップ {Step} / {Count}
+Tutorial.0.Title,移動
+Tutorial.1.Title,射撃
+Tutorial.2.Title,仲間にする
+Tutorial.3.Title,合体
+Tutorial.4.Title,砲台を置く
+Tutorial.5.Title,壁を描く
+Tutorial.6.Title,ラインを守る
+Tutorial.0,WASDで点滅するリングの中へ歩こう。
+Tutorial.1,マウスで狙って左ボタンを長押し。紙の的を2つ壊そう。
+Tutorial.2,三角形に近づいてE。2つをしっぽに加えよう。
+Tutorial.3,Fを押すと、最後尾の三角形が前の三角形と合体して四角形に。辺の数がランクです。
+Tutorial.4,Qを長押ししてため、離して四角形を空いた紙へ投げよう。砲台として固定されます。
+Tutorial.TurretRetry,的に当たった四角形は三角形に割れます。また仲間にして合体しよう。
+Tutorial.5,右ボタンを押したまま、点滅するマスをなぞろう。3マスの壁で敵が回り道します。
+Tutorial.6,Enterでウェーブ開始。コアを守ろう。砲台も一緒に撃ちます。
+Tutorial.StepDone,クリア！
+Tutorial.Skip,チュートリアルを飛ばす
+Tutorial.Finished,準備完了
+Tutorial.FinishedNote,これでゲームの操作はすべてです。ロビーのトレーニングコーナーには的とブルズアイがあり、いつでも練習できます。フレンドはSteamからあなたを自分のロビーに招待できます。
+Tutorial.Enter,ロビーへ
+Tutorial.NoClock,時間制限なし
+Tutorial.AloneOnly,チュートリアルは一人のときだけ始められます。
+Network.Entering,ロビーに入っています…
+Network.RoomBusy,フレンドはミッション中です。ロビーに戻ってから参加してください。
+Network.RoomFull,そのルームは満員です（8人）。
+Network.HostLeft,ホストが退出したので、自分のロビーに戻りました。
+Network.JoiningFriend,フレンドのロビーに参加中…
+Network.InviteFailed,招待を開けませんでした。ルームが閉じた可能性があります。
+Key.Use,仲間にする／使う

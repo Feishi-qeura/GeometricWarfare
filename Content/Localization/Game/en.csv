@@ -1,0 +1,403 @@
+﻿Key,SourceString
+Game.Title,GEOMETRIC WARFARE
+Game.Subtitle,Draw the maze. Hold the line. Bring friends.
+Menu.Single,Single player
+Menu.Create,Create room
+Menu.Settings,Settings
+Menu.Quit,Quit
+Menu.Back,Back
+Menu.Start,Start game
+Menu.Ready,Ready / unready
+Menu.Continue,Return to game
+Menu.Leave,Leave game
+Menu.Lobby,Return to lobby
+Room.Name,Room name
+Room.Password,Password (optional)
+Room.Steam,Steam
+Room.Refresh,Refresh
+Room.Join,Join selected room
+Room.Host,Host
+Room.Ready,Ready
+Room.Waiting,Waiting
+Room.Next,Next page
+Room.Previous,Previous page
+Settings.Language,Language
+Settings.Music,Music volume
+Settings.Effects,Effects volume
+Settings.Quality,Graphics quality
+Settings.Resolution,Resolution
+Settings.Window,Window / fullscreen
+Control.Move,WASD move · mouse aim · left click fire
+Control.Tail,E recruit · Hold Q / release: throw first ally · Wheel zoom · Esc settings
+Combat.Recruit,[E] Recruit ally
+Combat.Tail,Companions: {Count}
+Combat.Health,Health
+Combat.Armor,Armor
+Combat.NoRespawn,No respawns · spectating your team
+Combat.Level,Team level {Level}
+Combat.Upgrade,Choose an upgrade
+Combat.AirDrop,Weapon airdrop
+Combat.Boss,BOSS
+Result.Victory,VICTORY
+Result.Defeat,DEFEAT
+Result.Survived,Survival complete
+Network.Creating,Creating room…
+Network.Searching,Searching…
+Network.Joining,Joining room…
+Network.NoRooms,No rooms found. Try refreshing.
+Network.RoomsFound,Select a room to join.
+Network.CreateFailed,Could not create the room. Please retry.
+Network.SearchFailed,Room search failed. Please retry.
+Network.JoinFailed,Could not join. The room may be full or closed.
+Network.BadPassword,Incorrect password.
+Network.LeaveFailed,Session cleanup failed. Restart before creating another room.
+Network.ConnectionLost,The connection dropped; you are back in your own hub.
+Network.MatchFull,No playable slot is available. Please wait for the next round.
+Network.NotReady,Wait until every player is ready.
+Weapon.0,Pistol
+Weapon.1,Rifle
+Weapon.2,Shotgun
+Weapon.3,Sniper
+Weapon.4,Machine gun
+Weapon.5,Rocket launcher
+Skill.0,Piercing rounds
+Skill.1,Ricochet
+Skill.2,Armor breach
+Skill.3,Fragmentation
+Skill.4,Electric core
+Skill.5,Conductive bridge
+Skill.6,High voltage
+Skill.7,Electromagnetic resonance
+Skill.8,Burning rounds
+Skill.9,Spreading fire
+Skill.10,Combustion core
+Skill.11,Pressurized flame
+Skill.12,Ice rounds
+Skill.13,Deep freeze
+Skill.14,Shatter
+Skill.15,Permafrost
+Skill.16,Shield battery
+Skill.17,Repair recovery
+Skill.18,Magnetic shield
+Skill.19,Emergency transfer
+Combat.Charge,Hold Q to charge · Release to throw
+Skill.0.Description,Each rank lets shots pierce 1 more enemy. Sniper shots already pierce once.
+Skill.1.Description,Each rank adds 1 wall ricochet. Rockets still explode on impact.
+Skill.2.Description,"Projectile damage +15% per rank, added to the bonus from Burning rounds."
+Skill.3.Description,Hits explode for 25% of projectile damage per rank. Radius: 120 + 20 per rank.
+Skill.4.Description,Hits arc to 1 nearby enemy for 30% projectile damage. Unlocks range and extra-target synergies.
+Skill.5.Description,Requires Electric core to deal chain damage. Each rank increases arc range by 60 from a base of 220.
+Skill.6.Description,"Every 2 seconds, strike all enemies within 210 for 8 damage per rank."
+Skill.7.Description,Requires Electric core. Each rank adds 1 chain target to the base of 1.
+Skill.8.Description,Projectile damage +10% per rank. Hits burn for 2 seconds at 2 + 2 damage per rank each second.
+Skill.9.Description,Requires Burning rounds. Each rank adds 1 second of burn. Burn kills spread a 2-second burn within 200.
+Skill.10.Description,Requires Burning rounds. Burn kills explode within 180 for 6 times burn DPS per rank.
+Skill.11.Description,Requires Burning rounds. Each projectile hit deals 4 additional burn damage per rank immediately.
+Skill.12.Description,Hits slow enemies by 50% for 1 second. Deep freeze extends this duration.
+Skill.13.Description,Requires Ice rounds. Each rank extends its slow by 0.4 seconds.
+Skill.14.Description,Projectile kills explode within 180 for 20% of projectile damage per rank.
+Skill.15.Description,Hits slow enemies by 50% for 2 seconds in a radius of 120 + 30 per rank.
+Skill.16.Description,Gain 70 armor now. Each rank raises your armor regeneration cap by 40. Armor absorbs 70% of incoming damage.
+Skill.17.Description,Each rank adds 35 base maximum health and 0.8 health regeneration per second. Heal 70 now. Evolution doubles the health bonus.
+Skill.18.Description,"Regenerate 1.5 armor per second per rank, up to 100 + 40 per rank of Shield battery."
+Skill.19.Description,"When health is below 25%, heal 15% maximum health and gain 40 armor per rank. Checks every 2 seconds; cooldown 30 seconds."
+Combat.WorldPaused,WORLD PAUSED · Choose an upgrade
+Combat.WaitingUpgrades,Waiting for teammates to choose…
+Combat.SkillRank,Rank {Current} → {Next} / 5
+Combat.JoinSquad,E · Join this player’s squad
+Combat.LeaveSquad,E · Leave squad
+Skill.Recovery,Field recovery
+Skill.Recovery.Description,All skills are maxed. Restore 25% maximum health and gain 50 armor.
+Combat.LifeWeapon,Weapon equipped for this life
+Combat.ChooseHint,Click a card or press 1 / 2 / 3
+Combat.LevelUp,LEVEL UP!
+Combat.Reload,Reloading
+Combat.Squad,Squad
+Combat.Waiting.Count,{Count} player(s) still choosing
+Combat.XP,XP
+Key.Aim,Aim
+Key.Fire,Fire
+Key.LMB,LMB
+Key.Menu,Menu
+Key.Mouse,Mouse
+Key.Move,Move
+Key.Recruit,Recruit
+Key.Leave,Leave squad
+Key.Join,Join squad
+Key.Throw,Hold to throw
+Key.Wheel,Wheel
+Key.Zoom,Zoom
+Result.Reached,Reached team level {Level}
+Result.Survival,Survived {Seconds}s
+Settings.Fullscreen,Fullscreen
+Settings.Windowed,Windowed
+Settings.Paused,Game paused
+Settings.Quality.0,Low
+Settings.Quality.1,Medium
+Settings.Quality.2,High
+Settings.Quality.3,Epic
+Skill.New,NEW
+Skill.Family.0,Ballistics
+Skill.Family.1,Charge
+Skill.Family.2,Fire
+Skill.Family.3,Frost
+Skill.Family.4,Shield
+Menu.Multiplayer,Multiplayer
+Menu.Saves,Saves
+Menu.Intro,Introduction
+Menu.Footer,Hub and line defense · chapter 1
+Online.Subtitle,Play together on Steam or Epic. Up to 10 players per room.
+Room.Epic,Epic (EOS)
+Room.CreateTitle,Create a room
+Room.ListTitle,Open rooms
+Room.JoinPassword,Room password
+Room.NameHint,Name your room
+Room.PasswordHint,Leave empty for an open room
+Room.JoinHint,Only needed for locked rooms
+Room.CapacityNote,"Co-op for up to 8 players · friendly bullets push, never hurt"
+Room.Empty,"No rooms yet. Refresh, or create one for your friends."
+Room.EmptyOffline,Sign in to this platform to see its rooms.
+Room.Lobby,Room
+Room.Players,Players ({Count}/8)
+Room.RunTitle,Line defense
+Room.RunInfo,The host picks a page and deploys once everyone is ready. Every player carries their own ink for drawing walls.
+Room.ResumeTitle,Continuing a saved run
+Room.ResumeInfo,Team level {Level} · survived {Time}
+Room.ResumeNote,Each friend gets their own character back when they join with the same account.
+Platform.Ready,Ready
+Platform.SignedInAs,Signed in as {Name}
+Platform.SteamOffline,Steam is not running. Start Steam and sign in.
+Platform.EpicSignIn,Not signed in to Epic.
+Platform.EpicSignInButton,Sign in to Epic
+Platform.EpicSigningIn,Signing in to Epic…
+Platform.EpicSignedIn,Signed in to Epic.
+Platform.EpicFailed,Epic sign-in failed. Please try again.
+Platform.EpicNotConfigured,Epic online is not configured in this build (EOS product credentials missing).
+Platform.Unavailable,This platform is unavailable right now.
+Save.Title,Save progress
+Save.HostOnly,Only the host can save a co-op run.
+Save.Saved,Progress saved.
+Save.Failed,Could not save. Check disk space and try again.
+Save.LoadFailed,This save could not be loaded.
+Saves.Subtitle,"Each save is one player profile: stickers, stars and the pages you have opened."
+Saves.Slot,Slot {Slot}
+Saves.Empty,Empty
+Saves.EmptyHint,Press Esc during a run and choose a slot under “Save progress”.
+Saves.ModeSolo,Single player
+Saves.ModeSteam,Steam co-op
+Saves.ModeEpic,Epic co-op
+Saves.Survived,Survived {Time}
+Saves.Players,{Count} player(s)
+Saves.SoloTeam,You + {Count} AI teammates
+Saves.Continue,Continue
+Saves.Host,Host & continue
+Saves.Delete,Delete
+Saves.Cancel,Cancel
+Saves.ConfirmDelete,Delete this save for good?
+Saves.OnlineNote,"Co-op saves live only on the host's computer: guests never write a copy, so a run always has exactly one version. Each player is stored by their Steam or Epic account, so when the host reopens the room, every friend who joins with the same account gets their own character, skills and squad back."
+Intro.Subtitle,Everything you need for your first run.
+Intro.GoalTitle,Goal
+Intro.Goal,"Hold the paper arena for 10 minutes. Monster waves keep growing and elite blocks arrive at 2, 5 and 9 minutes. If every player falls, the run is lost."
+Intro.GrowthTitle,Level up together
+Intro.Growth,"Every kill adds to one shared team level. When it rises the world pauses and each player picks one of three skill cards: 20 skills in 5 families, each up to rank 5."
+Intro.SquadTitle,Companions
+Intro.Squad,Press E near a wandering companion to add it to your tail; it follows you and fires with you. Hold Q to charge and release to throw your first companion at the enemy.
+Intro.WeaponsTitle,Weapon drops
+Intro.Weapons,"Supply crates fall every 40 seconds. Walk over one to arm yourself and your whole squad with a rifle, shotgun, sniper, machine gun or rocket launcher."
+Intro.TeamTitle,Teammates
+Intro.Team,"Single player brings three AI teammates who fight, level up and pick skills on their own. Bullets never hurt teammates, but they do shove them along the shot, so mind your line of fire."
+Intro.OnlineTitle,Multiplayer
+Intro.Online,Create or join rooms on Steam or Epic (EOS) for up to 10 players. The host can save a co-op run and continue it later with the same friends.
+Key.Pick,Pick skill
+Team.Bot,AI {Index}
+Combat.Team,Teammates
+Board.Title,Mission board
+Board.Subtitle,"Line defense · draw walls into a maze, then fight on the field yourself."
+Board.Chapter,Chapter 1 · The first notebook
+Level.1-1,First page
+Level.1-2,Two doors
+Level.1-3,Long hall
+Board.Waves,{Count} waves
+Board.Locked,Clear the page before it first
+Board.Play,Deploy
+Board.Bots,AI teammates
+Board.BotsNote,Solo is balanced without AI; bringing AI teammates gives up the third star.
+Board.Friends,Play with friends
+Board.Profile,Profile {Slot}
+Board.Stickers,{Count} stickers
+Board.Change,Change profile
+Star.0,Core untouched
+Star.1,Lose fewer than 20 wall cells
+Star.2,No AI teammates
+Profile.Use,Use this profile
+Profile.Active,In use
+Profile.New,New profile
+Profile.Empty,Empty slot
+Profile.Cleared,{Count} pages cleared
+Profile.Stars,{Count} stars
+Profile.ConfirmDelete,Delete this profile for good?
+Profile.Note,Profiles stay on this PC and come with you into friends' rooms. The host works out rewards; your own machine writes them.
+Defense.Wave,Wave {Wave} / {Count}
+Defense.Build,Build phase
+Defense.Fight,Wave incoming
+Defense.Core,Core
+Defense.Enemies,{Count} enemies left
+Defense.StartWave,Start wave
+Defense.HostStarts,The host starts the wave
+Defense.Ink,Ink
+Defense.BuildHint,Right-drag on the paper to draw walls (10 ink a cell); right-drag a wall to erase it. Enemies take the shortest open road to the core.
+Defense.TurretHint,"Throw a square or bigger onto open paper to pin it as a turret. E recruits triangles, F merges the last one forward."
+Defense.WaveBanner,Wave {Wave}!
+Defense.ClearBanner,Wave cleared · +{Count} stickers
+Defense.Respawn,Back beside the core in {Seconds} s
+Defense.Denied.1,Not enough ink
+Defense.Denied.2,That stroke would seal the core off — enemies always need a road
+Defense.Denied.3,Someone is standing there
+Defense.Objectives,Stars
+Defense.StartFailed,The page could not be opened
+Defense.Turrets,Turrets {Count}
+Key.RMB,RMB
+Key.Draw,Draw walls
+Key.Merge,Merge
+Key.Enter,Enter
+Result.Waves,Waves held: {Count}
+Result.Stickers,Stickers earned: {Count}
+Result.FirstClear,First clear bonus +{Count}
+Result.Retry,Try again
+Result.Next,Next page
+Result.CoreLost,The core fell.
+Result.Held,Every wave held.
+Prank.Title,Trolling level
+Prank.0,Off
+Prank.1,Friendly
+Prank.2,Chaos
+Prank.0.Note,"Nobody can be grabbed or thrown, and friendly fire never shoves."
+Prank.1.Note,Only players who allow it can be grabbed and thrown; friendly fire shoves a little.
+Prank.2.Note,Anyone can be grabbed and thrown at any time; friendly fire shoves hard.
+Throwable.On,Teammates may throw me: on
+Throwable.Off,Teammates may throw me: off
+Throwable.Tag,throwable
+Room.Kick,Kick
+Network.Kicked,The host removed you from the room.
+Key.Grab,Grab
+Key.Roll,Roll free
+Key.Wriggle,Wriggle free
+Key.ThrowMate,Throw {Name}
+Bait.Tag,BAIT
+Bait.Countdown,BAIT {Seconds}s · pulling {Count}
+Bait.Hint,"You landed as bait: nearby enemies come for you and you take half damage. Shoot back, or press E to roll free."
+Carried.Tag,CARRIED
+Carried.Hint,{Name} is carrying you. Q throws you; E wriggles you free.
+Award.MVP,MVP
+Award.MVP.Detail,{Count} damage dealt
+Award.Bait,Best bait
+Award.Bait.Detail,held {Count} enemies
+Award.Cannonball,Human cannonball
+Award.Cannonball.Detail,thrown {Count} times
+Award.Walls,Wall artist
+Award.Walls.Detail,drew {Count} wall cells
+Award.Scapegoat,Scapegoat
+Award.Scapegoat.Detail,shoved teammates {Count} times
+Settings.Comfort,Readability
+Settings.Shake,Screen shake
+Settings.Flash,Hit flash
+Settings.Numbers,Damage numbers
+Settings.Throwable,Throwable
+Result.BaitStickers,Bait stickers: {Count}
+Station.0,Mission board
+Station.1,Achievement wall
+Station.2,Shop
+Station.3,Research desk
+Station.4,Wardrobe
+Station.5,Invite friends
+Station.6,Training corner
+Station.0.Note,Pick the mode and the page; only the host deploys.
+Station.1.Note,"Everyone in the room, and what each of them has achieved."
+Station.2.Note,Unlock weapons and wall types; buy items for one run.
+Station.3.Note,"Spend stickers on your attributes, five ranks each."
+Station.4.Note,Outfits and party titles.
+Station.5.Note,Your room holds up to eight players.
+Station.6.Note,"Targets, a bullseye and every key in one place."
+Hub.Mine,My hub
+Hub.Title,{Name}'s hub
+Hub.Kind.0,Offline · only you
+Hub.Kind.1,Steam room · friends only
+Hub.Kind.2,Direct room (testing)
+Hub.Seats,{Count} / 8 players
+Hub.Invite,Invite friends
+Hub.Here,In the room ({Count}/8)
+Hub.Open,open
+Hub.Deploying,{Page} · deploying in {Seconds}
+Hub.CancelDeploy,Cancel
+Hub.HostDeploys,The host picks the page and deploys. Get ready in the hub meanwhile.
+Hub.LeaveRoom,Leave the room
+Hub.ToTitle,Back to the title
+Hub.Abandon,Give up the mission
+Hub.Back,Back to the hub
+Hub.InviteUnavailable,Invites need a Steam room; this hub is not one right now.
+Hub.DeployHostOnly,Only the host can deploy.
+Board.Mode.0,Line defense
+Board.Mode.1,Expedition (soon)
+Board.Mode.2,Party playlist (soon)
+Board.ModeSoon,This mode opens in a later update.
+Board.BotsFriends,"With friends in the room, no AI teammates come along."
+Coming.Stamp,Opening soon
+Coming.Stickers,Your stickers: {Count}
+Coming.1,"Every player's achievements will hang here, the ones done and the ones still missing. For now the wall knows who is in the room."
+Coming.2,"Spend stickers to unlock weapons and wall types, and buy items for a single run (two per run at most)."
+Coming.3,"Raise health, damage, ink capacity, throw power, speed and pickup range, five ranks each. In someone else's room your ranks are capped by the room's difficulty."
+Coming.4,Change your outfit and pick a party title. Looks only: nothing here changes a fight.
+Npc.2,Pentagon at the counter: “The crates are still on their way. Save up your stickers!”
+Npc.3,"Triangle at the desk: “Formulas first, upgrades later. Come back soon.”"
+Npc.4,Square at the wardrobe: “Hats are coming. Every shape deserves a good hat.”
+Door.0,"Steam is not connected, so only you can be in this hub. Start Steam and press the button below: the hub reopens as a room your friends can join."
+Door.1,"This hub is a Steam room: your Steam friends can join, up to eight players. Send invites from the Steam overlay."
+Door.2,This is a direct room for testing; invites need a Steam room.
+Door.Reconnect,Reopen with Steam
+Door.OpenInvite,Open Steam invites
+Door.Friends,Friends can also right-click you in their Steam friends list and choose Join game.
+Door.Busy,Nobody can join during a mission; they get in once everyone is back in the hub.
+Door.Full,A room holds eight players; a ninth is turned away.
+Training.Move,Walk
+Training.Fire,Hold to shoot (the targets stand up again)
+Training.Recruit,Recruit a triangle into your tail; use a station
+Training.Merge,Merge the last triangle into the shape before it
+Training.Throw,"Hold to charge, release to throw (aim for the bullseye)"
+Training.Draw,In line defense: drag to draw walls
+Training.Wave,In line defense: call the next wave early
+Training.Menu,Settings and leaving
+Training.Intro,Nothing here can be lost: broken targets stand up again and the triangles are topped up. A polygon thrown at a target bursts into triangles; one that comes to rest on the bullseye scores.
+Training.Bullseye,Bullseyes: you {Mine} · whole room {All}
+Training.Replay,Replay the tutorial
+Training.ReplayAlone,The tutorial can be replayed while you are alone in the hub.
+Tutorial.Title,Tutorial
+Tutorial.Step,step {Step} of {Count}
+Tutorial.0.Title,Walk
+Tutorial.1.Title,Shoot
+Tutorial.2.Title,Recruit
+Tutorial.3.Title,Merge
+Tutorial.4.Title,Pin a turret
+Tutorial.5.Title,Draw walls
+Tutorial.6.Title,Hold the line
+Tutorial.0,Walk with WASD into the blinking ring.
+Tutorial.1,Aim with the mouse and hold the left button: break both paper targets.
+Tutorial.2,Walk up to a triangle and press E. Recruit two into your tail.
+Tutorial.3,Press F: the last triangle in your tail merges into the one before it and makes a square. Sides are the tier.
+Tutorial.4,Hold Q to charge and release to throw the square onto empty paper: it pins itself as a turret.
+Tutorial.TurretRetry,A square that hits a target bursts into triangles: recruit them and merge again.
+Tutorial.5,Hold the right button and drag across the blinking cells: three cells of wall make the enemies walk around.
+Tutorial.6,Press Enter for the wave and hold the core: your turret fires with you.
+Tutorial.StepDone,Done!
+Tutorial.Skip,Skip the tutorial
+Tutorial.Finished,You're ready
+Tutorial.FinishedNote,"That is every move the game has. The training corner in your hub has targets and a bullseye whenever you want more practice, and friends can invite you into their hubs through Steam."
+Tutorial.Enter,Enter the hub
+Tutorial.NoClock,no timer
+Tutorial.AloneOnly,The tutorial starts only when you are alone.
+Network.Entering,Entering the hub…
+Network.RoomBusy,Your friends are on a mission; join once they are back in their hub.
+Network.RoomFull,That room is full (eight players).
+Network.HostLeft,"The host left, so you are back in your own hub."
+Network.JoiningFriend,Joining your friend's hub…
+Network.InviteFailed,That invite could not be opened; the room may have closed.
+Key.Use,Recruit / use

@@ -1,0 +1,403 @@
+﻿Key,SourceString
+Game.Title,几何战争
+Game.Subtitle,在方格纸上画迷宫，守住核心，叫上朋友。
+Menu.Single,单人游戏
+Menu.Create,创建房间
+Menu.Settings,设置
+Menu.Quit,退出游戏
+Menu.Back,返回
+Menu.Start,开始游戏
+Menu.Ready,准备 / 取消准备
+Menu.Continue,返回游戏
+Menu.Leave,离开对局
+Menu.Lobby,返回准备界面
+Room.Name,房间名称
+Room.Password,房间密码（可选）
+Room.Steam,Steam 联机
+Room.Refresh,刷新
+Room.Join,加入选中房间
+Room.Host,房主
+Room.Ready,已准备
+Room.Waiting,未准备
+Room.Next,下一页
+Room.Previous,上一页
+Settings.Language,语言
+Settings.Music,音乐音量
+Settings.Effects,音效音量
+Settings.Quality,画面质量
+Settings.Resolution,分辨率
+Settings.Window,窗口 / 全屏
+Control.Move,WASD 移动 · 鼠标瞄准 · 左键射击
+Control.Tail,E 招募队友 · 按住 Q 蓄力，松开投掷首名队友 · 滚轮缩放 · Esc 设置
+Combat.Recruit,[E] 招募队友
+Combat.Tail,尾巴队友：{Count}
+Combat.Health,生命
+Combat.Armor,护甲
+Combat.NoRespawn,无法复活 · 正在观战队友
+Combat.Level,团队等级 {Level}
+Combat.Upgrade,选择本次进化
+Combat.AirDrop,空投武器箱
+Combat.Boss,BOSS
+Result.Victory,胜利
+Result.Defeat,失败
+Result.Survived,生存挑战完成
+Network.Creating,正在创建房间…
+Network.Searching,正在搜索…
+Network.Joining,正在加入房间…
+Network.NoRooms,未找到房间，请尝试刷新。
+Network.RoomsFound,请选择要加入的房间。
+Network.CreateFailed,创建房间失败，请重试。
+Network.SearchFailed,搜索房间失败，请重试。
+Network.JoinFailed,无法加入，房间可能已满或已关闭。
+Network.BadPassword,房间密码错误。
+Network.LeaveFailed,房间清理失败，请重启游戏后再创建房间。
+Network.ConnectionLost,连接已断开，你回到了自己的大厅。
+Network.MatchFull,当前没有可用名额，请等待下一局。
+Network.NotReady,请等待所有玩家准备完成。
+Weapon.0,手枪
+Weapon.1,步枪
+Weapon.2,霰弹枪
+Weapon.3,狙击枪
+Weapon.4,机枪
+Weapon.5,火箭筒
+Skill.0,贯穿弹芯
+Skill.1,折射弹道
+Skill.2,破甲刻痕
+Skill.3,终点碎裂
+Skill.4,电荷核心
+Skill.5,导电桥
+Skill.6,高压储能
+Skill.7,电磁共鸣
+Skill.8,灼热弹药
+Skill.9,焦油蔓延
+Skill.10,燃爆核心
+Skill.11,加压燃烧
+Skill.12,冰屑弹药
+Skill.13,凝结冻结
+Skill.14,碎冰冲击
+Skill.15,永冻残域
+Skill.16,缓冲电池
+Skill.17,维修回收
+Skill.18,隔舱磁场
+Skill.19,应急转流
+Combat.Charge,按住 Q 蓄力 · 松开投掷
+Skill.0.Description,每级让弹丸多穿透 1 名敌人；狙击枪自带 1 次穿透。
+Skill.1.Description,每级增加 1 次墙面弹射；火箭弹碰撞后仍会爆炸。
+Skill.2.Description,每级增加 15% 弹丸伤害，与灼热弹药的增伤相加。
+Skill.3.Description,命中时爆炸，每级造成弹丸伤害的 25%；范围半径为 120 + 每级 20。
+Skill.4.Description,命中后电弧攻击附近 1 名敌人，造成弹丸伤害的 30%；可搭配导电桥与电磁共鸣扩展。
+Skill.5.Description,需搭配电荷核心；电弧基础范围 220，每级增加 60。
+Skill.6.Description,每 2 秒攻击半径 210 内的所有敌人，每级造成 8 点伤害。
+Skill.7.Description,需搭配电荷核心；基础连锁 1 名目标，每级额外增加 1 名。
+Skill.8.Description,每级增加 10% 弹丸伤害；命中灼烧 2 秒，每秒伤害为 2 + 每级 2。
+Skill.9.Description,需搭配灼热弹药；每级延长灼烧 1 秒，灼烧击杀会向半径 200 内传播 2 秒灼烧。
+Skill.10.Description,需搭配灼热弹药；灼烧击杀产生半径 180 的爆炸，每级伤害为灼烧秒伤的 6 倍。
+Skill.11.Description,需搭配灼热弹药；弹丸命中时，每级立即追加 4 点灼烧伤害。
+Skill.12.Description,命中使敌人减速 50%，持续 1 秒；凝结冻结可延长持续时间。
+Skill.13.Description,需搭配冰屑弹药；每级延长其减速持续时间 0.4 秒。
+Skill.14.Description,弹丸击杀产生半径 180 的爆炸，每级造成弹丸伤害的 20%。
+Skill.15.Description,命中后，使半径 120 + 每级 30 内敌人减速 50%，持续 2 秒。
+Skill.16.Description,立即获得 70 护甲；每级增加 40 护甲恢复上限。护甲承担所受伤害的 70%。
+Skill.17.Description,每级增加 35 基础生命上限，并每秒恢复 0.8 生命；立即治疗 70。进化状态会翻倍生命上限加成。
+Skill.18.Description,每级每秒恢复 1.5 护甲；恢复上限为 100 + 缓冲电池每级 40。
+Skill.19.Description,生命低于 25% 时，恢复最大生命的 15%，并获得每级 40 护甲。每 2 秒检测，冷却 30 秒。
+Combat.WorldPaused,世界已暂停 · 请选择技能
+Combat.WaitingUpgrades,等待队友选择技能…
+Combat.SkillRank,等级 {Current} → {Next} / 5
+Combat.JoinSquad,E · 加入这名玩家的队伍
+Combat.LeaveSquad,E · 离开当前队伍
+Skill.Recovery,战地恢复
+Skill.Recovery.Description,所有技能已满级。恢复最大生命的 25%，获得 50 护甲。
+Combat.LifeWeapon,武器已装备，本条命永久持有
+Combat.ChooseHint,点击卡片或按 1 / 2 / 3 选择
+Combat.LevelUp,升级！
+Combat.Reload,装填中
+Combat.Squad,小队
+Combat.Waiting.Count,还有 {Count} 名玩家正在选择
+Combat.XP,经验
+Key.Aim,瞄准
+Key.Fire,射击
+Key.LMB,左键
+Key.Menu,菜单
+Key.Mouse,鼠标
+Key.Move,移动
+Key.Recruit,招募
+Key.Leave,离开队伍
+Key.Join,加入队伍
+Key.Throw,按住投掷
+Key.Wheel,滚轮
+Key.Zoom,缩放
+Result.Reached,团队达到 {Level} 级
+Result.Survival,生存 {Seconds} 秒
+Settings.Fullscreen,全屏
+Settings.Windowed,窗口
+Settings.Paused,游戏已暂停
+Settings.Quality.0,低
+Settings.Quality.1,中
+Settings.Quality.2,高
+Settings.Quality.3,极致
+Skill.New,新
+Skill.Family.0,弹道
+Skill.Family.1,电荷
+Skill.Family.2,火焰
+Skill.Family.3,冰霜
+Skill.Family.4,护盾
+Menu.Multiplayer,多人游戏
+Menu.Saves,存档
+Menu.Intro,介绍
+Menu.Footer,大厅与守线 · 第 1 章
+Online.Subtitle,通过 Steam 或 Epic 与好友合作，每个房间最多 10 人。
+Room.Epic,Epic 联机
+Room.CreateTitle,创建房间
+Room.ListTitle,房间列表
+Room.JoinPassword,加入密码
+Room.NameHint,给房间起个名字
+Room.PasswordHint,留空即为公开房间
+Room.JoinHint,仅带锁的房间需要填写
+Room.CapacityNote,最多 8 人合作 · 友军子弹只推开、不伤害
+Room.Empty,暂时没有房间。刷新一下，或为好友创建一个。
+Room.EmptyOffline,登录该平台后即可查看房间。
+Room.Lobby,房间大厅
+Room.Players,玩家（{Count}/8）
+Room.RunTitle,守线
+Room.RunInfo,房主选好关卡，等所有人准备后出击。每个人都有自己的墨水用来画墙。
+Room.ResumeTitle,继续联机存档
+Room.ResumeInfo,团队等级 {Level} · 已坚持 {Time}
+Room.ResumeNote,队友用同一平台账号加入后，会自动取回自己的角色。
+Platform.Ready,已就绪
+Platform.SignedInAs,已登录：{Name}
+Platform.SteamOffline,Steam 未运行，请启动并登录 Steam。
+Platform.EpicSignIn,尚未登录 Epic 账号。
+Platform.EpicSignInButton,登录 Epic
+Platform.EpicSigningIn,正在登录 Epic…
+Platform.EpicSignedIn,已登录 Epic。
+Platform.EpicFailed,Epic 登录失败，请重试。
+Platform.EpicNotConfigured,此版本尚未配置 Epic 联机（缺少 EOS 产品凭据）。
+Platform.Unavailable,该平台暂不可用。
+Save.Title,保存进度
+Save.HostOnly,联机进度只能由房主保存。
+Save.Saved,进度已保存。
+Save.Failed,保存失败，请检查磁盘空间后重试。
+Save.LoadFailed,该存档无法读取。
+Saves.Subtitle,每个存档是一份玩家档案：贴纸、星星和已解锁的关卡。
+Saves.Slot,存档 {Slot}
+Saves.Empty,空存档
+Saves.EmptyHint,对局中按 Esc，在“保存进度”里选择这个存档位。
+Saves.ModeSolo,单人游戏
+Saves.ModeSteam,Steam 联机
+Saves.ModeEpic,Epic 联机
+Saves.Survived,已坚持 {Time}
+Saves.Players,{Count} 名玩家
+Saves.SoloTeam,你 + {Count} 名 AI 队友
+Saves.Continue,继续
+Saves.Host,开房继续
+Saves.Delete,删除
+Saves.Cancel,取消
+Saves.ConfirmDelete,确定要永久删除这个存档吗？
+Saves.OnlineNote,联机存档只保存在房主的电脑上，队友不会另存副本，因此一局游戏永远只有一份进度。每名玩家按其 Steam / Epic 账号记录，房主重新开房后，队友用同一账号加入即可取回自己的角色、技能和伙伴。
+Intro.Subtitle,第一次出发前需要知道的一切。
+Intro.GoalTitle,目标
+Intro.Goal,在纸面竞技场坚持 10 分钟。怪物潮会越来越强，第 2、5、9 分钟还会出现精英方块。所有玩家倒下即失败。
+Intro.GrowthTitle,共同成长
+Intro.Growth,每次击杀都会累积团队经验。团队升级时世界暂停，每人从三张技能卡中选一张：共 5 个系列、20 种技能，每种最高 5 级。
+Intro.SquadTitle,伙伴
+Intro.Squad,靠近游荡的伙伴按 E，把它加入你的队尾，它会跟随你并一起开火。按住 Q 蓄力，松开即可把队首伙伴投掷出去。
+Intro.WeaponsTitle,武器空投
+Intro.Weapons,每 40 秒会空投一个补给箱，走过去即可为自己和整支队伍换上步枪、霰弹枪、狙击枪、机枪或火箭筒。
+Intro.TeamTitle,队友
+Intro.Team,单人游戏会配备 3 名 AI 队友，它们会自行战斗、升级并挑选技能。子弹不会伤害队友，但会沿弹道把队友推开，注意射击线路。
+Intro.OnlineTitle,联机
+Intro.Online,可在 Steam 或 Epic（EOS）上创建或加入房间，最多 10 人。房主可以保存联机进度，之后与同一批好友继续。
+Key.Pick,选技能
+Team.Bot,AI 队友 {Index}
+Combat.Team,队友
+Board.Title,任务板
+Board.Subtitle,守线 · 在方格纸上画墙造迷宫，再亲自下场战斗。
+Board.Chapter,第 1 章 · 第一本笔记本
+Level.1-1,第一页
+Level.1-2,两道门
+Level.1-3,长走廊
+Board.Waves,{Count} 波
+Board.Locked,先通关上一页
+Board.Play,出击
+Board.Bots,AI 队友
+Board.BotsNote,单人按不带 AI 平衡；带上 AI 队友就拿不到第三颗星。
+Board.Friends,和好友联机
+Board.Profile,档案 {Slot}
+Board.Stickers,{Count} 张贴纸
+Board.Change,切换档案
+Star.0,核心不掉血
+Star.1,墙体损失少于 20 格
+Star.2,不带 AI 队友
+Profile.Use,使用此档案
+Profile.Active,使用中
+Profile.New,新建档案
+Profile.Empty,空槽位
+Profile.Cleared,已通关 {Count} 页
+Profile.Stars,{Count} 颗星
+Profile.ConfirmDelete,确定永久删除这份档案？
+Profile.Note,档案保存在本机，跟着你进入好友的房间。奖励由房主计算，由你自己的电脑写入。
+Defense.Wave,第 {Wave} / {Count} 波
+Defense.Build,布防阶段
+Defense.Fight,波次进行中
+Defense.Core,核心
+Defense.Enemies,剩余敌人 {Count}
+Defense.StartWave,提前开波
+Defense.HostStarts,由房主开波
+Defense.Ink,墨水
+Defense.BuildHint,按住右键在方格纸上拖动画墙（每格 10 墨水），在墙上拖动则擦掉。敌人会走通往核心的最短通路。
+Defense.TurretHint,把方块及以上的多边形投到空地上，它会钉成炮台。E 招募三角形，F 把末尾的三角形并入前一个。
+Defense.WaveBanner,第 {Wave} 波来袭！
+Defense.ClearBanner,波次完成 · 贴纸 +{Count}
+Defense.Respawn,{Seconds} 秒后在核心旁复活
+Defense.Denied.1,墨水不够
+Defense.Denied.2,这一笔会封死通路——敌人必须始终有路可走
+Defense.Denied.3,那里有人站着
+Defense.Objectives,星级目标
+Defense.StartFailed,关卡无法开始
+Defense.Turrets,炮台 {Count}
+Key.RMB,右键
+Key.Draw,画墙
+Key.Merge,合成
+Key.Enter,回车
+Result.Waves,守住波数：{Count}
+Result.Stickers,获得贴纸：{Count}
+Result.FirstClear,首次通关奖励 +{Count}
+Result.Retry,再来一次
+Result.Next,下一页
+Result.CoreLost,核心被攻破了。
+Result.Held,守住了全部波次。
+Prank.Title,整活强度
+Prank.0,关闭
+Prank.1,友好
+Prank.2,混乱
+Prank.0.Note,谁都不能被抓起或投掷，友军子弹也不会推人。
+Prank.1.Note,只有打开“可被投掷”的人才能被抓起和投掷；友军子弹轻推。
+Prank.2.Note,任何人随时都能被抓起和投掷；友军子弹大力推人。
+Throwable.On,允许队友投掷我：开
+Throwable.Off,允许队友投掷我：关
+Throwable.Tag,可投掷
+Room.Kick,踢出
+Network.Kicked,你被房主移出了房间。
+Key.Grab,抓起
+Key.Roll,翻滚挣脱
+Key.Wriggle,挣脱
+Key.ThrowMate,扔出 {Name}
+Bait.Tag,诱饵
+Bait.Countdown,诱饵 {Seconds} 秒 · 拖住 {Count}
+Bait.Hint,你被扔成了诱饵：附近的敌人都会冲你来，你只受一半伤害。可以还击，也可以按 E 翻滚挣脱。
+Carried.Tag,被抓
+Carried.Hint,{Name} 抓着你：Q 会把你扔出去，按 E 挣脱。
+Award.MVP,MVP
+Award.MVP.Detail,造成 {Count} 伤害
+Award.Bait,最佳诱饵
+Award.Bait.Detail,拖住 {Count} 个敌人
+Award.Cannonball,人体炮弹
+Award.Cannonball.Detail,被投 {Count} 次
+Award.Walls,墙艺大师
+Award.Walls.Detail,画了 {Count} 格墙
+Award.Scapegoat,背锅侠
+Award.Scapegoat.Detail,推挤队友 {Count} 次
+Settings.Comfort,画面与互动
+Settings.Shake,震屏
+Settings.Flash,受击闪光
+Settings.Numbers,伤害数字
+Settings.Throwable,可被投掷
+Result.BaitStickers,诱饵贴纸：{Count}
+Station.0,任务板
+Station.1,成就墙
+Station.2,商店
+Station.3,研究台
+Station.4,衣柜
+Station.5,邀请好友
+Station.6,训练角落
+Station.0.Note,选模式和关卡；只有房主能出击。
+Station.1.Note,房间里的每个人，和各自达成的成就。
+Station.2.Note,解锁武器和墙型，购买单局道具。
+Station.3.Note,用贴纸升级属性，每项 5 级。
+Station.4.Note,换外观和派对称号。
+Station.5.Note,这个房间最多 8 人，由你邀请。
+Station.6.Note,靶子、靶心和所有按键，都在这里。
+Hub.Mine,我的大厅
+Hub.Title,{Name} 的大厅
+Hub.Kind.0,离线 · 只有你
+Hub.Kind.1,Steam 房间 · 仅好友
+Hub.Kind.2,直连房间（测试）
+Hub.Seats,{Count} / 8 人
+Hub.Invite,邀请好友
+Hub.Here,在场（{Count}/8）
+Hub.Open,打开
+Hub.Deploying,{Page} · {Seconds} 秒后出击
+Hub.CancelDeploy,取消出击
+Hub.HostDeploys,房主选关并出击。等的时候可以在大厅里随便逛逛。
+Hub.LeaveRoom,离开房间
+Hub.ToTitle,回到标题
+Hub.Abandon,放弃任务
+Hub.Back,回大厅
+Hub.InviteUnavailable,邀请需要 Steam 房间，这个大厅现在不是。
+Hub.DeployHostOnly,只有房主能出击。
+Board.Mode.0,守线
+Board.Mode.1,远征（即将开放）
+Board.Mode.2,派对轮盘（即将开放）
+Board.ModeSoon,这个模式会在后续版本开放。
+Board.BotsFriends,房间里有朋友时不带 AI 队友。
+Coming.Stamp,即将开张
+Coming.Stickers,你的贴纸：{Count} 张
+Coming.1,这里会挂上每个人已达成和未达成的成就。现在墙上先记下了房间里的人。
+Coming.2,用贴纸解锁武器和墙型，再买单局用的道具，每局最多带 2 个。
+Coming.3,升级生命、伤害、墨水上限、投掷力、移速和拾取范围，每项 5 级。进别人的房间时，按房间难度封顶。
+Coming.4,换外观、挑选派对称号。只是好看，不影响战斗。
+Npc.2,五边形店主：“货还在路上，先把贴纸攒着！”
+Npc.3,三角研究员：“公式还没算完，升级马上就来。”
+Npc.4,方块裁缝：“帽子在做了，每种形状都配得上一顶好帽子。”
+Door.0,Steam 没有连接，现在只有你能进这个大厅。打开 Steam 后点下面的按钮，大厅会重新以房间打开，好友就能进来了。
+Door.1,这个大厅是 Steam 房间：你的 Steam 好友可以加入，最多 8 人。用 Steam 浮窗发邀请。
+Door.2,这是测试用的直连房间；邀请需要 Steam 房间。
+Door.Reconnect,用 Steam 重开大厅
+Door.OpenInvite,打开 Steam 邀请
+Door.Friends,好友也可以在 Steam 好友列表里右键你，选“加入游戏”。
+Door.Busy,任务进行中谁也进不来；大家回到大厅后就能加入。
+Door.Full,房间最多 8 人，第 9 个人进不来。
+Training.Move,移动
+Training.Fire,按住射击（靶子打碎会自己立起来）
+Training.Recruit,把三角形招进尾巴；在设施前打开它
+Training.Merge,尾巴末端的三角形并入前一个
+Training.Throw,按住蓄力，松开投出（瞄准靶心）
+Training.Draw,守线中：按住拖动画墙
+Training.Wave,守线中：提前开波
+Training.Menu,设置和离开
+Training.Intro,这里怎么玩都不会输：靶子碎了会自己立起来，三角形用完会补上。把多边形扔向靶子会碎成三角形；停在靶心上就算命中。
+Training.Bullseye,靶心命中：你 {Mine} 次 · 全房间 {All} 次
+Training.Replay,重玩新手引导
+Training.ReplayAlone,只有你一个人在大厅时才能重玩引导。
+Tutorial.Title,新手引导
+Tutorial.Step,第 {Step} / {Count} 步
+Tutorial.0.Title,移动
+Tutorial.1.Title,射击
+Tutorial.2.Title,招募
+Tutorial.3.Title,合成
+Tutorial.4.Title,钉炮台
+Tutorial.5.Title,画墙
+Tutorial.6.Title,守线
+Tutorial.0,用 WASD 走进闪烁的圆圈里。
+Tutorial.1,用鼠标瞄准，按住左键：打碎两个纸靶。
+Tutorial.2,走近三角形按 E，把两个招进你的尾巴。
+Tutorial.3,按 F：尾巴末端的三角形并入前一个，变成方块。边数就是等级。
+Tutorial.4,按住 Q 蓄力、松开，把方块扔到空白纸上：它会钉成炮台。
+Tutorial.TurretRetry,方块砸到靶子会碎成三角形：再招募、再合成就行。
+Tutorial.5,按住右键，沿着闪烁的格子拖动：画三格墙，敌人就得绕路。
+Tutorial.6,按 Enter 开波，守住核心：炮台会和你一起开火。
+Tutorial.StepDone,完成！
+Tutorial.Skip,跳过引导
+Tutorial.Finished,引导完成
+Tutorial.FinishedNote,游戏里的操作你都会了。大厅的训练角落有靶子和靶心，随时可以再练；好友也能通过 Steam 邀请你进他们的大厅。
+Tutorial.Enter,进入大厅
+Tutorial.NoClock,不限时
+Tutorial.AloneOnly,只有你一个人时才能开始新手引导。
+Network.Entering,正在进入大厅…
+Network.RoomBusy,好友正在出击，等他们回到大厅再加入。
+Network.RoomFull,房间已满（8 人）。
+Network.HostLeft,房主离开了，你回到了自己的大厅。
+Network.JoiningFriend,正在加入好友的大厅…
+Network.InviteFailed,邀请打不开了，房间可能已经关闭。
+Key.Use,招募 / 使用

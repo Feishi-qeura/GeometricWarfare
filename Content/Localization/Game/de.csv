@@ -1,0 +1,403 @@
+﻿Key,SourceString
+Game.Title,GEOMETRIC WARFARE
+Game.Subtitle,Zeichne das Labyrinth. Halte die Linie. Bring Freunde mit.
+Menu.Single,Einzelspieler
+Menu.Create,Raum erstellen
+Menu.Settings,Einstellungen
+Menu.Quit,Beenden
+Menu.Back,Zurück
+Menu.Start,Spiel starten
+Menu.Ready,Bereit / nicht bereit
+Menu.Continue,Zurück zum Spiel
+Menu.Leave,Spiel verlassen
+Menu.Lobby,Zurück zur Lobby
+Room.Name,Raumname
+Room.Password,Passwort (optional)
+Room.Steam,Steam
+Room.Refresh,Aktualisieren
+Room.Join,Ausgewähltem Raum beitreten
+Room.Host,Gastgeber
+Room.Ready,Bereit
+Room.Waiting,Wartet
+Room.Next,Nächste Seite
+Room.Previous,Vorherige Seite
+Settings.Language,Sprache
+Settings.Music,Musiklautstärke
+Settings.Effects,Effektlautstärke
+Settings.Quality,Grafikqualität
+Settings.Resolution,Auflösung
+Settings.Window,Fenster / Vollbild
+Control.Move,WASD bewegen · Maus zielen · Linksklick schießen
+Control.Tail,E rekrutieren · Q halten/loslassen: ersten Begleiter werfen · Mausrad: Zoom · Esc: Einstellungen
+Combat.Recruit,[E] Verbündeten rekrutieren
+Combat.Tail,Begleiter: {Count}
+Combat.Health,Gesundheit
+Combat.Armor,Rüstung
+Combat.NoRespawn,Keine Wiederbelebung · Team beobachten
+Combat.Level,Teamstufe {Level}
+Combat.Upgrade,Verbesserung wählen
+Combat.AirDrop,Waffenabwurf
+Combat.Boss,BOSS
+Result.Victory,SIEG
+Result.Defeat,NIEDERLAGE
+Result.Survived,Überlebensziel erreicht
+Network.Creating,Raum wird erstellt…
+Network.Searching,Suche läuft…
+Network.Joining,Raumbeitritt läuft…
+Network.NoRooms,Keine Räume gefunden. Bitte aktualisieren.
+Network.RoomsFound,Wähle einen Raum zum Beitreten.
+Network.CreateFailed,Raum konnte nicht erstellt werden. Bitte erneut versuchen.
+Network.SearchFailed,Raumsuche fehlgeschlagen. Bitte erneut versuchen.
+Network.JoinFailed,Beitritt fehlgeschlagen. Der Raum ist möglicherweise voll oder geschlossen.
+Network.BadPassword,Falsches Passwort.
+Network.LeaveFailed,Sitzung konnte nicht bereinigt werden. Bitte vor dem nächsten Raum neu starten.
+Network.ConnectionLost,Die Verbindung ist abgebrochen – du bist zurück in deiner Lobby.
+Network.MatchFull,Kein Spielplatz verfügbar. Bitte auf die nächste Runde warten.
+Network.NotReady,"Warte, bis alle Spieler bereit sind."
+Weapon.0,Pistole
+Weapon.1,Gewehr
+Weapon.2,Schrotflinte
+Weapon.3,Scharfschützengewehr
+Weapon.4,Maschinengewehr
+Weapon.5,Raketenwerfer
+Skill.0,Durchschlagmunition
+Skill.1,Querschläger
+Skill.2,Panzerbrecher
+Skill.3,Splittermunition
+Skill.4,Elektrokern
+Skill.5,Leitbrücke
+Skill.6,Hochspannung
+Skill.7,Elektromagnetische Resonanz
+Skill.8,Brandmunition
+Skill.9,Feuerausbreitung
+Skill.10,Verbrennungskern
+Skill.11,Druckflamme
+Skill.12,Eismunition
+Skill.13,Tiefenfrost
+Skill.14,Eissplitter
+Skill.15,Permafrost
+Skill.16,Schildbatterie
+Skill.17,Selbstreparatur
+Skill.18,Magnetschild
+Skill.19,Notfallversorgung
+Combat.Charge,Q halten: aufladen · Loslassen: werfen
+Skill.0.Description,Pro Rang durchschlagen Schüsse 1 weiteren Gegner. Scharfschützen haben bereits 1 Durchschlag.
+Skill.1.Description,Pro Rang 1 zusätzlicher Wandabpraller. Raketen explodieren weiterhin beim Aufprall.
+Skill.2.Description,"Pro Rang +15% Projektilschaden, addiert zum Bonus der Brandmunition."
+Skill.3.Description,Treffer explodieren für 25% Projektilschaden pro Rang. Radius: 120 + 20 pro Rang.
+Skill.4.Description,Treffer springen auf 1 nahen Gegner über: 30% Projektilschaden. Kombinierbar mit Reichweite und weiteren Zielen.
+Skill.5.Description,"Benötigt Elektrokern. Lichtbogenreichweite: Basis 220, +60 pro Rang."
+Skill.6.Description,Alle 2 Sekunden werden alle Gegner im Radius 210 getroffen: 8 Schaden pro Rang.
+Skill.7.Description,Benötigt Elektrokern. Pro Rang 1 zusätzliches Kettenziel zum Grundwert von 1.
+Skill.8.Description,Pro Rang +10% Projektilschaden. Treffer brennen 2 Sekunden lang für 2 + 2 Schaden pro Rang und Sekunde.
+Skill.9.Description,Benötigt Brandmunition. Pro Rang +1 Sekunde Brenndauer. Brandtötungen verbreiten 2 Sekunden Feuer im Radius 200.
+Skill.10.Description,Benötigt Brandmunition. Brandtötungen explodieren im Radius 180: 6-facher Brandschaden pro Sekunde und Rang.
+Skill.11.Description,Benötigt Brandmunition. Jeder Projektiltreffer verursacht sofort 4 zusätzlichen Brandschaden pro Rang.
+Skill.12.Description,Treffer verlangsamen Gegner 1 Sekunde lang um 50%. Tiefenfrost verlängert die Dauer.
+Skill.13.Description,"Benötigt Eismunition. Pro Rang hält deren Verlangsamung 0,4 Sekunden länger an."
+Skill.14.Description,Projektiltötungen explodieren im Radius 180 für 20% Projektilschaden pro Rang.
+Skill.15.Description,Treffer verlangsamen Gegner 2 Sekunden um 50% im Radius 120 + 30 pro Rang.
+Skill.16.Description,Sofort 70 Rüstung. Pro Rang +40 auf das Regenerationslimit. Rüstung absorbiert 70% des eingehenden Schadens.
+Skill.17.Description,"Pro Rang +35 Basis-Maximalleben und +0,8 Lebensregeneration pro Sekunde. Sofort 70 Heilung. Evolution verdoppelt den Lebensbonus."
+Skill.18.Description,"Pro Rang regenerieren 1,5 Rüstung pro Sekunde, bis zu 100 + 40 pro Rang der Schildbatterie."
+Skill.19.Description,"Unter 25% Leben: 15% des Maximallebens heilen und 40 Rüstung pro Rang erhalten. Prüfung alle 2 Sekunden, Abklingzeit 30 Sekunden."
+Combat.WorldPaused,WELT ANGEHALTEN · Verbesserung wählen
+Combat.WaitingUpgrades,Warte auf die Auswahl deiner Mitspieler…
+Combat.SkillRank,Rang {Current} → {Next} / 5
+Combat.JoinSquad,E · Der Gruppe dieses Spielers beitreten
+Combat.LeaveSquad,E · Gruppe verlassen
+Skill.Recovery,Feldversorgung
+Skill.Recovery.Description,Alle Fertigkeiten sind maximal. 25% Maximalleben und 50 Rüstung erhalten.
+Combat.LifeWeapon,Waffe bleibt für dieses Leben ausgerüstet
+Combat.ChooseHint,Karte anklicken oder 1 / 2 / 3 drücken
+Combat.LevelUp,STUFE AUFGESTIEGEN!
+Combat.Reload,Nachladen
+Combat.Squad,Trupp
+Combat.Waiting.Count,{Count} Spieler wählen noch
+Combat.XP,EP
+Key.Aim,Zielen
+Key.Fire,Feuern
+Key.LMB,LMT
+Key.Menu,Menü
+Key.Mouse,Maus
+Key.Move,Bewegen
+Key.Recruit,Rekrutieren
+Key.Leave,Gruppe verlassen
+Key.Join,Gruppe beitreten
+Key.Throw,Halten zum Werfen
+Key.Wheel,Mausrad
+Key.Zoom,Zoom
+Result.Reached,Teamstufe {Level} erreicht
+Result.Survival,{Seconds} s überlebt
+Settings.Fullscreen,Vollbild
+Settings.Windowed,Fenster
+Settings.Paused,Spiel pausiert
+Settings.Quality.0,Niedrig
+Settings.Quality.1,Mittel
+Settings.Quality.2,Hoch
+Settings.Quality.3,Episch
+Skill.New,NEU
+Skill.Family.0,Ballistik
+Skill.Family.1,Ladung
+Skill.Family.2,Feuer
+Skill.Family.3,Frost
+Skill.Family.4,Schild
+Menu.Multiplayer,Mehrspieler
+Menu.Saves,Spielstände
+Menu.Intro,Einführung
+Menu.Footer,Lobby und Linienverteidigung · Kapitel 1
+Online.Subtitle,Gemeinsam über Steam oder Epic – bis zu 10 Spieler pro Raum.
+Room.Epic,Epic (EOS)
+Room.CreateTitle,Raum erstellen
+Room.ListTitle,Offene Räume
+Room.JoinPassword,Raumpasswort
+Room.NameHint,Raumname eingeben
+Room.PasswordHint,Leer lassen für einen offenen Raum
+Room.JoinHint,Nur für gesperrte Räume nötig
+Room.CapacityNote,Koop für bis zu 8 Spieler · eigene Kugeln schubsen nur
+Room.Empty,Noch keine Räume. Aktualisieren oder selbst einen erstellen.
+Room.EmptyOffline,"Melde dich bei dieser Plattform an, um ihre Räume zu sehen."
+Room.Lobby,Raum
+Room.Players,Spieler ({Count}/8)
+Room.RunTitle,Liniendefensive
+Room.RunInfo,"Der Host wählt eine Seite und rückt aus, sobald alle bereit sind. Jeder hat eigene Tinte zum Wändezeichnen."
+Room.ResumeTitle,Gespeicherter Durchgang
+Room.ResumeInfo,Teamlevel {Level} · überlebt {Time}
+Room.ResumeNote,"Wer mit demselben Konto beitritt, bekommt seine eigene Figur zurück."
+Platform.Ready,Bereit
+Platform.SignedInAs,Angemeldet als {Name}
+Platform.SteamOffline,Steam läuft nicht. Starte Steam und melde dich an.
+Platform.EpicSignIn,Nicht bei Epic angemeldet.
+Platform.EpicSignInButton,Bei Epic anmelden
+Platform.EpicSigningIn,Anmeldung bei Epic …
+Platform.EpicSignedIn,Bei Epic angemeldet.
+Platform.EpicFailed,Epic-Anmeldung fehlgeschlagen. Bitte erneut versuchen.
+Platform.EpicNotConfigured,Epic-Online ist in diesem Build nicht eingerichtet (EOS-Zugangsdaten fehlen).
+Platform.Unavailable,Diese Plattform ist gerade nicht verfügbar.
+Save.Title,Fortschritt speichern
+Save.HostOnly,Nur der Host kann einen Koop-Durchgang speichern.
+Save.Saved,Fortschritt gespeichert.
+Save.Failed,Speichern fehlgeschlagen. Speicherplatz prüfen und erneut versuchen.
+Save.LoadFailed,Dieser Spielstand konnte nicht geladen werden.
+Saves.Subtitle,"Jeder Spielstand ist ein Spielerprofil: Sticker, Sterne und freigeschaltete Seiten."
+Saves.Slot,Platz {Slot}
+Saves.Empty,Leer
+Saves.EmptyHint,Drücke im Durchgang Esc und wähle unter „Fortschritt speichern“ diesen Platz.
+Saves.ModeSolo,Einzelspieler
+Saves.ModeSteam,Steam-Koop
+Saves.ModeEpic,Epic-Koop
+Saves.Survived,Überlebt: {Time}
+Saves.Players,{Count} Spieler
+Saves.SoloTeam,Du + {Count} KI-Teamkameraden
+Saves.Continue,Fortsetzen
+Saves.Host,Hosten & fortsetzen
+Saves.Delete,Löschen
+Saves.Cancel,Abbrechen
+Saves.ConfirmDelete,Diesen Spielstand endgültig löschen?
+Saves.OnlineNote,"Koop-Spielstände liegen nur auf dem PC des Hosts – Gäste speichern keine Kopie, daher gibt es immer genau eine Version eines Durchgangs. Jeder Spieler wird über sein Steam- oder Epic-Konto gespeichert: Öffnet der Host den Raum erneut, erhält jeder, der mit demselben Konto beitritt, seine Figur, Fähigkeiten und Gefährten zurück."
+Intro.Subtitle,Alles für deinen ersten Durchgang.
+Intro.GoalTitle,Ziel
+Intro.Goal,"Halte die Papierarena 10 Minuten lang. Die Monsterwellen werden stärker, bei 2, 5 und 9 Minuten erscheinen Elite-Blöcke. Fallen alle Spieler, ist der Durchgang verloren."
+Intro.GrowthTitle,Gemeinsam aufsteigen
+Intro.Growth,"Jeder Treffer füllt ein gemeinsames Teamlevel. Steigt es, pausiert die Welt und jeder wählt eine von drei Fähigkeitskarten: 20 Fähigkeiten in 5 Familien, je bis Rang 5."
+Intro.SquadTitle,Gefährten
+Intro.Squad,"Drücke E bei einem umherstreifenden Gefährten, um ihn an deinen Schweif zu hängen – er folgt dir und feuert mit. Halte Q zum Aufladen und lass los, um den ersten Gefährten zu werfen."
+Intro.WeaponsTitle,Waffenabwürfe
+Intro.Weapons,"Alle 40 Sekunden fallen Versorgungskisten. Lauf darüber, um dich und deinen ganzen Trupp mit Gewehr, Schrotflinte, Scharfschützengewehr, MG oder Raketenwerfer auszurüsten."
+Intro.TeamTitle,Teamkameraden
+Intro.Team,"Im Einzelspieler kämpfen drei KI-Teamkameraden mit, steigen auf und wählen selbst Fähigkeiten. Kugeln verletzen Teamkameraden nie, schubsen sie aber entlang der Flugbahn – achte auf deine Schusslinie."
+Intro.OnlineTitle,Mehrspieler
+Intro.Online,Erstelle oder betritt Räume auf Steam oder Epic (EOS) für bis zu 10 Spieler. Der Host kann einen Koop-Durchgang speichern und später mit denselben Freunden fortsetzen.
+Key.Pick,Fähigkeit wählen
+Team.Bot,KI {Index}
+Combat.Team,Team
+Board.Title,Missionsbrett
+Board.Subtitle,Liniendefensive · zeichne Wände zu einem Labyrinth und kämpfe selbst mit.
+Board.Chapter,Kapitel 1 · Das erste Heft
+Level.1-1,Erste Seite
+Level.1-2,Zwei Türen
+Level.1-3,Langer Flur
+Board.Waves,{Count} Wellen
+Board.Locked,Erst die vorige Seite schaffen
+Board.Play,Ausrücken
+Board.Bots,KI-Mitspieler
+Board.BotsNote,Solo ist ohne KI ausbalanciert; mit KI-Mitspielern gibt es den dritten Stern nicht.
+Board.Friends,Mit Freunden spielen
+Board.Profile,Profil {Slot}
+Board.Stickers,{Count} Sticker
+Board.Change,Profil wechseln
+Star.0,Kern unversehrt
+Star.1,Weniger als 20 Wandfelder verlieren
+Star.2,Ohne KI-Mitspieler
+Profile.Use,Dieses Profil nutzen
+Profile.Active,Aktiv
+Profile.New,Neues Profil
+Profile.Empty,Leerer Platz
+Profile.Cleared,{Count} Seiten geschafft
+Profile.Stars,{Count} Sterne
+Profile.ConfirmDelete,Dieses Profil endgültig löschen?
+Profile.Note,"Profile bleiben auf diesem PC und kommen mit in die Räume von Freunden. Der Host berechnet Belohnungen, gespeichert werden sie auf deinem Rechner."
+Defense.Wave,Welle {Wave} / {Count}
+Defense.Build,Bauphase
+Defense.Fight,Welle läuft
+Defense.Core,Kern
+Defense.Enemies,{Count} Gegner übrig
+Defense.StartWave,Welle starten
+Defense.HostStarts,Der Host startet die Welle
+Defense.Ink,Tinte
+Defense.BuildHint,"Rechts ziehen zeichnet Wände (10 Tinte pro Feld), über einer Wand löscht es sie. Gegner nehmen den kürzesten offenen Weg zum Kern."
+Defense.TurretHint,"Wirf ein Quadrat oder größer auf freies Papier, dann wird es ein Geschütz. E sammelt Dreiecke, F verschmilzt das letzte nach vorn."
+Defense.WaveBanner,Welle {Wave}!
+Defense.ClearBanner,Welle geschafft · +{Count} Sticker
+Defense.Respawn,In {Seconds} s zurück am Kern
+Defense.Denied.1,Nicht genug Tinte
+Defense.Denied.2,Dieser Strich würde den Kern abriegeln — Gegner brauchen immer einen Weg
+Defense.Denied.3,Dort steht jemand
+Defense.Objectives,Sterne
+Defense.StartFailed,Die Seite ließ sich nicht öffnen
+Defense.Turrets,Geschütze {Count}
+Key.RMB,RMT
+Key.Draw,Wände zeichnen
+Key.Merge,Verschmelzen
+Key.Enter,Enter
+Result.Waves,Gehaltene Wellen: {Count}
+Result.Stickers,Verdiente Sticker: {Count}
+Result.FirstClear,Erstabschluss-Bonus +{Count}
+Result.Retry,Nochmal
+Result.Next,Nächste Seite
+Result.CoreLost,Der Kern ist gefallen.
+Result.Held,Alle Wellen gehalten.
+Prank.Title,Unfug-Stufe
+Prank.0,Aus
+Prank.1,Freundlich
+Prank.2,Chaos
+Prank.0.Note,"Niemand kann gepackt oder geworfen werden, und Eigenbeschuss schubst nie."
+Prank.1.Note,"Nur wer es erlaubt, kann gepackt und geworfen werden; Eigenbeschuss schubst leicht."
+Prank.2.Note,Jeder kann jederzeit gepackt und geworfen werden; Eigenbeschuss schubst kräftig.
+Throwable.On,Mitspieler dürfen mich werfen: an
+Throwable.Off,Mitspieler dürfen mich werfen: aus
+Throwable.Tag,werfbar
+Room.Kick,Entfernen
+Network.Kicked,Der Gastgeber hat dich aus dem Raum entfernt.
+Key.Grab,Packen
+Key.Roll,Freirollen
+Key.Wriggle,Losreißen
+Key.ThrowMate,{Name} werfen
+Bait.Tag,KÖDER
+Bait.Countdown,KÖDER {Seconds}s · zieht {Count}
+Bait.Hint,"Du bist als Köder gelandet: Gegner in der Nähe kommen zu dir, du nimmst halben Schaden. Schieß zurück oder roll dich mit E frei."
+Carried.Tag,GETRAGEN
+Carried.Hint,{Name} trägt dich. Q wirft dich; E reißt dich los.
+Award.MVP,MVP
+Award.MVP.Detail,{Count} Schaden verursacht
+Award.Bait,Bester Köder
+Award.Bait.Detail,{Count} Gegner gebunden
+Award.Cannonball,Menschliche Kanonenkugel
+Award.Cannonball.Detail,{Count}-mal geworfen
+Award.Walls,Mauerkünstler
+Award.Walls.Detail,{Count} Wandfelder gezeichnet
+Award.Scapegoat,Sündenbock
+Award.Scapegoat.Detail,Mitspieler {Count}-mal geschubst
+Settings.Comfort,Lesbarkeit
+Settings.Shake,Wackeln
+Settings.Flash,Trefferblitz
+Settings.Numbers,Schadenszahlen
+Settings.Throwable,Werfbar
+Result.BaitStickers,Köder-Sticker: {Count}
+Station.0,Missionsbrett
+Station.1,Erfolgswand
+Station.2,Laden
+Station.3,Forschungstisch
+Station.4,Garderobe
+Station.5,Freunde einladen
+Station.6,Trainingsecke
+Station.0.Note,Modus und Seite wählen – nur der Host startet die Mission.
+Station.1.Note,Alle im Raum und was alle jeweils erreicht haben.
+Station.2.Note,"Waffen und Wandtypen freischalten, Gegenstände für einen Einsatz kaufen."
+Station.3.Note,"Sticker in Eigenschaften stecken, je fünf Stufen."
+Station.4.Note,Outfits und Partytitel.
+Station.5.Note,Bis zu acht Leute passen in deinen Raum.
+Station.6.Note,"Zielscheiben, ein Bullseye und alle Tasten an einem Ort."
+Hub.Mine,Meine Lobby
+Hub.Title,Lobby von {Name}
+Hub.Kind.0,Offline · nur du
+Hub.Kind.1,Steam-Raum · nur Freunde
+Hub.Kind.2,Direktraum (Test)
+Hub.Seats,{Count} / 8 Spieler
+Hub.Invite,Freunde einladen
+Hub.Here,Im Raum ({Count}/8)
+Hub.Open,öffnen
+Hub.Deploying,{Page} · Start in {Seconds}
+Hub.CancelDeploy,Abbrechen
+Hub.HostDeploys,Der Host wählt die Seite und startet. Mach dich solange in der Lobby bereit.
+Hub.LeaveRoom,Raum verlassen
+Hub.ToTitle,Zum Titelbildschirm
+Hub.Abandon,Mission aufgeben
+Hub.Back,Zurück zur Lobby
+Hub.InviteUnavailable,Einladungen brauchen einen Steam-Raum – diese Lobby ist gerade keiner.
+Hub.DeployHostOnly,Nur der Host kann starten.
+Board.Mode.0,Linienverteidigung
+Board.Mode.1,Expedition (bald)
+Board.Mode.2,Partyrunde (bald)
+Board.ModeSoon,Dieser Modus kommt mit einem späteren Update.
+Board.BotsFriends,Mit Freunden im Raum kommen keine KI-Mitspieler mit.
+Coming.Stamp,Bald geöffnet
+Coming.Stickers,Deine Sticker: {Count}
+Coming.1,"Hier hängen bald die Erfolge aller – erreichte und noch fehlende. Vorerst kennt die Wand nur, wer im Raum ist."
+Coming.2,Mit Stickern schaltest du Waffen und Wandtypen frei und kaufst Gegenstände für einen Einsatz (höchstens zwei).
+Coming.3,"Steigere Leben, Schaden, Tintenvorrat, Wurfkraft, Tempo und Sammelradius um je fünf Stufen. In fremden Räumen begrenzt der Schwierigkeitsgrad deine Stufen."
+Coming.4,Outfit wechseln und einen Partytitel wählen. Nur Optik – am Kampf ändert das nichts.
+Npc.2,Fünfeck am Ladentisch: „Die Kisten sind noch unterwegs. Spar deine Sticker!“
+Npc.3,"Dreieck am Forschungstisch: „Erst die Formeln, dann die Upgrades. Komm bald wieder.“"
+Npc.4,Quadrat an der Garderobe: „Hüte sind in Arbeit. Jede Form verdient einen guten Hut.“
+Door.0,"Steam ist nicht verbunden, deshalb bist nur du in dieser Lobby. Starte Steam und drück unten auf den Knopf: Die Lobby öffnet sich neu als Raum, dem deine Freunde beitreten können."
+Door.1,"Diese Lobby ist ein Steam-Raum: Deine Steam-Freunde können beitreten, bis zu acht Leute. Einladungen verschickst du über das Steam-Overlay."
+Door.2,Das ist ein Direktraum zum Testen; Einladungen brauchen einen Steam-Raum.
+Door.Reconnect,Mit Steam neu öffnen
+Door.OpenInvite,Steam-Einladungen öffnen
+Door.Friends,Freunde können dich auch in ihrer Steam-Freundesliste rechtsklicken und „Spiel beitreten“ wählen.
+Door.Busy,Während einer Mission kann niemand beitreten – erst wenn alle zurück in der Lobby sind.
+Door.Full,"Ein Raum fasst acht Leute, eine neunte Person wird abgewiesen."
+Training.Move,Laufen
+Training.Fire,Halten zum Schießen (Ziele stehen wieder auf)
+Training.Recruit,Dreieck in den Schwanz holen; Station benutzen
+Training.Merge,Letztes Dreieck mit der Form davor verschmelzen
+Training.Throw,"Halten zum Aufladen, loslassen zum Werfen (aufs Bullseye zielen)"
+Training.Draw,"In der Linienverteidigung: ziehen, um Wände zu zeichnen"
+Training.Wave,In der Linienverteidigung: nächste Welle früher rufen
+Training.Menu,Einstellungen und Verlassen
+Training.Intro,"Hier kann nichts schiefgehen: Kaputte Ziele stehen wieder auf, Dreiecke werden nachgefüllt. Ein Vieleck, das ein Ziel trifft, zerspringt in Dreiecke; was auf dem Bullseye liegen bleibt, zählt als Treffer."
+Training.Bullseye,Bullseyes: du {Mine} · ganzer Raum {All}
+Training.Replay,Tutorial wiederholen
+Training.ReplayAlone,"Das Tutorial lässt sich wiederholen, solange du allein in der Lobby bist."
+Tutorial.Title,Tutorial
+Tutorial.Step,Schritt {Step} von {Count}
+Tutorial.0.Title,Laufen
+Tutorial.1.Title,Schießen
+Tutorial.2.Title,Anwerben
+Tutorial.3.Title,Verschmelzen
+Tutorial.4.Title,Geschütz setzen
+Tutorial.5.Title,Wände zeichnen
+Tutorial.6.Title,Linie halten
+Tutorial.0,Lauf mit WASD in den blinkenden Ring.
+Tutorial.1,Mit der Maus zielen und links halten: Zerschieß beide Papierziele.
+Tutorial.2,Geh zu einem Dreieck und drück E. Hol zwei in deinen Schwanz.
+Tutorial.3,Drück F: Das letzte Dreieck verschmilzt mit dem davor zu einem Quadrat. Die Seitenzahl ist die Stufe.
+Tutorial.4,"Halt Q zum Aufladen und lass los, um das Quadrat auf leeres Papier zu werfen: Es setzt sich als Geschütz fest."
+Tutorial.TurretRetry,"Ein Quadrat, das ein Ziel trifft, zerspringt in Dreiecke: wieder anwerben und verschmelzen."
+Tutorial.5,Halt die rechte Taste und zieh über die blinkenden Felder: Drei Felder Wand zwingen die Gegner zum Umweg.
+Tutorial.6,Drück Enter für die Welle und halte den Kern: Dein Geschütz feuert mit.
+Tutorial.StepDone,Geschafft!
+Tutorial.Skip,Tutorial überspringen
+Tutorial.Finished,Bereit
+Tutorial.FinishedNote,"Das waren alle Bewegungen des Spiels. In der Trainingsecke deiner Lobby warten Ziele und ein Bullseye, wann immer du üben willst, und Freunde können dich über Steam in ihre Lobby einladen."
+Tutorial.Enter,Zur Lobby
+Tutorial.NoClock,ohne Zeitlimit
+Tutorial.AloneOnly,"Das Tutorial startet nur, wenn du allein bist."
+Network.Entering,Betrete die Lobby…
+Network.RoomBusy,"Deine Freunde sind auf einer Mission – tritt bei, sobald sie zurück in der Lobby sind."
+Network.RoomFull,Der Raum ist voll (acht Leute).
+Network.HostLeft,"Der Host ist weg, du bist zurück in deiner eigenen Lobby."
+Network.JoiningFriend,Beitritt zur Lobby läuft…
+Network.InviteFailed,Die Einladung ließ sich nicht öffnen – der Raum ist vielleicht schon zu.
+Key.Use,Anwerben / benutzen
