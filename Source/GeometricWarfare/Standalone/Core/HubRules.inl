@@ -142,28 +142,11 @@ inline TutorialProgress Battle::tutorialProgress() const
     TutorialProgress out;
     if (!tutorialMode())
         return out;
-    const Unit* p = nullptr;
-    for (const auto& u : units)
-        if (u.human)
-        {
-            p = &u;
-            break;
-        }
-    auto allies = [&]
-    {
-        int n = 0;
-        if (p)
-            for (int id : tailIds(p->id))
-                n += !find(id)->human;
-        return n;
-    };
     const auto& d = defense;
     switch (tutorialStep())
     {
     case TutorialStep::Shoot:
         return {std::min(2, d.dummiesBroken), 2};
-    case TutorialStep::Recruit:
-        return {std::min(2, allies()), 2};
     case TutorialStep::Draw:
         return {std::min(3, d.wallsDrawn), 3};
     case TutorialStep::Defend:
@@ -244,6 +227,7 @@ inline void Battle::clearTutorialWall()
 }
 inline void Battle::updateTutorial(double dt)
 {
+    (void)dt;
     auto& d = defense;
     Unit* p = nullptr;
     for (auto& u : units)
@@ -256,40 +240,23 @@ inline void Battle::updateTutorial(double dt)
         return;
     const TutorialPage& t = tutorialPage();
     const TutorialStep step = tutorialStep();
-    std::vector<int> tail;
-    for (int id : tailIds(p->id))
-        if (!find(id)->human)
-            tail.push_back(id);
-    // Triangles stay within reach while the polygon steps need them (a square thrown into a target bursts).
-    if (step >= TutorialStep::Recruit && step <= TutorialStep::Turret && (d.supplyClock -= dt) <= 0)
-    {
-        d.supplyClock = 2;
-        supplyTriangles(p->position, 1200, std::max(0, 3 - static_cast<int>(tail.size())), 260);
-    }
-    if (step == TutorialStep::Draw)
-        clearTutorialWall();
     bool done = false;
     switch (step)
     {
     case TutorialStep::Move:
-        done = (p->position - maze.center(t.moveY * maze.width + t.moveX)).length() < 170;
+        done = p->deck && (p->position - maze.center(t.moveY * maze.width + t.moveX)).length() < 170;
         break;
     case TutorialStep::Shoot:
         done = d.dummiesBroken >= 2;
         break;
-    case TutorialStep::Recruit:
-        done = tail.size() >= 2;
-        break;
-    case TutorialStep::Merge:
-        for (int id : tail)
-            done |= find(id)->sides > MinSides;
-        break;
-    case TutorialStep::Turret:
-        for (const auto& u : units)
-            done |= u.alive && u.turret;
-        break;
     case TutorialStep::Draw:
         done = d.wallsDrawn >= 3;
+        break;
+    case TutorialStep::Tower:
+        done = d.towersBuilt >= 1;
+        break;
+    case TutorialStep::Ladder:
+        done = !d.ladders.empty();
         break;
     default:
         // Defend ends when its wave is cleared (clearWave).
@@ -301,12 +268,5 @@ inline void Battle::updateTutorial(double dt)
     event(EffectStyle::StepDone, p->position, p->position, p->team, d.step, 1.2);
     if (tutorialStep() == TutorialStep::Draw)
         placeTutorialWall();
-    // The recruiting step begins with three triangles right beside the player.
-    if (tutorialStep() == TutorialStep::Recruit)
-    {
-        for (int i = 0; i < 3; ++i)
-            spawnTriangle(p->position, 260);
-        d.supplyClock = 2;
-    }
 }
 } // namespace gwgame

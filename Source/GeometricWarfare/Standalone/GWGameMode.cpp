@@ -391,6 +391,7 @@ bool AGWGameMode::BeginDefense(AGWController* C, int32 Level, int32 Bots)
     const uint32 Seed = static_cast<uint32>(FPlatformTime::Cycles64()) | 1u;
     if (!Simulation->startDefense(Seed, Level))
         return false;
+    ApplyTwist(S, *Simulation, false);
     S->Simulation = MoveTemp(Simulation);
     S->Seed = Seed;
     // Force the whole grid to travel again even when the new page has the old page's size and version.
@@ -408,8 +409,73 @@ bool AGWGameMode::BeginDefense(AGWController* C, int32 Level, int32 Bots)
         for (int32 I = 0; I < FMath::Clamp(Bots, 0, 3); ++I)
             S->Simulation->addBot();
     UseItems(S);
+    ApplyTwist(S, *S->Simulation, true);
     PendingSave = nullptr;
     // A restart keeps where the run came from; otherwise it remembers whether it left the hub.
+    if (!Restart)
+        FromHub = LeavingHub;
+    S->InMatch = true;
+    S->Finished = false;
+    RefreshSeats();
+    S->Publish();
+    S->ForceNetUpdate();
+    SetJoinable(false);
+    return true;
+}
+void AGWGameMode::ApplyTwist(AGWGameState* S, gwgame::Battle& B, bool Joined)
+{
+    // The party playlist's twists: chaos trolling, rocket launchers for everyone, or twice the ink.
+    if (!Joined)
+    {
+        S->Twist = PendingTwist;
+        if (PendingTwist == 1)
+            B.config.prank = gwgame::PrankLevel::Chaos;
+        else if (PendingTwist == 3)
+            B.config.inkMax *= 2;
+        return;
+    }
+    if (S->Twist == 2)
+        for (auto& U : B.units)
+            if (U.kind == gwgame::UnitKind::Fighter && (U.human || U.bot))
+            {
+                U.weapon = U.perks.weapon = gwgame::RocketWeapon;
+                U.ammo = gwgame::weaponStats(gwgame::RocketWeapon).ammo;
+            }
+    PendingTwist = 0;
+}
+bool AGWGameMode::BeginExpedition(AGWController* C, int32 Bots)
+{
+    auto* S = GetGameState<AGWGameState>();
+    auto* P = C ? C->GetPlayerState<AGWPlayerState>() : nullptr;
+    // From the hub, or again from an expedition's result card.
+    if (!P || !S || P->Identity != S->HostIdentity || (S->InMatch && !S->Finished && !S->Hub()))
+        return false;
+    if (!S->IsRoom && GetNetMode() != NM_Standalone)
+        return false;
+    const bool LeavingHub = S->Hub(), Restart = S->InMatch && !LeavingHub;
+    CloseMission(S);
+    auto Simulation = MakeUnique<gwgame::Battle>(GetDefault<UGWRuntimeSettings>()->Rules());
+    Simulation->config.prank = static_cast<gwgame::PrankLevel>(S->Prank);
+    Simulation->config.tier = FMath::Clamp(static_cast<int32>(S->Tier), gwgame::MinTier, gwgame::MaxTier);
+    const uint32 Seed = static_cast<uint32>(FPlatformTime::Cycles64()) | 1u;
+    if (!Simulation->startExpedition(Seed))
+        return false;
+    // The expedition has no AI teammates (a solo run's shelves sell the stand-in instead) and no playlist twist.
+    (void)Bots;
+    PendingTwist = 0;
+    S->Twist = 0;
+    S->Simulation = MoveTemp(Simulation);
+    S->Seed = static_cast<uint32>(S->Simulation->maze.seed);
+    S->WallVersion = MAX_uint32;
+    S->Cells.Reset();
+    S->BrokenWalls.Reset();
+    S->WallPatches.Reset();
+    S->ResetRings();
+    S->StickersEarned = 0;
+    S->DeployAt = 0;
+    ResetProgress();
+    JoinEveryone(S);
+    PendingSave = nullptr;
     if (!Restart)
         FromHub = LeavingHub;
     S->InMatch = true;
@@ -425,10 +491,12 @@ bool AGWGameMode::RequestDeploy(AGWController* C, int32 Level, int32 Bots)
     auto* S = GetGameState<AGWGameState>();
     const auto* P = C ? C->GetPlayerState<AGWPlayerState>() : nullptr;
     const int32 Pages = static_cast<int32>(gwgame::defenseLevels().size());
-    if (!S || !P || P->Identity != S->HostIdentity || !S->Hub() || Level < 0 || Level >= Pages)
+    const bool Special = Level == ExpeditionLevel || Level == PlaylistLevel;
+    if (!S || !P || P->Identity != S->HostIdentity || !S->Hub() || ((Level < 0 || Level >= Pages) && !Special))
         return false;
     S->DeployLevel = static_cast<uint8>(Level);
-    S->BoardLevel = static_cast<uint8>(Level);
+    if (!Special)
+        S->BoardLevel = static_cast<uint8>(Level);
     DeployBots = AloneInRoom() ? FMath::Clamp(Bots, 0, 3) : 0;
     S->DeployAt = GetWorld()->GetTimeSeconds() + DeploySeconds;
     S->ForceNetUpdate();
@@ -491,6 +559,10 @@ void AGWGameMode::ResetProgress()
 {
     RewardedWaves = 0;
     RewardedFinish = false;
+    ExpeditionPaid.Reset();
+    // Only a mission the playlist itself rolled pays the playlist's share (a retry from the result card is a plain run).
+    PlaylistRun = PlaylistPending;
+    PlaylistPending = false;
     BaitPaid.Reset();
     StatsSent.Reset();
     ItemsBrought.Reset();
@@ -513,11 +585,12 @@ void AGWGameMode::UseItems(AGWGameState* S)
             }
     S->Publish();
 }
-void AGWGameMode::SendProgress(AGWGameState* S, int32 Stickers, uint8 Stars, bool Clear, bool Final)
+void AGWGameMode::SendProgress(AGWGameState* S, int32 Stickers, uint8 Stars, bool Clear, bool Final, AGWController* Only)
 {
     const gwgame::Battle& B = *S->Simulation;
-    const bool Page = B.defenseMode() && !B.tutorialMode();
-    const FString LevelId = Page ? GWMeta::PageId(B.defense.level) : FString();
+    // A real mission's packets carry each player's share of it (kills, damage, throws...): a defense page or an expedition.
+    const bool Page = (B.defenseMode() && !B.tutorialMode()) || B.expeditionMode();
+    const FString LevelId = Page ? GWMeta::PageId(B.defense.level) : B.expeditionMode() ? FString(ANSI_TO_TCHAR(gwgame::ExpeditionId)) : FString();
     // The awards of a run with friends: exactly the ones its result card draws (gwgame::awardWinners).
     std::vector<gwgame::AwardScores> Scores;
     std::vector<int32> Owners;
@@ -533,12 +606,13 @@ void AGWGameMode::SendProgress(AGWGameState* S, int32 Stickers, uint8 Stars, boo
     {
         auto* C = Cast<AGWController>(It->Get());
         const auto* P = C ? C->GetPlayerState<AGWPlayerState>() : nullptr;
-        if (!P)
+        if (!P || (Only && C != Only))
             continue;
         FGWProgressPacket Packet;
         Packet.Level = LevelId;
         Packet.Tier = static_cast<uint8>(B.config.tier);
-        Packet.Stickers = Stickers;
+        // The party playlist pays 55% (expedition refactor 2.1).
+        Packet.Stickers = PlaylistRun ? gwgame::playlistStickers(Stickers) : Stickers;
         Packet.Stars = Stars;
         Packet.Clear = Clear;
         if (const gwgame::Unit* U = B.find(P->UnitId); U && U->owner == P->Identity)
@@ -566,6 +640,20 @@ void AGWGameMode::SendProgress(AGWGameState* S, int32 Stickers, uint8 Stars, boo
                 Packet.Held = Delta(U->stats.held, Sent.Held);
                 Packet.InkGiven = Delta(FMath::RoundToInt(U->stats.inkGiven), Sent.InkGiven);
             }
+            if (B.expeditionMode())
+            {
+                // The run's feats, erasures, elites and gifts since the last packet; an exit's packet banks its stickers.
+                Packet.Erased = Delta(U->stats.erased, Sent.Erased);
+                Packet.Elites = Delta(U->stats.elites, Sent.Elites);
+                Packet.Given = Delta(U->stats.given, Sent.Given);
+                Packet.Feats = U->stats.feats & ~Sent.Feats;
+                Sent.Feats |= U->stats.feats;
+                Packet.Bosses = static_cast<uint8>(U->stats.bosses & ~Sent.Bosses);
+                Sent.Bosses = static_cast<uint8>(Sent.Bosses | U->stats.bosses);
+                Packet.Shapes = static_cast<uint8>(U->stats.shapes & ~Sent.Shapes);
+                Sent.Shapes = static_cast<uint8>(Sent.Shapes | U->stats.shapes);
+                Packet.Banked = U->kit.extracted && Stickers > 0 ? FMath::Min(Stickers, gwgame::ExpeditionRewardCap) : 0;
+            }
         }
         if (Final)
         {
@@ -577,6 +665,9 @@ void AGWGameMode::SendProgress(AGWGameState* S, int32 Stickers, uint8 Stars, boo
             for (int32 A = 0; A < gwgame::AwardCount; ++A)
                 if (Humans >= 2 && Winners[A] >= 0 && Owners[Winners[A]] == P->UnitId)
                     Packet.Awards = static_cast<uint8>(Packet.Awards | (1 << A));
+            // The playlist's MVP takes 20 more home.
+            if (PlaylistRun && (Packet.Awards & (1 << static_cast<int32>(gwgame::Award::MVP))))
+                Packet.Stickers += gwgame::PlaylistMvpBonus;
         }
         C->ClientProgress(Packet);
     }
@@ -586,7 +677,7 @@ void AGWGameMode::CloseMission(AGWGameState* S)
     if (!S || !S->Simulation || RewardedFinish)
         return;
     const gwgame::Battle& B = *S->Simulation;
-    if (!B.defenseMode() || B.tutorialMode())
+    if ((!B.defenseMode() && !B.expeditionMode()) || B.tutorialMode())
         return;
     RewardedFinish = true;
     SendProgress(S, 0, 0, false, true);
@@ -604,6 +695,28 @@ void AGWGameMode::GrantRewards(AGWGameState* S)
                     Hit = true;
         if (Hit)
             SendProgress(S, 0, 0, false, false);
+        return;
+    }
+    // An expedition pays each player the moment they walk out of an exit door: their pouch (and through the last boss's
+    // door the clear bonus, which also marks the clear). A fall banks nothing; a wipe ends the run with nothing at all.
+    if (B.expeditionMode())
+    {
+        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            auto* C = Cast<AGWController>(It->Get());
+            const auto* P = C ? C->GetPlayerState<AGWPlayerState>() : nullptr;
+            const gwgame::Unit* U = P ? B.find(P->UnitId) : nullptr;
+            if (!U || U->owner != P->Identity || !U->kit.extracted || ExpeditionPaid.Contains(P->Identity))
+                continue;
+            ExpeditionPaid.Add(P->Identity);
+            S->StickersEarned += U->kit.banked;
+            SendProgress(S, U->kit.banked, 0, U->kit.finalExit, false, C);
+        }
+        if (B.finished && !RewardedFinish)
+        {
+            RewardedFinish = true;
+            SendProgress(S, 0, 0, false, true);
+        }
         return;
     }
     // The tutorial pays nothing; defense pages pay per cleared wave (at the room's tier) and close with the clear.
@@ -630,8 +743,9 @@ bool AGWGameMode::SaveRun(AGWController* C, int32 Slot, FString& Notice)
     Notice = TEXT("Save.Failed");
     if (!S || !P || !S->InMatch || !S->Simulation || S->Finished || Slot < 0 || Slot >= UGWRunSave::SlotCount)
         return false;
-    // Only Survival runs are saved mid-run; a defense page keeps its progress in each player's profile.
-    if (!S->Simulation->survivalMode())
+    // Only Survival runs are saved mid-run; a defense page keeps its progress in each player's profile, and an
+    // expedition pays at every camp instead.
+    if (!S->Simulation->survivalMode() || S->Simulation->expeditionMode())
         return false;
     if (P->Identity != S->HostIdentity)
     {
@@ -731,7 +845,24 @@ void AGWGameMode::Tick(float Delta)
     {
         S->DeployAt = 0;
         AGWController* Host = HostController();
-        if (!Host || !BeginDefense(Host, S->DeployLevel, DeployBots))
+        int32 Level = S->DeployLevel;
+        PendingTwist = 0;
+        if (Level == PlaylistLevel)
+        {
+            // The party playlist: any page the host has opened, or an expedition, with a twist on top.
+            TArray<int32> Choices;
+            auto* GI = GetGameInstance<UGWGameInstance>();
+            const UGWProfileSave* Profile = GI ? GI->ActiveProfile() : nullptr;
+            for (int32 I = 0; I < static_cast<int32>(gwgame::defenseLevels().size()); ++I)
+                if (!Profile || Profile->Unlocked(I))
+                    Choices.Add(I);
+            // The expedition is a long sticker run of its own, not a party round (design v2.1 2.1): the playlist rolls pages.
+            Level = Choices[FMath::RandRange(0, Choices.Num() - 1)];
+            PendingTwist = static_cast<uint8>(FMath::RandRange(1, 3));
+        }
+        PlaylistPending = S->DeployLevel == PlaylistLevel;
+        const bool Started = Host && (Level == ExpeditionLevel ? BeginExpedition(Host, DeployBots) : BeginDefense(Host, Level, DeployBots));
+        if (!Started)
             S->ForceNetUpdate();
         return;
     }

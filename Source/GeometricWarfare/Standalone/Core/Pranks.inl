@@ -8,7 +8,7 @@ inline bool Battle::canGrab(const Unit& holder, const Unit& target) const
 {
     if (config.prank == PrankLevel::Off || !target.human || !target.alive || !holder.alive || target.id == holder.id ||
         target.team != holder.team || target.followerOf >= 0 || holder.followerOf >= 0 || target.state == UnitState::Launched ||
-        target.bait > 0 || target.guard > 0 || holder.bait > 0)
+        target.bait > 0 || target.guard > 0 || holder.bait > 0 || target.deck != holder.deck || target.climb >= 0 || holder.climb >= 0)
         return false;
     if (config.prank != PrankLevel::Chaos && !target.throwable)
         return false;
@@ -39,8 +39,11 @@ inline bool Battle::setThrowable(int id, bool allowed)
 inline void Battle::grab(Unit& holder, Unit& target)
 {
     cancelCharge(target.id);
+    target.rocketHeld = false;
+    target.rocketCharge = 0;
     target.followerOf = holder.id;
     target.carried = true;
+    target.deck = holder.deck;
     target.state = UnitState::Following;
     target.tailOrder = nextTailOrder++;
     target.velocity = target.impulse = {};
@@ -106,16 +109,16 @@ inline double Battle::pourInk(int from, int to, double amount)
     event(EffectStyle::InkPour, a->position, b->position, a->team, moved, .5);
     return moved;
 }
-// The closest teammate lying as bait that a monster can see within reach (nullptr when none).
+// The closest teammate lying as bait that a monster can see within reach on its own level (nullptr when none).
 inline const Unit* Battle::baitFor(const Unit& monster, double reach) const
 {
     const Unit* best = nullptr;
     double nearest = reach * reach;
     for (int id : baits)
-        if (const Unit* b = find(id); b && b->alive && b->bait > 0 && b->team != monster.team)
+        if (const Unit* b = find(id); b && b->alive && b->bait > 0 && b->team != monster.team && b->deck == monster.deck)
         {
             const double d2 = (b->position - monster.position).lengthSquared();
-            if (d2 < nearest && maze.clear(monster.position, b->position, 6))
+            if (d2 < nearest && maze.clear(monster.position, b->position, 6, monster.deck))
             {
                 nearest = d2;
                 best = b;
@@ -142,6 +145,10 @@ inline Unit* Battle::creditFor(int attacker)
         return nullptr;
     if (a->player())
         return a;
+    // A tower's kills are its builder's.
+    if (a->turret && a->builder >= 0)
+        if (Unit* builder = find(a->builder); builder && builder->player())
+            return builder;
     if (a->state == UnitState::Launched && a->launchOwner >= 0)
         return find(a->launchOwner);
     if (a->followerOf >= 0)
@@ -171,11 +178,46 @@ inline void Battle::consumeInput(Unit& u)
         u.moveQueue.pop_front();
         u.ackSequence = u.input.sequence;
         u.aim = u.input.aim;
+        u.freshInput = true;
+        if (u.input.dodge)
+            startDodge(u);
     }
     else if (u.input.sequence)
     {
+        // A gap in the stream: stand still and stop firing, but a held rocket trigger stays held (freshInput).
         u.input.move = {};
         u.input.fire = false;
+        u.input.dodge = false;
+        u.freshInput = false;
     }
+    else
+    {
+        // A held input (sequence 0: AI and tests) dodges once.
+        u.freshInput = true;
+        if (u.input.dodge)
+        {
+            startDodge(u);
+            u.input.dodge = false;
+        }
+    }
+}
+// The dodge (Shift): a kick toward the cursor that nothing can land on while it lasts, then a cooldown. Not while
+// climbing, held, carried in a tail, flying or lying as bait.
+inline void Battle::startDodge(Unit& u)
+{
+    if (!u.alive || !u.human || finished || u.dashCooldown > 0 || u.climb >= 0 || u.followerOf >= 0 || u.carried || u.bait > 0 ||
+        u.state == UnitState::Launched)
+        return;
+    Vec2 dir = u.input.aim.normalized();
+    if (dir.lengthSquared() < .5)
+        dir = u.input.move.normalized();
+    if (dir.lengthSquared() < .5)
+        return;
+    // Research makes the kick stronger and the cooldown shorter (2026-11-17).
+    const double kick = DashImpulse * perk(u, Attribute::DashSpeed);
+    u.impulse += dir * kick;
+    u.dashTime = DashSeconds;
+    u.dashCooldown = DashCooldownSeconds * perk(u, Attribute::DashCooldown);
+    event(EffectStyle::Dash, u.position, u.position + dir * (kick / 5), u.team, u.seat, .35);
 }
 } // namespace gwgame

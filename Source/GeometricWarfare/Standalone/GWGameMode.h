@@ -5,6 +5,10 @@
 class AGWController;
 class AGWGameState;
 class UGWRunSave;
+namespace gwgame
+{
+class Battle;
+}
 UCLASS()
 class GEOMETRICWARFARE_API AGWGameMode : public AGameModeBase
 {
@@ -33,6 +37,14 @@ public:
     // Opens a line-defense page for everyone, from the hub, the title or a result card. Up to three AI
     // teammates come along when the host is alone in the room.
     bool BeginDefense(AGWController* Player, int32 Level, int32 Bots = 0);
+    // An expedition from the hub (design v2.1): four stages of dungeon floors, everyone's pouch empty, no AI teammates.
+    bool BeginExpedition(AGWController* Player, int32 Bots = 0);
+    // The board's deploy targets beside the pages: the expedition, and the party playlist's roll.
+    static constexpr int32 ExpeditionLevel = 15;
+    static constexpr int32 PlaylistLevel = 14;
+    // The party playlist's twist for the next mission (0 none, 1 chaos, 2 rockets, 3 ink rain), consumed by it.
+    uint8 PendingTwist = 0;
+    void ApplyTwist(AGWGameState* State, gwgame::Battle& Battle, bool Joined);
     // The host's deploy from the hub's mission board: everyone leaves after DeploySeconds unless the host
     // cancels; players can still walk in meanwhile and go along.
     bool RequestDeploy(AGWController* Player, int32 Level, int32 Bots);
@@ -103,6 +115,13 @@ private:
         int32 Held = 0;
         int32 InkGiven = 0;
         int32 Bullseyes = 0;
+        // The expedition's counts and the feat, boss and shape bits already sent.
+        int32 Erased = 0;
+        int32 Elites = 0;
+        int32 Given = 0;
+        uint64 Feats = 0;
+        uint8 Bosses = 0;
+        uint8 Shapes = 0;
     };
     TMap<int32, FSentStats> StatsSent;
     TMap<int32, int32> ItemsBrought;
@@ -112,7 +131,11 @@ private:
     void RefreshSeats();
     void GrantRewards(AGWGameState* State);
     // One packet to every player's own profile: stickers (with their bait), stars, and their share of the run.
-    void SendProgress(AGWGameState* State, int32 Stickers, uint8 Stars, bool Clear, bool Final);
+    void SendProgress(AGWGameState* State, int32 Stickers, uint8 Stars, bool Clear, bool Final, AGWController* Only = nullptr);
+    // The expedition: players whose exit has been paid (each banks once), and whether this mission is the party
+    // playlist's roll (it pays 55%, its MVP 20 more); set as the deploy rolls it, taken up by the next mission.
+    TSet<int32> ExpeditionPaid;
+    bool PlaylistRun = false, PlaylistPending = false;
     // A defense mission ending without a result (given up, or a new one opening): its last packet goes out once.
     void CloseMission(AGWGameState* State);
     // A new simulation: nothing of it has been sent yet.

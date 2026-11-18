@@ -139,41 +139,46 @@ struct HubState
     int bullseyes = 0;
 };
 
-// The tutorial (新手引导) is a small defense page with a script: seven steps, each finished by doing it once.
+// The tutorial (新手引导) is a small box with a script: six steps, each finished by doing it once.
 enum class TutorialStep : uint8_t
 {
     Move,
     Shoot,
-    Recruit,
-    Merge,
-    Turret,
     Draw,
+    Tower,
+    Ladder,
     Defend,
     Done
 };
-constexpr int TutorialStepCount = 7;
+constexpr int TutorialStepCount = 6;
 struct TutorialPage
 {
     DefenseLevel page;
-    // Where the first step sends the player, the two paper targets, and the three cells the drawing step
-    // suggests (a short wall across the road; the road bends around it).
+    // The platform cell the first step sends the player to, the two paper targets down in the box below it, the
+    // three cells the drawing step suggests (a short wall across the road; the road bends around it) and the
+    // platform cell the ladder step blinks.
     int moveX, moveY;
     std::array<std::pair<int, int>, 2> targets;
     std::array<std::pair<int, int>, 3> wall;
+    std::pair<int, int> ladder;
     int waveSize;
+    // The floor cell the tower step suggests (any open floor will do).
+    std::pair<int, int> tower;
 };
 inline const TutorialPage& tutorialPage()
 {
     static const TutorialPage Page = {{"0-1",
                                        1,
                                        1.0,
-                                       {"#############", "#...........#", "#...........#", "#,,.......,,#", "S,,.......,C#",
-                                        "#,,.......,,#", "#...........#", "#...........#", "#############"}},
-                                      7,
-                                      2,
-                                      {{{4, 1}, {4, 3}}},
+                                       {"=============", "=...........=", "=...........=", "=,,.......,,=", "=S,.......,C=",
+                                        "=,,.......,,=", "=...........=", "=...........=", "============="}},
+                                      10,
+                                      8,
+                                      {{{9, 7}, {11, 7}}},
                                       {{{6, 3}, {6, 4}, {6, 5}}},
-                                      6};
+                                      {7, 8},
+                                      6,
+                                      {8, 6}};
     return Page;
 }
 // How far the current step has come, as done / needed (what the step card counts).

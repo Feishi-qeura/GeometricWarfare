@@ -171,6 +171,21 @@ void GWContent::BuildMeshes(TMap<FName, UStaticMesh*>& Out)
         Out.Add(TEXT("SM_GW_Shard"), Save(TEXT("SM_GW_Shard"), F));
     }
     {
+        // Flat card-stock plates: the paper polygons bursts throw out and pull together. Seen edge-on, the toon
+        // material inks their thin sides, so each tumbling plate keeps a pencil outline.
+        auto Plate = [&](const TCHAR* Name, const TArray<FVector2f>& Outline)
+        {
+            FFacetBuilder F;
+            F.Prism(Outline, 7);
+            Out.Add(Name, Save(Name, F));
+        };
+        Plate(TEXT("SM_GW_PlateTri"), Ring(3, 52, 90));
+        Plate(TEXT("SM_GW_PlateSquare"), Ring(4, 46, 45));
+        Plate(TEXT("SM_GW_PlatePent"), Ring(5, 48, 90));
+        Plate(TEXT("SM_GW_PlateHex"), Ring(6, 46, 0));
+        Plate(TEXT("SM_GW_PlateRhomb"), {FVector2f(56, 0), FVector2f(0, 30), FVector2f(-56, 0), FVector2f(0, -30)});
+    }
+    {
         // A one-sided ground card: decals, shadows and trails are flat paper cut-outs.
         FFacetBuilder F;
         F.Quad(FVector3f(-50, -50, 0), FVector3f(50, -50, 0), FVector3f(50, 50, 0), FVector3f(-50, 50, 0), FVector3f(0, 0, 1));

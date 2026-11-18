@@ -8,6 +8,7 @@ inline bool Battle::start(uint64_t seed)
     maze.generate(rng, true);
     resetRun();
     defense = DefenseState{};
+    expedition = ExpeditionState{};
     navigationVersion = maze.version;
     return true;
 }
@@ -88,12 +89,25 @@ inline int Battle::joinHuman(int owner)
     u.team = 1;
     u.human = true;
     u.owner = u.previousOwner = owner;
-    u.position = defenseMode() ? coreSpawn(humanCount()) : hubMode() ? hubSpawn(humanCount()) : spawnPosition(humanCount() + 12);
+    u.position = defenseMode()      ? deckSpawn(humanCount())
+                 : hubMode()        ? hubSpawn(humanCount())
+                 : expeditionMode() ? floorSpawn(humanCount())
+                                    : spawnPosition(humanCount() + 12);
+    u.deck = defenseMode() && maze.hasDeck();
     u.seat = freeSeat();
     u.maxInk = u.ink = defenseMode() ? config.inkMax : 0;
     u.pendingUpgrades = sharedLevel - 1;
     u.level = sharedLevel;
     makeChoices(u);
+    if (expeditionMode())
+    {
+        // Into the dungeon with the starting gun in slot 1 and nothing else (the loadout swaps in the player's own gun),
+        // an empty pouch and a little ink (design 2.2: 白手起家).
+        u.kit.slots[0] = {SlotKind::Weapon, 0, 1, magazine(0, false), 0};
+        syncHand(u);
+        refreshCapacities(u);
+        u.ink = std::min(u.maxInk, 40.);
+    }
     units.push_back(u);
     return u.id;
 }
@@ -149,14 +163,16 @@ inline int Battle::candidate(int id) const
         return -1;
     double best = config.recruitRange * perk(*p, Attribute::Reach);
     int selected = -1;
-    // Allies and grabbable teammates compete on distance, so E always takes what is closest.
+    // Allies and grabbable teammates compete on distance, so E always takes what is closest (on the same level:
+    // nobody reaches up the box wall or down off the platform).
     for (auto& u : units)
     {
-        const bool ally = u.kind == UnitKind::Companion && u.followerOf < 0 && u.state != UnitState::Launched && u.shardDelay <= 0;
-        if (!u.alive || u.team != p->team || !(ally || (u.human && canGrab(*p, u))))
+        const bool ally = u.kind == UnitKind::Companion && u.followerOf < 0 && u.state != UnitState::Launched && u.shardDelay <= 0 && !u.turret &&
+                          u.gadget < 0;
+        if (!u.alive || u.team != p->team || u.deck != p->deck || u.climb >= 0 || !(ally || (u.human && canGrab(*p, u))))
             continue;
         double d = (u.position - p->position).length();
-        if (d <= best && maze.clear(p->position, u.position, std::min(p->radius, u.radius)) &&
+        if (d <= best && maze.clear(p->position, u.position, std::min(p->radius, u.radius), p->deck) &&
             (d < best || selected < 0 || u.id < selected))
         {
             best = d;
@@ -170,11 +186,30 @@ inline int Battle::recruit(int id)
     if (upgradePaused())
         return -1;
     auto* p = find(id);
-    if (!p || !p->alive || !p->human || p->state == UnitState::Launched)
+    if (!p || !p->alive || !p->human || p->state == UnitState::Launched || p->climb >= 0)
         return -1;
     // Lying as bait, E rolls out once the landing has settled.
     if (p->bait > 0)
         return roll(id) ? id : -1;
+    // On the expedition E takes, buys, opens or works whatever is in reach first; with nothing there it grabs a willing
+    // teammate (2026-11-17: the grab and the throw are back in the dungeon at the user's call; no AI recruits down there).
+    if (expeditionMode() && p->followerOf < 0)
+    {
+        const int act = interact(id);
+        if (act != 0)
+            return act > 0 ? id : -1;
+        Unit* mate = find(candidate(id));
+        if (!mate || !mate->human)
+            return -1;
+        grab(*p, *mate);
+        return mate->id;
+    }
+    // Beside a fallen teammate's outline up on the platform, E brings them back for ink.
+    if (p->followerOf < 0 && fallenNear(id) >= 0)
+    {
+        const int fallen = fallenNear(id);
+        return reviveMate(id) ? fallen : -1;
+    }
     if (p->followerOf >= 0)
     {
         // Leaving a squad, or wriggling out of a teammate's grip (which buys a moment before the next grab).
@@ -202,9 +237,9 @@ inline int Battle::recruit(int id)
         double best = config.recruitRange * perk(*p, Attribute::Reach);
         int leader = -1;
         for (const auto& other : units)
-            if (other.id != id && other.human && other.alive && other.team == p->team && other.followerOf < 0 &&
-                (other.position - p->position).length() < best &&
-                maze.clear(p->position, other.position, std::min(p->radius, other.radius)))
+            if (other.id != id && other.human && other.alive && other.team == p->team && other.followerOf < 0 && other.deck == p->deck &&
+                other.climb < 0 && (other.position - p->position).length() < best &&
+                maze.clear(p->position, other.position, std::min(p->radius, other.radius), p->deck))
             {
                 best = (other.position - p->position).length();
                 leader = other.id;
@@ -248,7 +283,8 @@ inline int Battle::launch(int id)
     last->launchInitialSpeed = config.launchSpeed * (.55 + last->launchPower * 1.45);
     last->velocity = p->aim.normalized() * last->launchInitialSpeed;
     last->impulse = {};
-    last->position = maze.move(p->position, p->aim.normalized() * (p->radius + last->radius + 8), last->radius);
+    // From the platform the throw goes out over the box wall (design: 把队友抬起来扔进盒子).
+    last->position = maze.move(p->position, p->aim.normalized() * (p->radius + last->radius + 8), last->radius, true);
     if (person)
     {
         // The same player cannot be thrown again for a while (design doc: 10 s).
@@ -320,16 +356,27 @@ inline void Battle::emitDamage(int source, int victim, Vec2 position, double amo
         damageNumbers.erase(damageNumbers.begin());
     damageNumbers.push_back({nextDamageNumber++, victim, source, team, position, amount, .9});
 }
-inline void Battle::damageUnit(int attacker, int victim, double damage)
+inline void Battle::damageUnit(int attacker, int victim, double damage, bool friendly)
 {
     auto* v = find(victim);
     auto* a = find(attacker);
-    if (!v || !v->alive || !std::isfinite(damage) || damage <= 0 || (a && a->team == v->team))
+    if (!v || !v->alive || !std::isfinite(damage) || damage <= 0 || (a && a->team == v->team && !friendly))
         return;
+    // Mid-dodge, nothing lands.
+    if (v->dashTime > 0 && v->player())
+        return;
+    // The expedition's items and pen traits change the hit (critical hits, stamps, shields, notes).
+    if (expeditionMode())
+    {
+        damage = expeditionDamage(a, *v, damage);
+        if (!(damage > 0))
+            return;
+    }
     // A teammate lying as bait shrugs off half of every hit.
     if (v->bait > 0)
         damage *= config.baitDamage;
-    double absorbed = std::min(v->armor, damage * .7);
+    // Armour soaks up to 70% of a hit (the eraser's cut goes straight through it).
+    double absorbed = rawHit ? 0 : std::min(v->armor, damage * .7);
     double effective = absorbed + std::min(v->hp, damage - absorbed);
     emitDamage(attacker, victim, v->position, effective, v->team);
     if (Unit* credited = creditFor(attacker); credited && credited->team != v->team)
@@ -339,13 +386,22 @@ inline void Battle::damageUnit(int attacker, int victim, double damage)
     v->hitFlash = .15;
     if (v->hp > 0)
         return;
+    // A pencil body's dodge, a phoenix charm or a stand-in may keep an expedition player on their feet.
+    if (expeditionMode() && v->kind == UnitKind::Fighter && v->player() && cheatDeath(*v))
+        return;
     v->alive = false;
     v->turret = false;
     v->hasPickupWeapon = false;
-    // A player drops any crate weapon and gets up holding their own starting weapon.
-    v->weapon = v->player() && !survivalMode() ? v->perks.weapon : 0;
-    if (v->player() && !survivalMode())
-        v->ammo = weaponStats(v->weapon).ammo;
+    // An expedition player's whole kit falls to the floor and they become a ghost (design 4.4); anywhere else a player
+    // drops any crate weapon and gets up holding their own starting weapon.
+    if (expeditionMode() && v->kind == UnitKind::Fighter && v->player())
+        expeditionFall(*v);
+    else
+    {
+        v->weapon = v->player() && !survivalMode() ? v->perks.weapon : 0;
+        if (v->player() && !survivalMode())
+            v->ammo = weaponStats(v->weapon).ammo;
+    }
     v->maxHp = (v->kind == UnitKind::Fighter ? healthCapacity(*v) : v->maxHp) + v->skills[17] * 35;
     cancelCharge(victim);
     v->hp = 0;
@@ -359,7 +415,12 @@ inline void Battle::damageUnit(int attacker, int victim, double damage)
     v->velocity = {};
     v->path.clear();
     v->trail.clear();
+    v->climb = v->ladderGoal = -1;
+    v->rocketHeld = false;
+    v->rocketCharge = 0;
     releaseFollowers(victim);
+    if (v->kind == UnitKind::Monster)
+        expeditionKill(*v, attacker);
     if (v->dummy)
     {
         // A training target drops nothing and stands up again at home (reviveDummies).
@@ -369,23 +430,33 @@ inline void Battle::damageUnit(int attacker, int victim, double damage)
     }
     else if (defenseMode())
     {
-        // Defense has no team level: enemies drop ink and triangles, fallen players return at the core (or, once,
-        // get up where they fell with a plaster).
+        // Defense has no team level: enemies pay ink to whoever killed them, fallen players get back up on the
+        // platform (at once if a teammate pays ink at their outline; once, where they fell, with a plaster).
         if (v->kind == UnitKind::Monster)
-            dropLoot(*v);
-        else if (v->kind == UnitKind::Fighter && (v->human || v->bot) && v->perks.plaster)
-        {
-            v->perks.plaster = false;
-            v->perks.standUp = true;
-            v->standAt = v->position;
-            v->respawn = PlasterDelay;
-        }
+            dropLoot(*v, attacker);
         else if (v->kind == UnitKind::Fighter && (v->human || v->bot))
-            v->respawn = config.respawnSeconds;
+        {
+            if (v->perks.plaster)
+            {
+                v->perks.plaster = false;
+                v->perks.standUp = true;
+                v->standAt = v->position;
+                v->standDeck = v->deck;
+                v->respawn = PlasterDelay;
+            }
+            else
+                v->respawn = config.respawnSeconds;
+            // The outline waits up on the platform, nearest where they fell.
+            if (maze.hasDeck())
+            {
+                v->position = reviveSpot(v->position);
+                v->deck = true;
+            }
+        }
     }
     else if (hubMode() && v->kind == UnitKind::Fighter && (v->human || v->bot))
         v->respawn = 2;
-    if (a)
+    if (a && a->team != v->team)
     {
         ++a->kills;
         if (v->kind == UnitKind::Monster && survivalMode())
@@ -409,6 +480,8 @@ inline void Battle::tick(double dt)
         }
         u.hitFlash = std::max(0., u.hitFlash - dt);
         u.slowTime = std::max(0., u.slowTime - dt);
+        u.dashTime = std::max(0., u.dashTime - dt);
+        u.dashCooldown = std::max(0., u.dashCooldown - dt);
         u.shardDelay = std::max(0., u.shardDelay - dt);
         u.guard = std::max(0., u.guard - dt);
         if (u.bait > 0)
@@ -432,6 +505,9 @@ inline void Battle::tick(double dt)
     if (finished)
         return;
     updateEvolution(dt);
+    updateExpedition(dt);
+    // Ink into wounds (R) before anyone walks, so the mend's slow holds this very step.
+    updateMend(dt);
     flushUnits();
     moveUnits(dt);
     flushUnits();
@@ -439,13 +515,22 @@ inline void Battle::tick(double dt)
     flushUnits();
     updateProjectiles(dt);
     flushUnits();
-    // Weapon crates fall anywhere in Survival; in Defense only while a wave runs, within reach of the core.
+    // Weapon crates fall anywhere in Survival; in Defense only while a wave runs, onto the platform where the
+    // players walk (or near the core on a page without one).
     if (elapsed >= nextCrate && defenseMode() && defense.phase != DefensePhase::Wave)
         nextCrate = elapsed + 15;
     if (elapsed >= nextCrate)
     {
         nextCrate += config.airDropInterval;
         Vec2 p = defenseMode() ? maze.randomOpen(rng, defense.core, 1600) : maze.randomOpen(rng);
+        if (defenseMode() && maze.hasDeck())
+        {
+            std::vector<int> deckCells;
+            for (int id = 0; id < static_cast<int>(maze.decks.size()); ++id)
+                if (maze.decks[id])
+                    deckCells.push_back(id);
+            p = maze.center(deckCells[static_cast<size_t>(randomStep(rng) % deckCells.size())]);
+        }
         crates.push_back({nextId++, 1 + static_cast<int>(randomStep(rng) % 5), p, 2, 35, true});
     }
     for (auto& c : crates)

@@ -22,7 +22,10 @@
 
 // Network stress run for the design doc's gate 2 (8 players, a page full of enemies). One process hosts a
 // listen room over direct IP and keeps the page topped up with enemies; up to seven headless processes join
-// on autopilot (Scripts/Test-NetStress.ps1 starts them all). The host reports its upload per client and how
+// on autopilot (Scripts/Test-NetStress.ps1 starts them all). With -GWStressExpedition the host opens an expedition
+// instead (design v2.1 M4): everyone in the last floor's boss room (the ink sage by default, -GWStressBiome=0..4 picks
+// the pen), the boss held above 30% so its second form stays up, and the room kept at MaxRoomEnemies of the
+// stage's foes and elites. The host reports its upload per client and how
 // often each connection was saturated; each client reports its download, how many snapshots arrived per
 // second, the longest gap between them and how often a unit jumped. Reports land in -GWStressOut.
 namespace
@@ -77,8 +80,12 @@ public:
     explicit FStressHost(FAutomationTestBase* T)
         : Test(T), Start(FPlatformTime::Seconds()), Clients(FMath::Clamp(Option(TEXT("GWStressClients="), 7), 1, 7)),
           Seconds(FMath::Clamp(Option(TEXT("GWStressSeconds="), 40), 5, 600)), Warmup(FMath::Clamp(Option(TEXT("GWStressWarmup="), 12), 0, 120)),
-          Monsters(FMath::Clamp(Option(TEXT("GWStressMonsters="), 160), 0, 400))
+          Monsters(FMath::Clamp(Option(TEXT("GWStressMonsters="), 160), 0, 400)),
+          Expedition(FParse::Param(FCommandLine::Get(), TEXT("GWStressExpedition"))),
+          Pen(FMath::Clamp(Option(TEXT("GWStressBiome="), gwgame::BiomeCount - 1), 0, gwgame::BiomeCount - 1))
     {
+        if (Expedition)
+            Monsters = FMath::Min(Monsters, gwgame::MaxRoomEnemies);
     }
     bool Update() override
     {
@@ -126,6 +133,8 @@ public:
                 }
                 return false;
             }
+            if (Expedition)
+                return OpenExpedition(G, C, S);
             if (!G || !G->BeginDefense(C, 0, 0))
             {
                 Test->AddError(TEXT("Stress host could not open page 1-1"));
@@ -155,7 +164,25 @@ public:
             Next = Now;
         }
         auto& B = *S->Simulation;
-        if (Stage == 2)
+        if (Stage == 2 && Expedition)
+        {
+            // Nobody falls and the boss never does: the load stays a full boss fight for the whole measurement.
+            for (auto& U : B.units)
+                if (U.alive && U.human)
+                    U.hp = U.maxHp;
+            if (gwgame::Unit* Boss = B.find(B.expedition.bossId); Boss && Boss->alive)
+                Boss->hp = FMath::Max(Boss->hp, Boss->maxHp * .3);
+            if (Now >= Refill)
+            {
+                Refill = Now + .25;
+                int32 Alive = 0;
+                for (const auto& U : B.units)
+                    Alive += U.alive && U.kind == gwgame::UnitKind::Monster && U.room == BossRoom;
+                for (int32 I = 0; I < 8 && Alive < Monsters && B.expeditionReinforce(BossRoom) >= 0; ++I)
+                    ++Alive;
+            }
+        }
+        else if (Stage == 2)
         {
             // Keep the page full: a steady mix of runners, rams and shooters marching from both entrances.
             if (Now >= Refill)
@@ -171,6 +198,9 @@ public:
                     B.spawnWaveEnemy(Kind, Spawned % 13 == 0, static_cast<int>(Spawned % 2));
                 }
             }
+        }
+        if (Stage == 2)
+        {
             UNetDriver* Driver = W->GetNetDriver();
             if (!Driver)
                 return false;
@@ -200,6 +230,7 @@ public:
                     UnitSlots.Add(S->Units.Num());
                     ShotCount.Add(S->Projectiles.Num());
                     EffectCount.Add(S->Effects.Num());
+                    ZoneCount.Add(S->Zones.Num());
                     double Total = 0;
                     TArray<double> PerClient;
                     for (const auto& Connection : Connections)
@@ -231,11 +262,55 @@ public:
     }
 
 private:
+    // The expedition run: the last floor of a run whose fourth stage is the chosen pen, everyone spread over its boss
+    // room (all in, so its doors shut and the boss comes on the next step).
+    bool OpenExpedition(AGWGameMode* G, AGWController* C, AGWGameState* S)
+    {
+        if (!G || !G->BeginExpedition(C, 0))
+        {
+            Test->AddError(TEXT("Stress host could not open an expedition"));
+            Finish(TEXT("no expedition"));
+            return true;
+        }
+        auto& B = *S->Simulation;
+        B.expedition.biomes[gwgame::ExpeditionStages - 1] = static_cast<gwgame::PenBiome>(Pen);
+        bool Opened = false;
+        for (int32 Floor = 8; Floor >= 1 && !Opened; --Floor)
+            if (B.expeditionJump(gwgame::ExpeditionStages, Floor))
+                for (const auto& Room : B.expedition.rooms)
+                    Opened |= Room.kind == gwgame::RoomKind::Boss;
+        BossRoom = -1;
+        for (int32 I = 0; I < static_cast<int32>(B.expedition.rooms.size()); ++I)
+            if (B.expedition.rooms[static_cast<size_t>(I)].kind == gwgame::RoomKind::Boss)
+                BossRoom = I;
+        if (BossRoom < 0)
+        {
+            Test->AddError(TEXT("Stress host found no boss room"));
+            Finish(TEXT("no boss room"));
+            return true;
+        }
+        const gwgame::DungeonRoom& R = B.expedition.rooms[static_cast<size_t>(BossRoom)];
+        const double Cell = B.maze.cellSize;
+        const gwgame::Vec2 Mid{(R.x + R.w * .5) * Cell, (R.y + R.h * .5) * Cell};
+        int32 Seat = 0;
+        for (auto& U : B.units)
+            if (U.human && U.alive)
+            {
+                const double A = Seat++ * 2 * PI / 8;
+                U.position = B.maze.move(Mid, gwgame::Vec2{std::cos(A), std::sin(A) * .6 + .5} * (R.w * Cell * .3), U.radius);
+            }
+        S->Publish();
+        Stage = 2;
+        Began = FPlatformTime::Seconds();
+        Next = Began;
+        return false;
+    }
     void Finish(const TCHAR* Result)
     {
         const TSharedRef<FJsonObject> Report = MakeShared<FJsonObject>();
         Report->SetStringField(TEXT("role"), TEXT("host"));
         Report->SetStringField(TEXT("result"), Result);
+        Report->SetStringField(TEXT("mode"), Expedition ? TEXT("expedition") : TEXT("defense"));
         Report->SetNumberField(TEXT("clients"), Clients);
         Report->SetNumberField(TEXT("monsterTarget"), Monsters);
         Report->SetNumberField(TEXT("seconds"), Seconds);
@@ -259,6 +334,8 @@ private:
         Summary->SetNumberField(TEXT("unitSlots"), Most(UnitSlots));
         Summary->SetNumberField(TEXT("avgProjectiles"), Mean(ShotCount));
         Summary->SetNumberField(TEXT("avgEffects"), Mean(EffectCount));
+        Summary->SetNumberField(TEXT("avgZones"), Mean(ZoneCount));
+        Summary->SetNumberField(TEXT("maxZones"), Most(ZoneCount));
         Summary->SetNumberField(TEXT("avgFrameMs"), Mean(FrameMs));
         Summary->SetNumberField(TEXT("maxFrameMs"), Most(FrameMs));
         Report->SetObjectField(TEXT("summary"), Summary);
@@ -267,9 +344,11 @@ private:
     FAutomationTestBase* Test;
     double Start = 0, Next = 0, Waiting = 0, Began = 0, Refill = 0;
     int32 Clients = 7, Seconds = 40, Warmup = 12, Monsters = 160, Stage = 0, Frames = 0;
+    bool Expedition = false;
+    int32 Pen = gwgame::BiomeCount - 1, BossRoom = -1;
     uint32 Spawned = 0;
     TArray<int32> Saturated;
-    TArray<double> Uplink, ClientOut, Packets, Lag, MonstersAlive, AlliesAlive, UnitSlots, ShotCount, EffectCount, FrameMs;
+    TArray<double> Uplink, ClientOut, Packets, Lag, MonstersAlive, AlliesAlive, UnitSlots, ShotCount, EffectCount, ZoneCount, FrameMs;
 };
 
 class FStressClient : public IAutomationLatentCommand

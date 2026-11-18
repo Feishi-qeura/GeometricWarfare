@@ -4,6 +4,7 @@
 #include "GWGameMode.h"
 #include "GWGameState.h"
 #include "GWHUD.h"
+#include "GWMotion.h"
 #include "GWPalette.h"
 #include "GWPlayerState.h"
 #include "GWProfile.h"
@@ -29,6 +30,10 @@ FLinearColor StationColor(int32 Index)
 FText PageName(int32 Index)
 {
     const auto& Levels = gwgame::defenseLevels();
+    if (Index == AGWGameMode::ExpeditionLevel)
+        return GWText::Get(TEXT("Board.Mode.1"));
+    if (Index == AGWGameMode::PlaylistLevel)
+        return GWText::Get(TEXT("Board.Mode.2"));
     if (Index < 0 || Index >= static_cast<int32>(Levels.size()))
         return GWText::Get(TEXT("Tutorial.Title"));
     const FString Id = ANSI_TO_TCHAR(Levels[Index].id);
@@ -54,6 +59,20 @@ bool AGWHUD::Interact()
     auto* S = GetWorld()->GetGameState<AGWGameState>();
     const auto* P = PlayerOwner ? PlayerOwner->GetPlayerState<AGWPlayerState>() : nullptr;
     const FGWUnitView* Local = S && P ? S->FindUnit(P->UnitId) : nullptr;
+    // The expedition: E at the shop's buyer opens the bag sheet to sell, and at a fallen teammate's outline (with nothing
+    // of the floor's nearer) the revive sheet, paper & pen or not (everything else E does is the host's).
+    if (S && S->Expedition())
+    {
+        if (OpenTrade())
+            return true;
+        FReach Reach;
+        if (Local && ExpeditionReach(S, *Local, Reach) && Reach.Ghost >= 0 && !Settings)
+        {
+            ReviveTarget = Reach.Ghost;
+            return OpenRevive(true);
+        }
+        return false;
+    }
     const int32 Station = NearStation(S, Local);
     if (Station < 0 || Settings || Panel != EPanel::None)
         return false;
@@ -74,9 +93,16 @@ void AGWHUD::OpenPanel(EPanel Next)
 
 void AGWHUD::HubScreen(AGWGameState* S, const FGWUnitView* Local)
 {
+    const float Entry = SceneAge(S);
     StationTags(S, Local);
-    RoomCard(S);
-    Roster(S, Local);
+    {
+        const auto Drop = DropIn(FVector2D(Width * .5f, 58 * Scale), Entry, .1f, 70);
+        RoomCard(S);
+    }
+    {
+        const auto Slide = SlideIn(FVector2D(170 * Scale, 200 * Scale), Entry, FVector2D(-200, 0), .22f);
+        Roster(S, Local);
+    }
     DeployBanner(S);
     if (Panel != EPanel::None)
         HubPanel(S);
@@ -104,14 +130,30 @@ void AGWHUD::RoomCard(AGWGameState* S)
     Glyph(4, FVector2D(X + 46 * Scale, Y + H * .5f), 40 * Scale, Coral, 1102);
     const float TextX = X + 80 * Scale, ButtonW = 190 * Scale, TextW = W - (TextX - X) - ButtonW - 30 * Scale;
     Label(Title, TextX, Y + 9 * Scale, 24 * Scale, Ink, false, TextW, EFace::Heavy);
-    // Where the room stands: who can come in, how full it is, and the trolling level the host has set.
-    const FString Status = FString::Printf(TEXT("%s  ·  %s  ·  %s %s"), *GWText::Get(FString::Printf(TEXT("Hub.Kind.%d"), static_cast<int32>(Kind))).ToString(),
-                                           *GWText::Number(TEXT("Hub.Seats"), TEXT("Count"), S->PlayerArray.Num()).ToString(),
-                                           *GWText::Get(TEXT("Prank.Title")).ToString(),
-                                           *GWText::Get(FString::Printf(TEXT("Prank.%d"), FMath::Clamp(static_cast<int32>(S->Prank), 0, 2))).ToString());
-    Highlight(TextX - 4 * Scale, Y + 48 * Scale, FMath::Min(Measure(FText::FromString(Status), 15 * Scale, EFace::Bold).X, TextW) + 8 * Scale, 22 * Scale,
-              Accent.CopyWithNewOpacity(.22f), 1103);
-    Label(FText::FromString(Status), TextX, Y + 48 * Scale, 15 * Scale, InkSoft, false, TextW, EFace::Bold);
+    // Where the room stands, as three marker chips: who can come in (a check, a cross or a link), how full it is,
+    // and the trolling level the host has set.
+    float ChipX = TextX - 4 * Scale;
+    auto Chip = [&](int32 GlyphKind, FLinearColor Color, const FText& Text, int32 Seed)
+    {
+        const float TextWidth = Measure(Text, 15 * Scale, EFace::Bold).X, ChipW = TextWidth + 34 * Scale;
+        if (ChipX + ChipW > TextX + TextW)
+            return;
+        Highlight(ChipX, Y + 48 * Scale, ChipW, 22 * Scale, Color.CopyWithNewOpacity(.24f), Seed);
+        Glyph(GlyphKind, FVector2D(ChipX + 13 * Scale, Y + 59 * Scale), 14 * Scale, Color, Seed + 1);
+        Label(Text, ChipX + 26 * Scale, Y + 48 * Scale, 15 * Scale, InkSoft, false, 0, EFace::Bold);
+        ChipX += ChipW + 8 * Scale;
+    };
+    const int32 PrankLevel = FMath::Clamp(static_cast<int32>(S->Prank), 0, 2);
+    Chip(Kind == EGWRoomKind::Steam ? 16 : Kind == EGWRoomKind::Offline ? 17 : 14, Accent, GWText::Get(Kind == EGWRoomKind::Steam ? TEXT("Hub.KindShort.1")
+                                                                                                : Kind == EGWRoomKind::Offline ? TEXT("Hub.KindShort.0")
+                                                                                                                               : TEXT("Hub.KindShort.2")),
+         1103);
+    {
+        PushMotion(FVector2D(ChipX + 30 * Scale, Y + 59 * Scale), FVector2D::ZeroVector, 0, Bump(0x5EA7u, static_cast<float>(S->PlayerArray.Num())));
+        const FMotionGuard Pulse(this);
+        Chip(0, Coral, FText::FromString(FString::Printf(TEXT("%d / 8"), S->PlayerArray.Num())), 1105);
+    }
+    Chip(15, PrankLevel == 2 ? Coral : PrankLevel == 1 ? Teal : Pencil, GWText::Get(FString::Printf(TEXT("Prank.%d"), PrankLevel)), 1107);
     Button(GWDefenseAction::Invite, GWText::Get(TEXT("Hub.Invite")), X + W - ButtonW - 16 * Scale, Y + 16 * Scale, ButtonW, 52 * Scale,
            Kind == EGWRoomKind::Steam, false, Cobalt);
 }
@@ -238,6 +280,10 @@ void AGWHUD::StationTags(AGWGameState* S, const FGWUnitView* Local)
         // Kept whole on screen when the station is at the edge of the view (its pointer stays under it).
         P.X = FMath::Clamp(P.X, W * .5f + 8 * Scale, Width - W * .5f - 8 * Scale);
         const float X = P.X - W * .5f, Y = P.Y - H - (Here ? 3 * Scale * FMath::Sin(Clock * 5) : 0);
+        // A tag pops up off its station whenever it comes into view, and grows a little while the player is at it.
+        const auto Pop = PopIn(FVector2D(P.X, Y + H), FMath::Min(Since(HashCombine(static_cast<uint32>(I), 0x57A7u)), SceneAge(S)), .3f + I * .05f);
+        PushMotion(FVector2D(P.X, Y + H), FVector2D::ZeroVector, 0, 1 + .06f * Eased(HashCombine(static_cast<uint32>(I), 0x57A8u), Here ? 1.f : 0.f, 12));
+        const FMotionGuard Grown(this);
         Card(X, Y, W, H, Here ? Hex(0xFFF2B0) : Paper, Ink, 1150 + I, Here ? 1.5f : 1.f);
         if (Here)
             Polygon({FVector2D(P.X - 9 * Scale, Y + H - 1), FVector2D(P.X + 9 * Scale, Y + H - 1), FVector2D(P.X, Y + H + 13 * Scale)},
@@ -262,9 +308,13 @@ void AGWHUD::DeployBanner(AGWGameState* S)
     Args.Add(TEXT("Seconds"), FMath::Max(1, FMath::CeilToInt(Left)));
     const FText Text = FText::Format(GWText::Get(TEXT("Hub.Deploying")), Args);
     const float Size = 30 * Scale, W = FMath::Max(560 * Scale, Measure(Text, Size, EFace::Heavy).X + 130 * Scale), Y = Height * .27f;
-    const float Pulse = .5f + .5f * FMath::Sin(Clock * 8);
-    Tape(FVector2D(Width * .5f, Y + 26 * Scale), W, 66 * Scale, -2, FMath::Lerp(Coral, Marigold, Pulse * .3f).CopyWithNewOpacity(.94f));
-    Lettering(Text, Width * .5f, Y + 4 * Scale, Size, Ink, 1170);
+    const float Pulse = .5f + .5f * FMath::Sin(Clock * 8), Age = Since(HashCombine(S->Seed, GetTypeHash(S->DeployAt)));
+    // The tape slaps on and unrolls; every second of the count jolts it.
+    const auto Pop = PopIn(FVector2D(Width * .5f, Y + 26 * Scale), Age);
+    PushMotion(FVector2D(Width * .5f, Y + 26 * Scale), FVector2D::ZeroVector, 0, Bump(0xDE91u, static_cast<float>(FMath::CeilToInt(Left))));
+    const FMotionGuard Jolt(this);
+    Tape(FVector2D(Width * .5f, Y + 26 * Scale), W * GWEase::OutBack(Age / .3f), 66 * Scale, -2, FMath::Lerp(Coral, Marigold, Pulse * .3f).CopyWithNewOpacity(.94f));
+    Lettering(Text, Width * .5f, Y + 4 * Scale, Size, Ink, 1170, Age - .05f);
     if (LocalHost(S))
         Button(GWDefenseAction::DeployCancel, GWText::Get(TEXT("Hub.CancelDeploy")), Width * .5f - 110 * Scale, Y + 74 * Scale, 220 * Scale,
                48 * Scale, true, false, Pencil);
@@ -295,15 +345,19 @@ void AGWHUD::PanelFrame(const TCHAR* TitleKey, const TCHAR* SubtitleKey, FLinear
 
 void AGWHUD::HubPanel(AGWGameState* S)
 {
-    // A station sheet is modal: the room behind it takes no clicks until it is closed (Esc or ×).
-    Box(0, 0, Width, Height, Ink.CopyWithNewOpacity(.38f));
-    Hits.Reset();
+    // A station sheet is modal: the room behind it takes no clicks until it is closed (Esc or ×). It is slapped
+    // down on the table over a dimming room.
+    ClearMotions();
     const int32 Kind = static_cast<int32>(Panel) - 1;
-    const FString TitleKey = FString::Printf(TEXT("Station.%d"), Kind), SubtitleKey = FString::Printf(TEXT("Station.%d.Note"), Kind);
+    const float Age = Since(HashCombine(static_cast<uint32>(Kind), 0x5EE7u));
+    Box(0, 0, Width, Height, Ink.CopyWithNewOpacity(.38f * GWEase::Clamp01(Age / .2f)));
+    Hits.Reset();
+    const FString TitleKey = FString::Printf(TEXT("Station.%d"), Kind);
     float X = 0, Y = 0, W = 0, H = 0;
     // Each sheet is as tall as what it holds: the board fills the page, the rest are shorter notes.
-    const float Tall = Panel == EPanel::Board ? 720 : Panel == EPanel::Door ? 480 : Panel == EPanel::Training ? 580 : Panel == EPanel::Achievements ? 600 : 540;
-    PanelFrame(*TitleKey, *SubtitleKey, StationColor(Kind), Tall, X, Y, W, H);
+    const float Tall = Panel == EPanel::Board ? 660 : Panel == EPanel::Door ? 520 : Panel == EPanel::Training ? 560 : 660;
+    const auto Drop = DropIn(FVector2D(Width * .5f, Height * .5f), Age, 0, 120);
+    PanelFrame(*TitleKey, nullptr, StationColor(Kind), Tall, X, Y, W, H);
     switch (Panel)
     {
     case EPanel::Board:
@@ -318,10 +372,30 @@ void AGWHUD::HubPanel(AGWGameState* S)
     case EPanel::Training:
         TrainingPanel(S, X, Y, W, H);
         break;
+    case EPanel::Shop:
+        ShopPanel(S, X, Y, W, H);
+        break;
+    case EPanel::Research:
+        ResearchPanel(S, X, Y, W, H);
+        break;
+    case EPanel::Wardrobe:
+        WardrobePanel(S, X, Y, W, H);
+        break;
     default:
-        ComingPanel(S, X, Y, W, H);
         break;
     }
+    // A sheet's fine print shows only where the mouse asks for it: a sticky note beside the pointer.
+    float MX = 0, MY = 0;
+    if (!PanelTip.IsEmpty() && PlayerOwner && PlayerOwner->GetMousePosition(MX, MY))
+    {
+        ClearMotions();
+        const float TipW = FMath::Min(360 * Scale, Width * .3f), TipH = Paragraph(PanelTip, 0, -1000, 15 * Scale, TipW - 28 * Scale, FLinearColor::Transparent) + 24 * Scale;
+        const float TX = FMath::Min(MX + 18 * Scale, Width - TipW - 8 * Scale), TY = FMath::Min(MY + 22 * Scale, Height - TipH - 8 * Scale);
+        const auto Pop = PopIn(FVector2D(TX, TY), Since(GetTypeHash(PanelTip.ToString())));
+        Card(TX, TY, TipW, TipH, Hex(0xFFF7D6), Ink, 1290, 1.3f, 1.6f * Scale);
+        Paragraph(PanelTip, TX + 14 * Scale, TY + 12 * Scale, 15 * Scale, TipW - 28 * Scale, Ink);
+    }
+    PanelTip = FText::GetEmpty();
 }
 
 void AGWHUD::BoardPanel(AGWGameState* S, float X, float Y, float W, float H)
@@ -333,23 +407,46 @@ void AGWHUD::BoardPanel(AGWGameState* S, float X, float Y, float W, float H)
         BoardLevel = S->BoardLevel;
     else if (Profile && !Profile->Unlocked(BoardLevel))
         BoardLevel = 0;
-    // Modes: line defense now; the expedition and the party playlist arrive in phase 5.
+    // Modes: line defense, the expedition and the party playlist (the host's pick; a guest sees the pages).
+    const int32 Mode = Host ? BoardMode : 0;
     const float Gap = 18 * Scale, TabH = 44 * Scale, TabW = FMath::Min(250 * Scale, (W - 2 * Gap) / 3);
+    const FLinearColor ModeColors[3] = {Coral, Cobalt, Magenta};
     for (int32 I = 0; I < 3; ++I)
-        Button(GWDefenseAction::Mode + I, GWText::Get(FString::Printf(TEXT("Board.Mode.%d"), I)), X + I * (TabW + Gap), Y, TabW, TabH, true, I == 0,
-               I == 0 ? Coral : Pencil);
+        Button(GWDefenseAction::Mode + I, GWText::Get(FString::Printf(TEXT("Board.Mode.%d"), I)), X + I * (TabW + Gap), Y, TabW, TabH, Host || I == 0,
+               Mode == I, ModeColors[I]);
+    // Chapters: three notebooks of three pages, one notebook open at a time (the selected page's, unless the host
+    // turned to another tab).
     const auto& Levels = gwgame::defenseLevels();
-    const int32 Count = static_cast<int32>(Levels.size());
+    const int32 Shown = FMath::Clamp(Host && BoardChapter >= 0 ? BoardChapter : Levels[FMath::Clamp(BoardLevel, 0, static_cast<int32>(Levels.size()) - 1)].id[0] - '1', 0, 2);
+    const float ChapterW = FMath::Min(150 * Scale, (W - 3 * (TabW + Gap)) / 3 - 8 * Scale);
+    const FLinearColor ChapterColors[] = {Teal, Marigold, Plum};
+    TArray<int32> Pages;
+    for (int32 I = 0; I < static_cast<int32>(Levels.size()); ++I)
+        if (Levels[I].id[0] - '1' == Shown)
+            Pages.Add(I);
+    const int32 Count = FMath::Max(1, Pages.Num());
     const float CardY = Y + TabH + 18 * Scale, CardW = (W - (Count - 1) * Gap) / Count, CardH = FMath::Min(H * .5f, CardW * .78f);
-    for (int32 I = 0; I < Count; ++I)
-        LevelCard(I, X + I * (CardW + Gap), CardY, CardW, CardH, !Host);
+    if (Mode == 0)
+    {
+        for (int32 I = 0; I < 3; ++I)
+            Button(GWDefenseAction::Chapter + I, GWText::Number(TEXT("Board.ChapterTab"), TEXT("Index"), I + 1),
+                   X + W - (3 - I) * (ChapterW + 8 * Scale) + 8 * Scale, Y, ChapterW, TabH, true, Shown == I, ChapterColors[I]);
+        for (int32 K = 0; K < Pages.Num(); ++K)
+            LevelCard(Pages[K], X + K * (CardW + Gap), CardY, CardW, CardH, !Host);
+    }
+    else
+        ModeCard(S, X, CardY, W, CardH);
     // Under the pages: the stars, the AI teammates, the trolling level and the deploy button.
     const float RowY = CardY + CardH + 18 * Scale, RowH = Y + H - RowY;
     const float ObjW = W * .27f, BotW = W * .21f, PrankW = W * .27f;
     const float BotX = X + ObjW + Gap, PrankX = BotX + BotW + Gap, GoX = PrankX + PrankW + Gap, GoW = X + W - GoX;
     Card(X, RowY, ObjW, RowH, Paper.CopyWithNewOpacity(.96f), Ink, 1210, 1.f);
-    Key(TEXT("Defense.Objectives"), X + 16 * Scale, RowY + 12 * Scale, 16 * Scale, InkSoft, false, ObjW - 32 * Scale, EFace::Bold);
-    for (int32 I = 0; I < 3; ++I)
+    // A page's three stars; the expedition and the playlist say how they play instead.
+    Key(Mode == 0 ? TEXT("Defense.Objectives") : TEXT("Board.HowItPlays"), X + 16 * Scale, RowY + 12 * Scale, 16 * Scale, InkSoft, false, ObjW - 32 * Scale,
+        EFace::Bold);
+    if (Mode != 0)
+        Paragraph(GWText::Get(FString::Printf(TEXT("Mode.%d.Facts"), Mode)), X + 16 * Scale, RowY + 42 * Scale, 15 * Scale, ObjW - 32 * Scale, Ink);
+    for (int32 I = 0; I < 3 && Mode == 0; ++I)
     {
         const float LY = RowY + 42 * Scale + I * 26 * Scale;
         if (LY > RowY + RowH - 18 * Scale)
@@ -359,17 +456,61 @@ void AGWHUD::BoardPanel(AGWGameState* S, float X, float Y, float W, float H)
     }
     Card(BotX, RowY, BotW, RowH, Paper.CopyWithNewOpacity(.96f), Ink, 1215, 1.f);
     Key(TEXT("Board.Bots"), BotX + 16 * Scale, RowY + 12 * Scale, 16 * Scale, InkSoft, false, BotW - 32 * Scale, EFace::Bold);
-    if (S->PlayerArray.Num() <= 1)
+    if (Mode == 1)
+    {
+        // The expedition is played by people only (its kits, ghosts and revive drawings are theirs).
+        const float PickW = (BotW - 32 * Scale - 3 * 8 * Scale) / 4;
+        for (int32 I = 0; I < 4; ++I)
+            Button(GWDefenseAction::Bots + I, FText::AsNumber(I), BotX + 16 * Scale + I * (PickW + 8 * Scale), RowY + 40 * Scale, PickW, 38 * Scale,
+                   false, I == 0, Cobalt);
+        if (Hovered(BotX, RowY, BotW, RowH))
+            PanelTip = GWText::Get(TEXT("Board.BotsExpedition"));
+    }
+    else if (S->PlayerArray.Num() <= 1)
     {
         const float PickW = (BotW - 32 * Scale - 3 * 8 * Scale) / 4;
         for (int32 I = 0; I < 4; ++I)
             Button(GWDefenseAction::Bots + I, FText::AsNumber(I), BotX + 16 * Scale + I * (PickW + 8 * Scale), RowY + 40 * Scale, PickW, 38 * Scale,
                    Host, BoardBots == I, Cobalt);
-        if (RowH > 120 * Scale)
-            Paragraph(GWText::Get(TEXT("Board.BotsNote")), BotX + 16 * Scale, RowY + 88 * Scale, 13 * Scale, BotW - 32 * Scale, InkSoft);
+        // What bringing AI teammates costs is a tooltip, not a paragraph.
+        if (Hovered(BotX, RowY, BotW, RowH))
+            PanelTip = GWText::Get(TEXT("Board.BotsNote"));
     }
     else
-        Paragraph(GWText::Get(TEXT("Board.BotsFriends")), BotX + 16 * Scale, RowY + 42 * Scale, 14 * Scale, BotW - 32 * Scale, InkSoft);
+    {
+        // With friends in the room no AI comes along: the picks show greyed at zero.
+        const float PickW = (BotW - 32 * Scale - 3 * 8 * Scale) / 4;
+        for (int32 I = 0; I < 4; ++I)
+            Button(GWDefenseAction::Bots + I, FText::AsNumber(I), BotX + 16 * Scale + I * (PickW + 8 * Scale), RowY + 40 * Scale, PickW, 38 * Scale,
+                   false, I == 0, Cobalt);
+        if (Hovered(BotX, RowY, BotW, RowH))
+            PanelTip = GWText::Get(TEXT("Board.BotsFriends"));
+    }
+    // Who comes along, drawn: the player and the picked AI teammates in a row (the friends in the room instead),
+    // hopping in place, with a dashed spot for each teammate who could still come; one pops in when the pick goes up.
+    {
+        const bool Alone = S->PlayerArray.Num() <= 1;
+        const int32 Crew = FMath::Clamp(Alone ? 1 + (Mode == 1 ? 0 : BoardBots) : S->PlayerArray.Num(), 1, 8), Spots = Alone ? 4 : Crew;
+        const float Top = RowY + 86 * Scale, Room = RowY + RowH - 12 * Scale - Top;
+        if (Room > 30 * Scale)
+        {
+            const float Step = FMath::Min(40 * Scale, (BotW - 40 * Scale) / Spots), Size = FMath::Min(26 * Scale, Step * .8f);
+            const float Left = BotX + BotW * .5f - Step * (Spots - 1) * .5f, Ground = Top + Room * .5f + Size * .4f;
+            Pen(FVector2D(BotX + 20 * Scale, Ground + Size * .55f), FVector2D(BotX + BotW - 20 * Scale, Ground + Size * .55f),
+                Pencil.CopyWithNewOpacity(.5f), 1.2f * Scale, 1280, .5f);
+            for (int32 I = Crew; I < Spots; ++I)
+                for (int32 K = 0; K < 8; K += 2)
+                    Arc(FVector2D(Left + I * Step, Ground), Size * .42f, K * PI / 4 + .2f, (K + 1) * PI / 4 + .2f, Pencil.CopyWithNewOpacity(.55f),
+                        1.4f * Scale);
+            for (int32 I = 0; I < Crew; ++I)
+            {
+                const FVector2D At(Left + I * Step, Ground - FMath::Abs(FMath::Sin(static_cast<float>(Clock) * 3.2f + I * 1.3f)) * 5 * Scale);
+                const auto Pop = PopIn(At, Since(HashCombine(0xC4E3u, static_cast<uint32>(I))));
+                Pen(At, At + FVector2D(Size * .8f, 0), InkSoft, Size * .2f, 1281 + I, .2f);
+                Glyph(0, At, Size, GWPalette::Seat(I), 1290 + I);
+            }
+        }
+    }
     // The room's trolling level: the host chooses, everyone reads what it allows.
     Card(PrankX, RowY, PrankW, RowH, Paper.CopyWithNewOpacity(.96f), Ink, 1220, 1.f);
     Key(TEXT("Prank.Title"), PrankX + 16 * Scale, RowY + 12 * Scale, 16 * Scale, InkSoft, false, PrankW - 32 * Scale, EFace::Bold);
@@ -379,47 +520,94 @@ void AGWHUD::BoardPanel(AGWGameState* S, float X, float Y, float W, float H)
     for (int32 I = 0; I < 3; ++I)
         Button(GWDefenseAction::Prank + I, GWText::Get(FString::Printf(TEXT("Prank.%d"), I)), PrankX + 16 * Scale + I * (PickW + 8 * Scale),
                RowY + 40 * Scale, PickW, 38 * Scale, Host, PrankIndex == I, Accents[I]);
-    if (RowH > 120 * Scale)
-        Paragraph(GWText::Get(FString::Printf(TEXT("Prank.%d.Note"), PrankIndex)), PrankX + 16 * Scale, RowY + 88 * Scale, 13 * Scale,
-                  PrankW - 32 * Scale, InkSoft);
+    if (Hovered(PrankX, RowY, PrankW, RowH))
+        PanelTip = GWText::Get(FString::Printf(TEXT("Prank.%d.Note"), PrankIndex));
+    // The level, drawn: a shape lobbed along a dotted arc between two teammates (crossed out when it is off, a
+    // juggle of three spinning shapes in chaos).
+    {
+        const float Top = RowY + 86 * Scale, Bottom = RowY + RowH - 14 * Scale;
+        if (Bottom - Top > 30 * Scale)
+        {
+            const float Size = 20 * Scale;
+            const FVector2D From(PrankX + 34 * Scale, Bottom - Size * .5f), To(PrankX + PrankW - 34 * Scale, Bottom - Size * .5f);
+            const float Peak = FMath::Min(Bottom - Top - Size * 1.2f, 50 * Scale);
+            auto ArcAt = [&](float T) { return FMath::Lerp(From, To, T) - FVector2D(0, Peak * 4 * T * (1 - T)); };
+            for (int32 K = 1; K < 14; ++K)
+                Disc(ArcAt(K / 14.f), 1.8f * Scale, InkSoft.CopyWithNewOpacity(PrankIndex == 0 ? .3f : .65f), 8);
+            Glyph(0, From, Size, GWPalette::Seat(0), 1300);
+            Glyph(0, To, Size, GWPalette::Seat(1), 1301);
+            if (PrankIndex == 0)
+                Glyph(17, ArcAt(.5f), Size, Danger, 1302);
+            else
+                for (int32 K = 0; K < (PrankIndex == 1 ? 1 : 3); ++K)
+                {
+                    const float T = FMath::Frac(static_cast<float>(Clock) / (PrankIndex == 1 ? 1.9f : 1.15f) + K / 3.f);
+                    const FVector2D At = ArcAt(T);
+                    PushMotion(At, FVector2D::ZeroVector, T * (PrankIndex == 1 ? 360.f : 720.f));
+                    const FMotionGuard Spin(this);
+                    Glyph(K == 0 ? 3 : K == 1 ? 1 : 4, At, Size * .85f, K == 0 ? Accents[PrankIndex] : K == 1 ? Marigold : Cobalt, 1303 + K);
+                }
+        }
+    }
     Card(GoX, RowY, GoW, RowH, Paper, Ink, 1225, 1.4f);
     Tape(FVector2D(GoX + GoW * .5f, RowY + 4 * Scale), 80 * Scale, 20 * Scale, 3, Coral);
-    Label(PageName(BoardLevel), GoX + 16 * Scale, RowY + 18 * Scale, 18 * Scale, Ink, false, GoW - 32 * Scale, EFace::Heavy);
+    Label(PageName(Mode == 1 ? AGWGameMode::ExpeditionLevel : Mode == 2 ? AGWGameMode::PlaylistLevel : BoardLevel), GoX + 16 * Scale, RowY + 18 * Scale,
+          18 * Scale, Ink, false, GoW - 32 * Scale, EFace::Heavy);
     if (Host)
-        Button(GWDefenseAction::Deploy, GWText::Get(TEXT("Board.Play")), GoX + 16 * Scale, RowY + RowH - 72 * Scale, GoW - 32 * Scale, 56 * Scale,
+        Button(GWDefenseAction::Deploy, GWText::Get(Mode == 2 ? TEXT("Board.Roll") : TEXT("Board.Play")), GoX + 16 * Scale, RowY + RowH - 72 * Scale,
+               GoW - 32 * Scale, 56 * Scale,
                S->DeployIn() < 0 && GI && !GI->Busy, false, Coral);
     else
         Paragraph(GWText::Get(TEXT("Hub.HostDeploys")), GoX + 16 * Scale, RowY + 54 * Scale, 15 * Scale, GoW - 32 * Scale, InkSoft);
 }
 
-void AGWHUD::ComingPanel(AGWGameState* S, float X, float Y, float W, float H)
+void AGWHUD::ModeCard(AGWGameState* S, float X, float Y, float W, float H)
 {
-    // Shop, research desk and wardrobe exist in the room now; what they sell arrives with phase 4.
-    auto* GI = GetGameInstance<UGWGameInstance>();
-    const int32 Kind = static_cast<int32>(Panel) - 1;
-    const float LeftW = W * .34f, RightX = X + LeftW + 30 * Scale, RightW = X + W - RightX;
-    Card(X, Y, LeftW, H, PaperShade, Ink, 1230, .8f);
-    Glyph(StationGlyphs[Kind], FVector2D(X + LeftW * .5f, Y + H * .3f), FMath::Min(LeftW * .4f, 150 * Scale), StationColor(Kind), 1231);
-    Paragraph(GWText::Get(FString::Printf(TEXT("Npc.%d"), Kind)), X + 22 * Scale, Y + H * .56f, 17 * Scale, LeftW - 44 * Scale, Ink);
-    // A rubber stamp, like the result card's.
-    const FText Stamp = GWText::Get(TEXT("Coming.Stamp"));
-    const float StampSize = 34 * Scale;
-    const FVector2D Size = Measure(Stamp, StampSize, EFace::Heavy), Center(RightX + RightW * .5f, Y + 44 * Scale);
-    TArray<FVector2D> Border;
-    const float A = FMath::DegreesToRadians(-4.f);
-    for (const FVector2D& Corner : {FVector2D(-1, -1), FVector2D(1, -1), FVector2D(1, 1), FVector2D(-1, 1)})
+    // The expedition's or the playlist's page on the board: what it is, in a few lines, beside a doodle of it.
+    const int32 Mode = FMath::Clamp(BoardMode, 1, 2);
+    const FLinearColor Accent = Mode == 1 ? Cobalt : Magenta;
+    Card(X, Y, W, H, Paper, Ink, 1240, 1.3f);
+    Tape(FVector2D(X + W * .5f, Y + 4 * Scale), 120 * Scale, 24 * Scale, -3, Accent.CopyWithNewOpacity(.85f));
+    const float ArtW = FMath::Min(W * .32f, H * 1.1f);
+    if (Mode == 1)
     {
-        const FVector2D L(Corner.X * (Size.X * .5f + 26 * Scale), Corner.Y * (Size.Y * .5f + 10 * Scale));
-        Border.Add(Center + FVector2D(L.X * FMath::Cos(A) - L.Y * FMath::Sin(A), L.X * FMath::Sin(A) + L.Y * FMath::Cos(A)));
+        // Four stages of 3, 4, 5 and 6 floors down the page, each ending on its boss's crown, and the way out after the
+        // last. The first stage is always pencil; the other three pens are drawn for each run.
+        const float Left = X + 24 * Scale, Step = (ArtW - 48 * Scale) / gwgame::ExpeditionStages, Top = Y + 34 * Scale;
+        const float Gap = (H - 78 * Scale) / 6;
+        FVector2D LastCrown = FVector2D::ZeroVector;
+        for (int32 Stage = 1; Stage <= gwgame::ExpeditionStages; ++Stage)
+        {
+            const int32 Floors = gwgame::stageFloors(Stage);
+            const float CX = Left + (Stage - .5f) * Step;
+            const FLinearColor Tone = Stage == 1 ? Biome(0) : Accent;
+            for (int32 F = 0; F < Floors; ++F)
+            {
+                const FVector2D At(CX, Top + F * Gap);
+                if (F > 0)
+                    Pen(At - FVector2D(0, Gap - 7 * Scale), At - FVector2D(0, 7 * Scale), InkSoft, 1.4f * Scale, 1241 + Stage * 8 + F, .3f);
+                if (F == Floors - 1)
+                {
+                    Glyph(18, At, 22 * Scale, Coral, 1280 + Stage);
+                    if (Stage > 1)
+                        for (int32 K = 1; K < 6; ++K)
+                            Disc(FMath::Lerp(LastCrown, FVector2D(CX, Top), K / 6.f), 1.8f * Scale, Pencil);
+                    LastCrown = At;
+                }
+                else
+                    Disc(At, 5.5f * Scale, Tone, 12);
+            }
+            Label(FText::AsNumber(Stage), CX, Top - 30 * Scale, 14 * Scale, InkSoft, true, 0, EFace::Heavy);
+        }
+        RoomIcon(static_cast<int32>(gwgame::RoomKind::Event), static_cast<int32>(gwgame::RoomEvent::Exit), LastCrown + FVector2D(Step * .55f, 0), 26 * Scale, Teal, 1290);
     }
-    Polygon(Border, Coral.CopyWithNewOpacity(.08f), Coral, 3 * Scale, 1232);
-    Lettering(Stamp, Center.X, Center.Y - Size.Y * .5f, StampSize, Coral, 1233);
-    const float TextY = Y + 110 * Scale;
-    const float Used = Paragraph(GWText::Get(FString::Printf(TEXT("Coming.%d"), Kind)), RightX, TextY, 18 * Scale, RightW, Ink);
-    const UGWProfileSave* Profile = GI ? GI->ActiveProfile() : nullptr;
-    Glyph(5, FVector2D(RightX + 12 * Scale, TextY + Used + 40 * Scale), 22 * Scale, Marigold, 1234);
-    Label(GWText::Number(TEXT("Coming.Stickers"), TEXT("Count"), Profile ? Profile->Stickers : 0), RightX + 32 * Scale, TextY + Used + 28 * Scale,
-          18 * Scale, Ink, false, RightW - 32 * Scale, EFace::Bold);
+    else
+        for (int32 I = 0; I < 3; ++I)
+            Glyph(I == 0 ? 8 : I == 1 ? 11 : 15, FVector2D(X + ArtW * (.25f + .25f * I), Y + H * (.4f + .12f * (I % 2))), 46 * Scale,
+                  I == 0 ? Coral : I == 1 ? Marigold : Teal, 1250 + I);
+    const float TX = X + ArtW + 24 * Scale, TW = X + W - TX - 24 * Scale;
+    Key(*FString::Printf(TEXT("Mode.%d.Title"), Mode), TX, Y + 22 * Scale, 26 * Scale, Ink, false, TW, EFace::Heavy);
+    Paragraph(GWText::Get(FString::Printf(TEXT("Mode.%d.Note"), Mode)), TX, Y + 62 * Scale, 16 * Scale, TW, Ink);
     (void)S;
 }
 
@@ -427,12 +615,37 @@ void AGWHUD::DoorPanel(AGWGameState* S, float X, float Y, float W, float H)
 {
     auto* GI = GetGameInstance<UGWGameInstance>();
     const EGWRoomKind Kind = GI ? GI->RoomKind() : EGWRoomKind::Offline;
+    // In this player's own hub with Steam up, the right-hand column lists Steam friends who are in a room now, each
+    // with a Join button: the way into a friend's hub that needs neither an invite nor the overlay.
+    const bool Friends = GI && LocalHost(S) && GI->PlatformReady(EFU_OnlineProvider::Steam);
+    if (Friends)
+    {
+        GI->RefreshFriendRooms();
+        const float ListW = W * .4f, LX = X + W - ListW;
+        Pen(FVector2D(LX - 22 * Scale, Y), FVector2D(LX - 22 * Scale, Y + H - 8 * Scale), Pencil.CopyWithNewOpacity(.4f), 1, 1262, .4f);
+        Glyph(16, FVector2D(LX + 12 * Scale, Y + 15 * Scale), 24 * Scale, Teal, 1263);
+        Label(GWText::Get(TEXT("Door.FriendRooms")), LX + 34 * Scale, Y, 22 * Scale, Ink, false, ListW - 34 * Scale, EFace::Heavy);
+        float Row = Y + 46 * Scale;
+        if (GI->FriendRooms.IsEmpty())
+            Paragraph(GWText::Get(TEXT("Door.NoFriendRooms")), LX, Row, 16 * Scale, ListW, InkSoft);
+        const float RowH = 54 * Scale, JoinW = FMath::Min(130 * Scale, ListW * .38f);
+        for (int32 I = 0; I < GI->FriendRooms.Num() && I < 8 && Row + RowH <= Y + H; ++I)
+        {
+            Glyph(I % 2 ? 1 : 0, FVector2D(LX + 10 * Scale, Row + 21 * Scale), 14 * Scale, GWPalette::Seat(I), 1264 + I);
+            Label(FText::FromString(GI->FriendRooms[I].Name), LX + 26 * Scale, Row + 8 * Scale, 19 * Scale, Ink, false, ListW - JoinW - 40 * Scale,
+                  EFace::Bold);
+            Button(GWDefenseAction::FriendJoin + I, GWText::Get(TEXT("Door.Join")), LX + ListW - JoinW, Row, JoinW, 44 * Scale, !GI->Busy, false, Teal);
+            Pen(FVector2D(LX, Row + RowH - 4 * Scale), FVector2D(LX + ListW, Row + RowH - 4 * Scale), Pencil.CopyWithNewOpacity(.3f), 1, 1272 + I, .4f);
+            Row += RowH;
+        }
+        W -= ListW + 44 * Scale;
+    }
     float Cursor = Y;
     Glyph(Kind == EGWRoomKind::Steam ? 16 : Kind == EGWRoomKind::Offline ? 17 : 14, FVector2D(X + 18 * Scale, Cursor + 16 * Scale), 30 * Scale,
           Kind == EGWRoomKind::Steam ? Teal : Kind == EGWRoomKind::Offline ? Danger : Cobalt, 1260);
     Cursor += Paragraph(GWText::Get(FString::Printf(TEXT("Door.%d"), static_cast<int32>(Kind))), X + 46 * Scale, Cursor, 19 * Scale, W - 46 * Scale, Ink) +
               24 * Scale;
-    const float ButtonW = FMath::Min(360 * Scale, W * .5f);
+    const float ButtonW = FMath::Min(360 * Scale, W * (Friends ? .8f : .5f));
     if (Kind == EGWRoomKind::Offline)
         Button(GWDefenseAction::Reconnect, GWText::Get(TEXT("Door.Reconnect")), X, Cursor, ButtonW, 58 * Scale, GI && !GI->Busy, false, Teal);
     else
@@ -459,7 +672,7 @@ void AGWHUD::TrainingPanel(AGWGameState* S, float X, float Y, float W, float H)
         const TCHAR* Text;
     };
     const FRow Rows[] = {{FText::FromString(TEXT("WASD")), TEXT("Training.Move")},  {GWText::Get(TEXT("Key.LMB")), TEXT("Training.Fire")},
-                         {FText::FromString(TEXT("E")), TEXT("Training.Recruit")},   {FText::FromString(TEXT("F")), TEXT("Training.Merge")},
+                         {FText::FromString(TEXT("E")), TEXT("Training.Recruit")},   {FText::FromString(TEXT("F")), TEXT("Training.Tower")},
                          {FText::FromString(TEXT("Q")), TEXT("Training.Throw")},     {GWText::Get(TEXT("Key.RMB")), TEXT("Training.Draw")},
                          {GWText::Get(TEXT("Key.Enter")), TEXT("Training.Wave")},    {FText::FromString(TEXT("Esc")), TEXT("Training.Menu")}};
     const float ColW = (W - 30 * Scale) * .5f, RowH = 50 * Scale, Size = 30 * Scale;
@@ -514,15 +727,17 @@ void AGWHUD::TutorialPointer(AGWGameState* S, const FGWUnitView* Local)
         }
     };
     if (Step == gwgame::TutorialStep::Move)
-        Consider(FVector((Lesson.moveX + .5f) * S->CellSize, (Lesson.moveY + .5f) * S->CellSize, 0));
-    else if (Step == gwgame::TutorialStep::Shoot || Step == gwgame::TutorialStep::Recruit)
+        Consider(FVector((Lesson.moveX + .5f) * S->CellSize, (Lesson.moveY + .5f) * S->CellSize, gwgame::DeckHeight));
+    else if (Step == gwgame::TutorialStep::Ladder)
+        Consider(FVector((Lesson.ladder.first + .5f) * S->CellSize, (Lesson.ladder.second + .5f) * S->CellSize, gwgame::DeckHeight));
+    else if (Step == gwgame::TutorialStep::Tower)
+        Consider(FVector((Lesson.tower.first + .5f) * S->CellSize, (Lesson.tower.second + .5f) * S->CellSize, 0));
+    else if (Step == gwgame::TutorialStep::Shoot)
         for (const auto& U : S->Units)
-            if (U.Alive && (Step == gwgame::TutorialStep::Shoot ? U.Dummy
-                                                                : U.Kind == static_cast<uint8>(gwgame::UnitKind::Companion) && U.FollowerOf < 0 &&
-                                                                      !U.Turret && !U.Human))
+            if (U.Alive && U.Dummy)
                 Consider(U.Position);
     if (Goal)
-        EdgePointer(S, *Goal, Step == gwgame::TutorialStep::Recruit ? 3 : 0, FText::GetEmpty(), Marigold, 1290, 345 * Scale);
+        EdgePointer(S, *Goal, Step == gwgame::TutorialStep::Ladder ? 1 : 0, FText::GetEmpty(), Marigold, 1290, 345 * Scale);
 }
 
 void AGWHUD::TutorialCard(AGWGameState* S, const FGWUnitView* Local)
@@ -530,7 +745,10 @@ void AGWHUD::TutorialCard(AGWGameState* S, const FGWUnitView* Local)
     const int32 Count = gwgame::TutorialStepCount;
     const int32 Step = FMath::Clamp(static_cast<int32>(S->TutorialStep), 0, Count);
     if (SeenStep >= 0 && Step > SeenStep)
+    {
         StepBanner = Clock;
+        Confetti(FVector2D(Width * .5f, Height * .24f + 28 * Scale), 24, 800, 6.5f);
+    }
     SeenStep = Step;
     TutorialPointer(S, Local);
     // Skipping is always one click away (a friend's invite can also pull the player out at any time).
@@ -541,30 +759,31 @@ void AGWHUD::TutorialCard(AGWGameState* S, const FGWUnitView* Local)
     if (Age < 1.6f)
     {
         const float Out = FMath::Clamp((1.6f - Age) / .4f, 0.f, 1.f);
-        Tape(FVector2D(Width * .5f, Height * .24f + 28 * Scale), 360 * Scale, 62 * Scale, -2, Teal.CopyWithNewOpacity(Out));
-        Lettering(GWText::Get(TEXT("Tutorial.StepDone")), Width * .5f, Height * .24f, 40 * Scale, Ink.CopyWithNewOpacity(Out), 1301);
+        const auto Pop = PopIn(FVector2D(Width * .5f, Height * .24f + 28 * Scale), Age);
+        Tape(FVector2D(Width * .5f, Height * .24f + 28 * Scale), 360 * Scale * GWEase::OutBack(Age / .3f), 62 * Scale, -2, Teal.CopyWithNewOpacity(Out));
+        Lettering(GWText::Get(TEXT("Tutorial.StepDone")), Width * .5f, Height * .24f, 40 * Scale, Ink.CopyWithNewOpacity(Out), 1301, Age - .06f);
     }
     if (Step >= Count)
         return;
     const float X = 22 * Scale, Y = 92 * Scale, W = 450 * Scale, TextW = W - 44 * Scale;
     const FText Body = GWText::Get(FString::Printf(TEXT("Tutorial.%d"), Step));
-    const bool Retry = Step == static_cast<int32>(gwgame::TutorialStep::Turret);
-    const FText Extra = Retry ? GWText::Get(TEXT("Tutorial.TurretRetry")) : FText::GetEmpty();
+    // The ladder step adds the catch: what climbs down can be climbed up.
+    const bool Retry = Step == static_cast<int32>(gwgame::TutorialStep::Ladder);
+    const FText Extra = Retry ? GWText::Get(TEXT("Tutorial.LadderNote")) : FText::GetEmpty();
     const float BodyH = Paragraph(Body, 0, -1000, 18 * Scale, TextW, FLinearColor::Transparent);
     const float ExtraH = Retry ? Paragraph(Extra, 0, -1000, 14 * Scale, TextW, FLinearColor::Transparent) + 8 * Scale : 0;
     const bool Counted = S->TutorialNeeded > 1;
-    const float H = 92 * Scale + BodyH + ExtraH + (Counted ? 34 * Scale : 0) + 36 * Scale;
+    const float H = 62 * Scale + BodyH + ExtraH + (Counted ? 34 * Scale : 0) + 36 * Scale;
+    // Each new step's card slides in from the left edge; its title's marker stroke is drawn across.
+    const float Shown = FMath::Min(Since(HashCombine(static_cast<uint32>(Step), 0x7E5Cu)), SceneAge(S));
+    const auto Slide = SlideIn(FVector2D(X + W * .5f, Y + H * .5f), Shown, FVector2D(-260, 0), .15f);
     Card(X, Y, W, H, Hex(0xFFF7D6), Ink, 1300, 1.5f);
     Tape(FVector2D(X + W * .5f, Y + 3 * Scale), 110 * Scale, 22 * Scale, -2, Marigold);
-    FFormatNamedArguments Args;
-    Args.Add(TEXT("Step"), Step + 1);
-    Args.Add(TEXT("Count"), Count);
-    Label(FText::FromString(GWText::Get(TEXT("Tutorial.Title")).ToString() + TEXT("  ·  ") + FText::Format(GWText::Get(TEXT("Tutorial.Step")), Args).ToString()),
-          X + 22 * Scale, Y + 16 * Scale, 15 * Scale, InkSoft, false, TextW, EFace::Bold);
     const FText Title = GWText::Get(FString::Printf(TEXT("Tutorial.%d.Title"), Step));
-    Highlight(X + 18 * Scale, Y + 60 * Scale, Measure(Title, 28 * Scale, EFace::Heavy).X + 12 * Scale, 12 * Scale, Marigold.CopyWithNewOpacity(.5f), 1302);
-    Label(Title, X + 22 * Scale, Y + 38 * Scale, 28 * Scale, Ink, false, TextW, EFace::Heavy);
-    float Cursor = Y + 84 * Scale;
+    Highlight(X + 18 * Scale, Y + 42 * Scale, (Measure(Title, 28 * Scale, EFace::Heavy).X + 12 * Scale) * GWEase::OutCubic((Shown - .3f) / .4f), 12 * Scale,
+              Marigold.CopyWithNewOpacity(.5f), 1302);
+    Label(Title, X + 22 * Scale, Y + 20 * Scale, 28 * Scale, Ink, false, TextW, EFace::Heavy);
+    float Cursor = Y + 64 * Scale;
     Cursor += Paragraph(Body, X + 22 * Scale, Cursor, 18 * Scale, TextW, Ink);
     if (Retry)
         Cursor += Paragraph(Extra, X + 22 * Scale, Cursor + 8 * Scale, 14 * Scale, TextW, InkSoft) + 8 * Scale;
@@ -594,15 +813,23 @@ void AGWHUD::TutorialCard(AGWGameState* S, const FGWUnitView* Local)
 
 void AGWHUD::TutorialFinished(AGWGameState* S)
 {
-    Box(0, 0, Width, Height, Paper.CopyWithNewOpacity(.9f));
-    Grained(0, 0, Width, Height);
+    const float Age = Since(HashCombine(S->Seed, 0x7F1Du));
+    Box(0, 0, Width, Height, Paper.CopyWithNewOpacity(.9f * GWEase::Clamp01(Age / .25f)));
+    if (Age > .25f)
+        Grained(0, 0, Width, Height);
     const float W = FMath::Min(Width * .62f, 860 * Scale), H = FMath::Min(Height * .7f, 560 * Scale);
     const float X = (Width - W) * .5f, Y = (Height - H) * .45f;
+    const auto Drop = DropIn(FVector2D(Width * .5f, Height * .5f), Age, .05f, 90);
     Card(X, Y, W, H, Paper, Ink, 1350, 2.4f, 2.6f * Scale);
     Tape(FVector2D(X + 30 * Scale, Y + 18 * Scale), 90 * Scale, 26 * Scale, -38, Teal);
     Tape(FVector2D(X + W - 30 * Scale, Y + 18 * Scale), 90 * Scale, 26 * Scale, 38, Teal);
     Doodles(FBox2D(FVector2D(X + 20 * Scale, Y + 20 * Scale), FVector2D(X + W - 20 * Scale, Y + H * .3f)), 7, .45f);
-    Lettering(GWText::Get(TEXT("Tutorial.Finished")), X + W * .5f, Y + H * .1f, 62 * Scale, Teal, 1351);
+    {
+        const auto Slam = StampIn(FVector2D(X + W * .5f, Y + H * .1f + 31 * Scale), Age, .3f);
+        Lettering(GWText::Get(TEXT("Tutorial.Finished")), X + W * .5f, Y + H * .1f, 62 * Scale, Teal, 1351);
+    }
+    if (Age > .5f && Once(HashCombine(S->Seed, 0x7F1Eu)))
+        Confetti(FVector2D(X + W * .5f, Y + H * .1f + 31 * Scale), 46, 1100, 8);
     float Cursor = Y + H * .1f + 96 * Scale;
     // Every step learned, in two columns of ticks.
     const float ColW = (W - 120 * Scale) * .5f;

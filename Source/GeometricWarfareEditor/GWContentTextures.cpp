@@ -561,5 +561,166 @@ void GWContent::BuildTextures(TMap<FName, UTexture2D*>& Out)
                 }
         },
         true);
+
+    // The geometric set: every effect is pieced together from these polygons (design: 几何图形拼接).
+    // Sheets are 2x2 sub images in Niagara's frame order (top-left, top-right, bottom-left, bottom-right).
+    auto CellCenter = [](int32 Cell, float S) { return FVector2f((Cell % 2 + .5f) * S * .5f, (Cell / 2 + .5f) * S * .5f); };
+    Add(TEXT("T_GW_Poly"), 256, 34,
+        [&](FPainter& P, float S, FVector2f)
+        {
+            // Outlines of a triangle, square, pentagon and hexagon: a marker band inside an ink stroke, with a
+            // compass point just past each corner. A particle picks one, or grows through them over its life.
+            const int32 Sides[4] = {3, 4, 5, 6};
+            const float Spin[4] = {-90, 45, -90, -90};
+            TArray<TArray<FVector2f>> Shapes;
+            for (int32 Cell = 0; Cell < 4; ++Cell)
+            {
+                const FVector2f C = CellCenter(Cell, S) + FVector2f(0, Sides[Cell] == 3 ? .03f * S : 0);
+                Shapes.Add(Regular(C, Sides[Cell], (Sides[Cell] == 3 ? .205f : .175f) * S, Spin[Cell]));
+                P.Polyline(Ink, Shapes.Last(), .056f * S, 1, 0, true, 0);
+                P.Polyline(Fill, Shapes.Last(), .03f * S, 1, 0, true, 0);
+            }
+            P.Knockout();
+            for (int32 Cell = 0; Cell < 4; ++Cell)
+            {
+                const FVector2f C = CellCenter(Cell, S);
+                for (const FVector2f& V : Shapes[Cell])
+                    P.Disc(Ink, V + (V - C).GetSafeNormal() * .028f * S, .011f * S, 1);
+                P.Segment(Light, FMath::Lerp(Shapes[Cell][0], Shapes[Cell][1], .25f), FMath::Lerp(Shapes[Cell][0], Shapes[Cell][1], .55f), 3, 2,
+                          .8f, 0);
+            }
+        });
+    Add(TEXT("T_GW_Chips"), 128, 35,
+        [&](FPainter& P, float S, FVector2f)
+        {
+            // Solid cut-outs (triangle, square, diamond, hexagon): sprite confetti and debris.
+            for (int32 Cell = 0; Cell < 4; ++Cell)
+            {
+                const FVector2f C = CellCenter(Cell, S);
+                const float R = .19f * S;
+                const TArray<FVector2f> Shape = Cell == 0   ? Regular(C + FVector2f(0, .025f * S), 3, R * 1.1f, -90)
+                                                : Cell == 1 ? Regular(C, 4, R, 45)
+                                                : Cell == 2 ? TArray<FVector2f>{C + FVector2f(0, -R * 1.15f), C + FVector2f(R * .7f, 0),
+                                                                                C + FVector2f(0, R * 1.15f), C + FVector2f(-R * .7f, 0)}
+                                                            : Regular(C, 6, R, -90);
+                P.FillPolygon(Fill, Shape, 1);
+                P.SketchPolygon(Ink, Shape, 2.6f, 1, .015f, 1.2f);
+                P.Segment(Light, FMath::Lerp(C, Shape[0], .55f), FMath::Lerp(C, Shape.Last(), .5f), 2.2f, 1.4f, .85f, 0);
+            }
+        });
+    Add(TEXT("T_GW_Burst8"), 256, 36,
+        [](FPainter& P, float S, FVector2f C)
+        {
+            // A ruler-straight starburst: twelve spikes of two lengths round a hexagon core.
+            TArray<FVector2f> Shape;
+            for (int32 I = 0; I < 24; ++I)
+            {
+                const float A = FMath::DegreesToRadians(-90.f + I * 15.f);
+                const float R = I % 2 ? .14f * S : (I % 4 == 0 ? .47f : .33f) * S * P.Rand(.94f, 1.f);
+                Shape.Add(C + FVector2f(FMath::Cos(A), FMath::Sin(A)) * R);
+            }
+            P.FillPolygon(Fill, Shape, 1);
+            P.SketchPolygon(Ink, Shape, 4.2f, 1, .004f, 2);
+            const auto Core = Regular(C, 6, .11f * S, -90);
+            P.FillPolygon(Light, Core, .95f);
+            P.SketchPolygon(Ink, Core, 2.2f, .55f, .01f, 1);
+        });
+    Add(TEXT("T_GW_Compass"), 256, 37,
+        [](FPainter& P, float S, FVector2f C)
+        {
+            // A geometry-set construction: compass circle with degree ticks, an inscribed hexagon, a dashed inner
+            // circle and the needle's cross. Drawn on with the material's sweep, it reads as being constructed.
+            P.Polyline(Ink, P.Circle(C, .43f * S, .006f, 1.04f, 160, .01f), 3.4f, 1, .15f, false, .2f);
+            P.Polyline(Ink, P.Circle(C, .437f * S, .01f, .55f, 90, .01f), 1.6f, .55f, .3f, false, .5f);
+            for (int32 I = 0; I < 36; ++I)
+            {
+                const float A = I * 2 * PI / 36;
+                const FVector2f D(FMath::Cos(A), FMath::Sin(A));
+                const float L = I % 9 == 0 ? .08f : I % 3 == 0 ? .05f : .028f;
+                P.Segment(Ink, C + D * (.43f - L) * S, C + D * .43f * S, I % 9 == 0 ? 3.2f : 2.f, 1.6f, 1, .1f);
+            }
+            const auto Hex = Regular(C, 6, .3f * S, -90);
+            P.Polyline(Ink, Hex, 11, 1, 0, true, 0);
+            P.Polyline(Fill, Hex, 5.5f, 1, 0, true, 0);
+            P.Knockout();
+            for (int32 I = 0; I < 18; ++I)
+            {
+                const float A0 = I * 2 * PI / 18, A1 = A0 + .55f * 2 * PI / 18;
+                P.Segment(Ink, C + FVector2f(FMath::Cos(A0), FMath::Sin(A0)) * .17f * S, C + FVector2f(FMath::Cos(A1), FMath::Sin(A1)) * .17f * S,
+                          2.2f, 2.2f, .85f, .1f);
+            }
+            P.Segment(Ink, C - FVector2f(.05f * S, 0), C + FVector2f(.05f * S, 0), 2.4f, 2.4f, 1, 0);
+            P.Segment(Ink, C - FVector2f(0, .05f * S), C + FVector2f(0, .05f * S), 2.4f, 2.4f, 1, 0);
+            P.Disc(Fill, C, .016f * S, 1);
+        });
+    // Shock bands with straight sides: a marker band between two pencil rims, like T_GW_Ring.
+    auto PolyRing = [](FPainter& P, float S, FVector2f C, int32 Sides, float Spin, float Band, float BandW, float Outer, float Inner)
+    {
+        P.Polyline(Fill, Regular(C, Sides, Band * S, Spin), BandW * S, .92f, 0, true, 0);
+        P.SketchPolygon(Ink, Regular(C, Sides, Outer * S, Spin), 7.f, 1, .01f, 4);
+        P.SketchPolygon(Ink, Regular(C, Sides, Inner * S, Spin), 5.f, .95f, .01f, 4);
+    };
+    Add(TEXT("T_GW_HexRing"), 256, 38, [&](FPainter& P, float S, FVector2f C) { PolyRing(P, S, C, 6, -90, .37f, .12f, .45f, .29f); });
+    Add(TEXT("T_GW_TriRing"), 256, 39,
+        [&](FPainter& P, float S, FVector2f C) { PolyRing(P, S, C + FVector2f(0, .06f * S), 3, -90, .36f, .07f, .465f, .25f); });
+    Add(TEXT("T_GW_Dash"), 128, 40,
+        [](FPainter& P, float S, FVector2f C)
+        {
+            // A dashed speed line: four marker dashes with pencil edges.
+            for (int32 I = 0; I < 4; ++I)
+            {
+                const float Y0 = (.07f + I * .225f) * S, Y1 = Y0 + .14f * S;
+                const auto Path = P.Bowed(FVector2f(C.X, Y0), FVector2f(C.X, Y1), .05f, 0, 4);
+                P.Polyline(Ink, Path, 38, 1, 0, false, .25f);
+                P.Polyline(Fill, Path, 22, 1, 0, false, .25f);
+            }
+            P.Knockout();
+        });
+    Add(TEXT("T_GW_Scorch"), 256, 41,
+        [](FPainter& P, float S, FVector2f C)
+        {
+            // What a blast leaves on the page: a cross-hatched blot with a broken pencil edge and flecks.
+            TArray<FVector2f> Blot, Inner;
+            for (int32 I = 0; I < 11; ++I)
+            {
+                const float A = I * 2 * PI / 11 + P.Rand(-.15f, .15f);
+                const FVector2f D(FMath::Cos(A), FMath::Sin(A));
+                Blot.Add(C + D * P.Rand(.3f, .44f) * S);
+                Inner.Add(C + D * P.Rand(.14f, .24f) * S);
+            }
+            P.FillPolygon(Fill, Blot, .2f);
+            P.Hatch(Ink, Blot, 11, 35, 2.4f, .75f);
+            P.Hatch(Ink, Inner, 9, -42, 2.2f, .7f);
+            for (int32 I = 0; I < Blot.Num(); ++I)
+                if (P.Rand() < .72f)
+                    P.Polyline(Ink, P.Bowed(Blot[I], Blot[(I + 1) % Blot.Num()], .04f, 3), 2.8f, .9f, .3f, false, .4f);
+            for (int32 I = 0; I < 12; ++I)
+            {
+                const float A = P.Rand(0, 2 * PI);
+                P.Disc(Ink, C + FVector2f(FMath::Cos(A), FMath::Sin(A)) * P.Rand(.38f, .48f) * S, P.Rand(1.8f, 4.5f), .9f);
+            }
+        });
+    Add(TEXT("T_GW_Splat"), 128, 42,
+        [](FPainter& P, float S, FVector2f C)
+        {
+            // An ink splat: a lumpy blot with an ink rim, and droplets thrown clear of it.
+            TArray<FVector3f> Blobs = {FVector3f(C.X, C.Y, .2f * S)};
+            for (int32 I = 0; I < 7; ++I)
+            {
+                const float A = I * 2 * PI / 7 + P.Rand(-.3f, .3f), D = P.Rand(.12f, .2f) * S;
+                Blobs.Add(FVector3f(C.X + FMath::Cos(A) * D, C.Y + FMath::Sin(A) * D, P.Rand(.06f, .1f) * S));
+            }
+            for (int32 I = 0; I < 6; ++I)
+            {
+                const float A = P.Rand(0, 2 * PI), D = P.Rand(.3f, .42f) * S;
+                Blobs.Add(FVector3f(C.X + FMath::Cos(A) * D, C.Y + FMath::Sin(A) * D, P.Rand(.018f, .04f) * S));
+            }
+            for (const auto& B : Blobs)
+                P.Disc(Ink, FVector2f(B.X, B.Y), B.Z + 2.6f, 1, 1.2f);
+            for (const auto& B : Blobs)
+                P.Disc(Fill, FVector2f(B.X, B.Y), B.Z, 1, 1.2f);
+            P.Knockout();
+            P.Disc(Light, C + FVector2f(-.07f, -.07f) * S, .045f * S, .7f, 2);
+        });
     UE_LOG(LogGWContent, Display, TEXT("TEXTURES=%d"), Out.Num());
 }

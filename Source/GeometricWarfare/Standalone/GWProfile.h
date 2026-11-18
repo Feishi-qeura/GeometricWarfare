@@ -65,6 +65,15 @@ public:
     UPROPERTY() int32 MaxParty = 0;
     UPROPERTY() int32 MaxItems = 0;
     UPROPERTY() TArray<int32> Awards;
+    // The expedition's lifetime numbers (gwgame::Counters): feats ever earned, enemies erased, elites felled, stickers
+    // dropped for teammates and banked, the biome bosses felled and the revive shape bonuses drawn.
+    UPROPERTY() uint64 Feats = 0;
+    UPROPERTY() int64 Erased = 0;
+    UPROPERTY() int64 Elites = 0;
+    UPROPERTY() int64 Given = 0;
+    UPROPERTY() int64 Banked = 0;
+    UPROPERTY() int32 Bosses = 0;
+    UPROPERTY() int32 Shapes = 0;
 
     bool Cleared(const FString& Level) const;
     // The page's star bits.

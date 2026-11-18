@@ -2,6 +2,7 @@
 #include "Engine/Engine.h"
 #include "Engine/NetDriver.h"
 #include "FU_OnlineSessionSubsystem.h"
+#include "GWCinematic.h"
 #include "GWController.h"
 #include "GWMeta.h"
 #include "GWProfile.h"
@@ -9,7 +10,9 @@
 #include "GWSettings.h"
 #include "GWText.h"
 #include "Interfaces/OnlineExternalUIInterface.h"
+#include "Interfaces/OnlineFriendsInterface.h"
 #include "Interfaces/OnlineIdentityInterface.h"
+#include "Interfaces/OnlinePresenceInterface.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/CommandLine.h"
 #include "Misc/ConfigCacheIni.h"
@@ -52,6 +55,8 @@ void UGWGameInstance::Shutdown()
         GEngine->OnNetworkFailure().Remove(NetworkFailureHandle);
     if (const IOnlineSessionPtr Sessions = InviteSessions.Pin())
         Sessions->ClearOnSessionUserInviteAcceptedDelegate_Handle(InviteHandle);
+    if (const IOnlineSessionPtr Sessions = FriendSessions.Pin())
+        Sessions->ClearOnFindFriendSessionCompleteDelegate_Handle(0, FriendSessionHandle);
     if (EpicLoginHandle.IsValid())
         if (auto* Eos = Online::GetSubsystem(GetWorld(), EOS_SUBSYSTEM))
             if (auto Identity = Eos->GetIdentityInterface())
@@ -115,6 +120,11 @@ void UGWGameInstance::InviteAccepted(bool bWasSuccessful, int32, FUniqueNetIdPtr
         StatusKey = TEXT("Network.InviteFailed");
         return;
     }
+    UE_LOG(LogGWRoom, Display, TEXT("Accepted an invite to %s's hub"), *Result.Session.OwningUserName);
+    JoinFriendResult(Result, Result.Session.OwningUserName);
+}
+void UGWGameInstance::JoinFriendResult(const FOnlineSessionSearchResult& Result, const FString& Host)
+{
     // An invited player skips the tutorial and goes straight to the friend's hub (design doc flow); the room
     // this player had open closes on the way.
     InviteAcceptedAt = FPlatformTime::Seconds();
@@ -124,9 +134,105 @@ void UGWGameInstance::InviteAccepted(bool bWasSuccessful, int32, FUniqueNetIdPtr
     Busy = true;
     StatusKey = TEXT("Network.JoiningFriend");
     ActiveProvider = EFU_OnlineProvider::Steam;
-    RoomName = Result.Session.OwningUserName;
-    UE_LOG(LogGWRoom, Display, TEXT("Accepted an invite to %s's hub"), *RoomName);
+    RoomName = Host;
     GetSubsystem<UFU_OnlineSessionSubsystem>()->JoinSteamSessionFromResult(Result);
+}
+int32 UGWGameInstance::SteamAppId() const
+{
+    IOnlineSubsystem* Steam = PlatformReady(EFU_OnlineProvider::Steam) ? Online::GetSubsystem(GetWorld(), STEAM_SUBSYSTEM) : nullptr;
+    return Steam ? FCString::Atoi(*Steam->GetAppId()) : 0;
+}
+void UGWGameInstance::RefreshFriendRooms()
+{
+    // The list comes from the friends' own Steam presence: a friend in a lobby of this app shows its id there (hubs
+    // are friends-only lobbies, which Steam shows to friends). Reading it is cheap, but not every frame.
+    const double Now = FPlatformTime::Seconds();
+    if (ReadingFriends || Now - FriendsReadAt < 3)
+        return;
+    IOnlineSubsystem* Steam = PlatformReady(EFU_OnlineProvider::Steam) ? Online::GetSubsystem(GetWorld(), STEAM_SUBSYSTEM) : nullptr;
+    const IOnlineFriendsPtr Friends = Steam ? Steam->GetFriendsInterface() : nullptr;
+    if (!Friends.IsValid())
+    {
+        FriendRooms.Reset();
+        return;
+    }
+    FriendsReadAt = Now;
+    ReadingFriends = Friends->ReadFriendsList(0, EFriendsLists::ToString(EFriendsLists::Default),
+                                              FOnReadFriendsListComplete::CreateUObject(this, &UGWGameInstance::FriendsRead));
+}
+void UGWGameInstance::FriendsRead(int32, bool bWasSuccessful, const FString& ListName, const FString&)
+{
+    ReadingFriends = false;
+    IOnlineSubsystem* Steam = Online::GetSubsystem(GetWorld(), STEAM_SUBSYSTEM);
+    const IOnlineFriendsPtr Friends = Steam ? Steam->GetFriendsInterface() : nullptr;
+    const IOnlinePresencePtr Presence = Steam ? Steam->GetPresenceInterface() : nullptr;
+    TArray<TSharedRef<FOnlineFriend>> List;
+    if (!bWasSuccessful || !Friends.IsValid() || !Friends->GetFriendsList(0, ListName, List))
+        return;
+    // Friends already in this player's own room are not offered as somewhere to go.
+    FString Mine;
+    const IOnlineSessionPtr Sessions = Steam->GetSessionInterface();
+    if (const FNamedOnlineSession* Own = Sessions.IsValid() ? Sessions->GetNamedSession(NAME_GameSession) : nullptr; Own && Own->SessionInfo.IsValid())
+        Mine = Own->SessionInfo->GetSessionId().ToString();
+    TArray<FGWFriendRoom> Rooms;
+    for (const TSharedRef<FOnlineFriend>& Friend : List)
+    {
+        const FUniqueNetIdRef Id = Friend->GetUserId();
+        // For a friend this re-reads the Steam client's own data at once (the cached presence can lag a lobby change).
+        if (Presence.IsValid())
+            Presence->QueryPresence(*Id);
+        const FOnlineUserPresence& Status = Friend->GetPresence();
+        if (!Status.bIsPlayingThisGame || !Status.SessionId.IsValid() || !Status.SessionId->IsValid() || Status.SessionId->ToString() == Mine)
+            continue;
+        Rooms.Add({Friend->GetDisplayName(), Id});
+    }
+    Rooms.Sort([](const FGWFriendRoom& A, const FGWFriendRoom& B) { return A.Name < B.Name; });
+    FriendRooms = MoveTemp(Rooms);
+}
+void UGWGameInstance::JoinFriendRoom(int32 Index)
+{
+    if (Busy || !FriendRooms.IsValidIndex(Index) || !FriendRooms[Index].Id.IsValid())
+        return;
+    IOnlineSubsystem* Steam = Online::GetSubsystem(GetWorld(), STEAM_SUBSYSTEM);
+    const IOnlineSessionPtr Sessions = Steam ? Steam->GetSessionInterface() : nullptr;
+    if (!Sessions.IsValid())
+    {
+        StatusKey = TEXT("Network.FriendRoomGone");
+        return;
+    }
+    if (FriendSessions.Pin() != Sessions)
+    {
+        if (const IOnlineSessionPtr Old = FriendSessions.Pin())
+            Old->ClearOnFindFriendSessionCompleteDelegate_Handle(0, FriendSessionHandle);
+        FriendSessionHandle = Sessions->AddOnFindFriendSessionCompleteDelegate_Handle(
+            0, FOnFindFriendSessionCompleteDelegate::CreateUObject(this, &UGWGameInstance::FriendSessionFound));
+        FriendSessions = Sessions;
+    }
+    // The lobby's own data is fetched first; the join itself then runs exactly like an accepted invite.
+    Busy = true;
+    StatusKey = TEXT("Network.FindingFriend");
+    FriendJoining = FriendRooms[Index].Name;
+    UE_LOG(LogGWRoom, Display, TEXT("Looking up %s's room from the friends list"), *FriendJoining);
+    Sessions->FindFriendSession(0, *FriendRooms[Index].Id);
+}
+void UGWGameInstance::FriendSessionFound(int32, bool bWasSuccessful, const TArray<FOnlineSessionSearchResult>& Results)
+{
+    if (FriendJoining.IsEmpty())
+        return;
+    const FString Host = MoveTemp(FriendJoining);
+    FriendJoining.Reset();
+    Busy = false;
+    // Development builds share Steam's test app (480) with other games: only a room this game made (it carries the
+    // FU plugin's project mark) is joined.
+    for (const FOnlineSessionSearchResult& Result : Results)
+        if (bWasSuccessful && Result.IsValid() && Result.Session.SessionSettings.Settings.Contains(FName(TEXT("FU_ProjectProtocolHash"))))
+        {
+            UE_LOG(LogGWRoom, Display, TEXT("Joining %s's room from the friends list"), *Host);
+            JoinFriendResult(Result, Host);
+            return;
+        }
+    UE_LOG(LogGWRoom, Display, TEXT("%s's room could not be joined (found %d, success %d)"), *Host, Results.Num(), bWasSuccessful ? 1 : 0);
+    StatusKey = TEXT("Network.FriendRoomGone");
 }
 void UGWGameInstance::NetworkFailure(UWorld*, UNetDriver* Driver, ENetworkFailure::Type Type, const FString& Error)
 {
@@ -167,6 +273,8 @@ bool UGWGameInstance::HasSession(EFU_OnlineProvider Provider) const
 }
 EGWRoomKind UGWGameInstance::RoomKind() const
 {
+    if (FGWCinematic::Get().SteamRoom)
+        return EGWRoomKind::Steam;
     const UWorld* W = GetWorld();
     if (!W || W->GetNetMode() == NM_Standalone)
         return EGWRoomKind::Offline;
@@ -555,8 +663,9 @@ void UGWGameInstance::ApplyProgress(const FGWProgressPacket& Packet)
         return;
     gwgame::MetaProfile Core = Active->ToCore();
     const gwgame::Tally Share = GWMeta::ToTally(Packet);
-    // A packet beyond any cap changes nothing at all (design doc: 奖励包上限).
-    if (!gwgame::plausible(Share) || Packet.Stickers < 0 || Packet.Stickers > gwgame::MetaProfile::MaxStickersPerReward)
+    // A packet beyond any cap changes nothing at all (design doc: 奖励包上限). An expedition exit settles a whole run's
+    // pouch in one packet, so its record has a cap of its own (expedition refactor 2.1: 5000).
+    if (!gwgame::plausible(Share) || Packet.Stickers < 0 || Packet.Stickers > gwgame::MetaProfile::rewardCap(TCHAR_TO_UTF8(*Packet.Level)))
         return;
     if (Packet.Stickers > 0 || Packet.Clear)
     {

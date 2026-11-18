@@ -18,12 +18,20 @@ struct FGWInputCommand
     UPROPERTY() FVector2D Move = FVector2D::ZeroVector;
     UPROPERTY() FVector2D Aim = FVector2D(1, 0);
     UPROPERTY() bool Fire = false;
+    UPROPERTY() bool Dodge = false;
+    // E held (the expedition's doors and chests that are held open).
+    UPROPERTY() bool Use = false;
+    // R held (2026-11-17: ink mends every hurt player in a circle round this one, the player too).
+    UPROPERTY() bool Mend = false;
 };
 
 namespace EGWStatus
 {
-// Dummy marks a training target (hub and tutorial), drawn as a paper target and never counted as an enemy.
-constexpr uint8 Burning = 1, Slowed = 2, Armored = 4, Regenerating = 8, Dummy = 16;
+// Dummy marks a training target (hub and tutorial), drawn as a paper target and never counted as an enemy. Deck: up
+// on the box's platform; Climbing: on a ladder between the two levels.
+constexpr uint8 Burning = 1, Slowed = 2, Armored = 4, Regenerating = 8, Dummy = 16, Deck = 32, Climbing = 64;
+// An expedition foe bleeding from a staple or a thumbtack (2026-11-17).
+constexpr uint8 Bleeding = 128;
 }
 // A unit's booleans travel together in one byte.
 namespace EGWUnitFlag
@@ -51,6 +59,19 @@ inline int16 PackSpeed(double V)
 {
     return static_cast<int16>(FMath::Clamp(FMath::RoundToInt(V), -32767, 32767));
 }
+// An expedition kit slot in one number: kind (2 bits) << 30 | count (4) << 26 | variant + 1 (8) << 18 | what (18).
+inline uint32 PackSlot(uint8 Kind, int32 What, int32 Count, int32 Variant)
+{
+    return (static_cast<uint32>(Kind & 3) << 30) | (static_cast<uint32>(FMath::Clamp(Count, 0, 15)) << 26) |
+           (static_cast<uint32>(FMath::Clamp(Variant + 1, 0, 255)) << 18) | static_cast<uint32>(FMath::Clamp(What, 0, (1 << 18) - 1));
+}
+inline void UnpackSlot(uint32 Packed, uint8& Kind, int32& What, int32& Count, int32& Variant)
+{
+    Kind = static_cast<uint8>(Packed >> 30);
+    Count = static_cast<int32>((Packed >> 26) & 15);
+    Variant = static_cast<int32>((Packed >> 18) & 255) - 1;
+    What = Kind ? static_cast<int32>(Packed & ((1u << 18) - 1)) : -1;
+}
 } // namespace GWNet
 
 USTRUCT()
@@ -77,7 +98,29 @@ struct FGWUnitNet
     UPROPERTY() uint8 Flags = 0;
     // A fighter's seat colour (255 = none).
     UPROPERTY() uint8 Seat = 255;
+    // The expedition: an enemy's breed (gwgame::Breed; an item's body on the field is 100 + its Gear kind, 255 nothing)
+    // and the marks items leave on enemies (EGWMark).
+    UPROPERTY() uint8 Breed = 255;
+    UPROPERTY() uint8 Marks = 0;
+    // An enemy's act (gwgame::FoeAct) and a boss's parts byte (bits 0-1 its tools, gwgame::PartsSecondForm, PartsSplit);
+    // for an expedition player, Act carries what the floor has left on them (EGWAfflict).
+    UPROPERTY() uint8 Act = 0;
+    UPROPERTY() uint8 Parts = 0;
 };
+namespace EGWMark
+{
+constexpr uint8 Stunned = 1, Stamped = 2, Gilded = 4, Highlighted = 8, Wet = 16, Erased = 32;
+}
+// What the floor's foes and hazards have left on an expedition player (FGWUnitNet::Act on a player).
+namespace EGWAfflict
+{
+constexpr uint8 Bleeding = 1, Circled = 2, Sealed = 4, Smeared = 8, Dragged = 16, Streak = 32, Fogged = 64, DryBrush = 128;
+}
+// An expedition player's states (FGWPlayerNet::KitFlags).
+namespace EGWKit
+{
+constexpr uint8 Ghost = 1, Extracted = 2, FinalExit = 4, Note = 8, Dual = 16;
+}
 
 // What only players (humans and AI teammates) carry: prediction, ammo, skills, ink, throws and statistics.
 USTRUCT()
@@ -117,6 +160,139 @@ struct FGWPlayerNet
     // single-mission items in effect (a bit per gwgame::Item).
     UPROPERTY() uint8 SpeedRank = 0;
     UPROPERTY() uint8 Items = 0;
+    // The dodge's research (2026-11-17): the cooldown's and the kick's ranks counted here (the owner predicts by them).
+    UPROPERTY() uint8 DashRank = 0;
+    UPROPERTY() uint8 KickRank = 0;
+    // The box: how far a held rocket trigger has charged (0-255 of a full charge; everyone sees a friend winding
+    // up), and the fallen teammates this player brought back with ink.
+    UPROPERTY() uint8 RocketCharge = 0;
+    UPROPERTY() int32 Revives = 0;
+    // The expedition (everyone sees everyone's kit: design 9.1, 队友贴纸与 5 格图标): the hotbar's five slots and then the
+    // bag's open ones (a slot each: GWNet::PackSlot), the slot in hand, the pouch, the looks worn (category order, 255
+    // none), EGWKit states, the stickers banked on the way out, a revive drawing's trait (gwgame::PenBiome, 255 none) and
+    // shape bonus, the hold on a door or chest (0-255 of its time), the walking pace on top of research, the magazine, the
+    // shields left (tape and graphite) and the pens the player may draw a revive with (a bit each). The run's coins and
+    // the bag's open slots (2026-11-16).
+    UPROPERTY() TArray<uint32> Hotbar;
+    UPROPERTY() uint8 Selected = 0;
+    UPROPERTY() int32 Pouch = 0;
+    UPROPERTY() int32 Coins = 0;
+    UPROPERTY() uint8 PackSize = 5;
+    UPROPERTY() TArray<uint8> Wear;
+    UPROPERTY() uint8 KitFlags = 0;
+    UPROPERTY() int32 Banked = 0;
+    UPROPERTY() uint8 Trait = 255;
+    UPROPERTY() uint8 Bonus = 0;
+    UPROPERTY() uint8 Hold = 0;
+    UPROPERTY() float Pace = 1;
+    UPROPERTY() int16 Clip = 0;
+    UPROPERTY() uint8 Shield = 0;
+    UPROPERTY() uint8 Pens = 0;
+    // Each slot's reforged nib (gwgame::PenBiome, 255 none), the prank this player voted for (255 none), the pens
+    // borrowed from a rack (a bit each) and the nibs reforged this run.
+    UPROPERTY() TArray<uint8> Nibs;
+    UPROPERTY() uint8 Vote = 255;
+    UPROPERTY() uint8 Borrowed = 0;
+    UPROPERTY() uint8 Reforges = 0;
+    // This player's own unit id while ink flows from them with R this moment (to everyone hurt in their circle); -1 not.
+    UPROPERTY() int32 Mending = -1;
+};
+
+// ---- The expedition's floor (design v2.1) ----
+// A room: its interior in cells, kind and state (gwgame::RoomKind, RoomState), corridors (a bit per side), event machine
+// (gwgame::RoomEvent, 255 none), whether the party has been in it, its waves, a clock (an armed room's grace; a chained
+// chest's hold, 0-1) and its door cells (solid in the grid's cells while the room is shut).
+USTRUCT()
+struct FGWRoomNet
+{
+    GENERATED_BODY()
+    UPROPERTY() uint8 X = 0;
+    UPROPERTY() uint8 Y = 0;
+    UPROPERTY() uint8 W = 1;
+    UPROPERTY() uint8 H = 1;
+    UPROPERTY() uint8 Kind = 0;
+    UPROPERTY() uint8 State = 0;
+    UPROPERTY() uint8 Links = 0;
+    UPROPERTY() uint8 Event = 255;
+    UPROPERTY() bool Explored = false;
+    UPROPERTY() uint8 Wave = 0;
+    UPROPERTY() uint8 Waves = 0;
+    UPROPERTY() float Clock = 0;
+    UPROPERTY() TArray<int16> Doors;
+};
+// A thing lying on the floor (gwgame::GroundLoot): one slot per id like the ink drops; Id 0 marks an empty slot.
+USTRUCT()
+struct FGWLootNet
+{
+    GENERATED_BODY()
+    UPROPERTY() int32 Id = 0;
+    UPROPERTY() uint8 Kind = 0;
+    UPROPERTY() uint16 What = 0;
+    UPROPERTY() int16 Amount = 0;
+    UPROPERTY() int8 Owner = -1;
+    UPROPERTY() uint16 X = 0;
+    UPROPERTY() uint16 Y = 0;
+    // A quality gun's variant (gwgame::gunVariant), -1 for anything else.
+    UPROPERTY() int8 Variant = -1;
+    // A toss out of an opened chest (2026-11-17): its arc's height in 4-unit steps and its flight in hundredths of a
+    // second; 0 once it has landed (clients draw the arc from when they first see it).
+    UPROPERTY() uint8 Hop = 0;
+    UPROPERTY() uint8 Flight = 0;
+};
+// A shelf's ware or an event machine (Kind gwgame::LootKind; ServiceLoot is a machine, What its gwgame::Service).
+USTRUCT()
+struct FGWOfferNet
+{
+    GENERATED_BODY()
+    UPROPERTY() uint8 Room = 0;
+    UPROPERTY() uint8 Kind = 0;
+    UPROPERTY() uint8 What = 0;
+    UPROPERTY() uint16 Price = 0;
+    UPROPERTY() uint16 X = 0;
+    UPROPERTY() uint16 Y = 0;
+    UPROPERTY() bool Sold = false;
+    // A machine's choice: the prank a ballot box stands for, the pen a rack holds (-1 none).
+    UPROPERTY() int8 Extra = -1;
+};
+USTRUCT()
+struct FGWChestNet
+{
+    GENERATED_BODY()
+    UPROPERTY() int32 Id = 0;
+    UPROPERTY() uint8 Room = 0;
+    UPROPERTY() uint16 X = 0;
+    UPROPERTY() uint16 Y = 0;
+    UPROPERTY() bool Opened = false;
+    UPROPERTY() uint8 Grade = 0;
+    // 1 green .. 5 red (gwgame::Quality).
+    UPROPERTY() uint8 Quality = 1;
+};
+// An exit door (the early one of EV13, or the last boss's final door) and what lies on the floor (gwgame::ZoneKind: the
+// items' zones, the foes' hazards, the biome's terrain; What its colour or variant, Life the seconds it was laid for,
+// Charged a puddle with a zapper's charge in it).
+USTRUCT()
+struct FGWExitNet
+{
+    GENERATED_BODY()
+    UPROPERTY() uint16 X = 0;
+    UPROPERTY() uint16 Y = 0;
+    UPROPERTY() uint8 Room = 0;
+    UPROPERTY() bool Final = false;
+};
+USTRUCT()
+struct FGWZoneNet
+{
+    GENERATED_BODY()
+    UPROPERTY() uint8 Kind = 0;
+    UPROPERTY() uint16 FromX = 0;
+    UPROPERTY() uint16 FromY = 0;
+    UPROPERTY() uint16 ToX = 0;
+    UPROPERTY() uint16 ToY = 0;
+    UPROPERTY() float Radius = 0;
+    UPROPERTY() float Remaining = 0;
+    UPROPERTY() uint8 What = 0;
+    UPROPERTY() float Life = 0;
+    UPROPERTY() bool Charged = false;
 };
 
 // What a player tells the room about their own profile (the design doc's 档案摘要, gwgame::Loadout on the wire):
@@ -135,6 +311,8 @@ struct FGWProfileDigest
     UPROPERTY() uint8 ItemA = 255;
     UPROPERTY() uint8 ItemB = 255;
     UPROPERTY() uint64 Achievements = 0;
+    // The weapons owned (a bit per kind): the expedition's chests and shelves favour them.
+    UPROPERTY() uint8 Weapons = 1;
 };
 
 // The host's packet for one player's own profile: a cleared wave's stickers or a page's clear with its stars, and
@@ -164,6 +342,15 @@ struct FGWProgressPacket
     UPROPERTY() uint8 Items = 0;
     // A bit per gwgame::Award this player won at the end.
     UPROPERTY() uint8 Awards = 0;
+    // The expedition (gwgame::Tally): feats (a bit per gwgame::Feat), enemies erased, elites felled, stickers dropped
+    // for teammates and banked on the way out, the biome bosses felled and the revive shape bonuses (a bit each).
+    UPROPERTY() uint64 Feats = 0;
+    UPROPERTY() int32 Erased = 0;
+    UPROPERTY() int32 Elites = 0;
+    UPROPERTY() int32 Given = 0;
+    UPROPERTY() int32 Banked = 0;
+    UPROPERTY() uint8 Bosses = 0;
+    UPROPERTY() uint8 Shapes = 0;
 };
 
 // A shot is sent once when fired (and again if it bounces); clients fly it themselves. Ended marks a shot
@@ -183,6 +370,8 @@ struct FGWShotNet
     UPROPERTY() float Ended = 0;
     UPROPERTY() uint8 Team = 0;
     UPROPERTY() uint8 Weapon = 0;
+    // A quality gun's colour (gwgame::GunVariant::tint; 8-11 a crayon round's red, blue, yellow, green), 0 plain.
+    UPROPERTY() uint8 Tint = 0;
 };
 
 USTRUCT()
@@ -248,9 +437,19 @@ struct FGWWallPatchView
 // Defense grid cell flags replicated per cell (the client rebuilds walls, rock and the route from them).
 namespace EGWCell
 {
-// Thick and Bounce mark a drawn wall's type (the marker's and the highlighter's walls).
-constexpr uint8 Wall = 1, Rock = 2, Paper = 4, Entrance = 8, Core = 16, Thick = 32, Bounce = 64;
+// Thick and Bounce mark a drawn wall's type (the marker's and the highlighter's walls); Deck the box's platform
+// (sent with Rock: it is rock to everything down in the box).
+constexpr uint8 Wall = 1, Rock = 2, Paper = 4, Entrance = 8, Core = 16, Thick = 32, Bounce = 64, Deck = 128;
 }
+
+// A ladder down the box wall: the platform cell it hangs from and the floor cell its foot stands in.
+USTRUCT()
+struct FGWLadderNet
+{
+    GENERATED_BODY()
+    UPROPERTY() int16 Deck = -1;
+    UPROPERTY() int16 Pit = -1;
+};
 
 // A player of the saved run a room is about to resume: who they were and whether they are back.
 USTRUCT()
@@ -282,7 +481,7 @@ struct FGWUnitView
     float MaxHP = 300;
     float Armor = 0;
     float Radius = 25;
-    // Real time (FPlatformTime::Seconds) the unit last lost health, for the hit flash.
+    // Real time (GWClock::Seconds) the unit last lost health, for the hit flash.
     double HitAt = -10;
     uint8 Team = 1;
     uint8 Shape = 0;
@@ -318,9 +517,55 @@ struct FGWUnitView
     int32 Kills = 0, Held = 0, Thrown = 0, Throws = 0, Walls = 0, Pushes = 0, Damage = 0, InkGiven = 0, BaitBonus = 0;
     int32 Bullseyes = 0;
     bool Dummy = false;
-    // Meta progression: the counted speed rank and the items in effect (FGWPlayerNet).
-    int32 SpeedRank = 0;
+    // Meta progression: the counted speed and dodge ranks and the items in effect (FGWPlayerNet).
+    int32 SpeedRank = 0, DashRank = 0, KickRank = 0;
     uint8 Items = 0;
+    // The box: up on the platform, on a ladder, a held rocket trigger's charge (0..1), revives paid for.
+    bool Deck = false;
+    bool Climbing = false;
+    float RocketCharge = 0;
+    int32 Revives = 0;
+    // The expedition (FGWPlayerNet): the hotbar, the slot in hand, the pouch, looks worn (category order, -1 none),
+    // states, stickers banked, a revive drawing's trait (-1 none) and shape bonus, the hold (0-1), magazine, shields
+    // and pens; an enemy's breed (-1 none; 100 + Gear for an item's body) and marks (EGWMark).
+    struct FSlot
+    {
+        uint8 Kind = 0;
+        int32 What = -1, Count = 0;
+        // A quality gun's variant (-1 an armoury gun or an item).
+        int32 Variant = -1;
+    };
+    FSlot Hotbar[5];
+    // The bag's slots (the first PackSize are open) and the run's coins.
+    FSlot Pack[10];
+    int32 PackSize = 5, Coins = 0;
+    // A kit slot by index: 0-4 the hotbar, 5 on the bag.
+    const FSlot& KitSlot(int32 Index) const
+    {
+        return Index < 5 ? Hotbar[FMath::Clamp(Index, 0, 4)] : Pack[FMath::Clamp(Index - 5, 0, 9)];
+    }
+    int32 Selected = 0, Pouch = 0, Banked = 0, Trait = -1, Bonus = 0, Clip = 0, Breed = -1;
+    int32 Wear[6] = {-1, -1, -1, -1, -1, -1};
+    bool Ghost = false, Extracted = false, FinalExit = false, Note = false, Dual = false;
+    float Hold = 0, Shield = 0;
+    uint8 Pens = 0, Marks = 0;
+    // An enemy's act and a boss's parts (FGWUnitNet); on a player, Act is EGWAfflict bits. Each slot's nib (-1 none),
+    // the vote cast (-1 none), the pens borrowed and nibs reforged.
+    uint8 Act = 0, Parts = 0;
+    int32 Nibs[5] = {-1, -1, -1, -1, -1};
+    int32 Vote = -1;
+    uint8 Borrowed = 0, Reforges = 0;
+    // This player's id while ink flows from them with R (everyone hurt in MendReach takes a share); -1 not.
+    int32 Mending = -1;
+};
+struct FGWLootView
+{
+    int32 Id = 0;
+    uint8 Kind = 0;
+    int32 What = 0, Amount = 0, Owner = -1, Variant = -1;
+    FVector Position = FVector::ZeroVector;
+    // A chest's toss still in the air: its arc's height and flight seconds (0: on the floor).
+    float Hop = 0, Flight = 0;
 };
 struct FGWProjectileView
 {
@@ -334,6 +579,19 @@ struct FGWProjectileView
     FVector Direction = FVector(1, 0, 0);
     FVector Velocity = FVector::ZeroVector;
     float Remaining = 0;
+    // Fired from up on the platform: drawn from its muzzle up there, over the platform, then dropping into the box.
+    bool Deck = false;
+    // Seconds flown, the whole flight its range allows, and whether the host stopped it early (a hit).
+    float Age = 0, Life = 0;
+    bool Stopped = false;
+    // A quality gun's colour (FGWShotNet::Tint).
+    uint8 Tint = 0;
+    // Whether the shot runs out of range (rather than hitting something) within Ahead seconds: such a shot does
+    // not vanish, it drops to the floor (AGWWorld's spent shots).
+    bool RanOut(float Ahead) const
+    {
+        return !Stopped && Life > 0 && Age + Ahead >= Life - .03f;
+    }
 };
 struct FGWEffectView
 {

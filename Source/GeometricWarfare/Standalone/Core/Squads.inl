@@ -8,6 +8,8 @@ inline void Battle::equip(Unit& u, int weapon)
     u.ammo = weaponStats(weapon).ammo;
     u.reload = 0;
     u.cooldown = 0;
+    u.rocketHeld = false;
+    u.rocketCharge = 0;
 }
 inline bool Battle::pickupWeapon(int id, int weapon)
 {

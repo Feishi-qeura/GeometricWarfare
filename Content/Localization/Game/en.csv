@@ -1,4 +1,5 @@
 ﻿Key,SourceString
+Intro.Skip,Press Space to skip
 Game.Title,GEOMETRIC WARFARE
 Game.Subtitle,Draw the maze. Hold the line. Bring friends.
 Menu.Single,Single player
@@ -212,8 +213,7 @@ Key.Pick,Pick skill
 Team.Bot,AI {Index}
 Combat.Team,Teammates
 Board.Title,Mission board
-Board.Subtitle,"Line defense · draw walls into a maze, then fight on the field yourself."
-Board.Chapter,Chapter 1 · The first notebook
+Board.Subtitle,"Line defense · from the platform round the box: draw blocks, raise towers, hang ladders, and hold the core together."
 Level.1-1,First page
 Level.1-2,Two doors
 Level.1-3,Long hall
@@ -245,11 +245,10 @@ Defense.Enemies,{Count} enemies left
 Defense.StartWave,Start wave
 Defense.HostStarts,The host starts the wave
 Defense.Ink,Ink
-Defense.BuildHint,Right-drag on the paper to draw walls (10 ink a cell); right-drag a wall to erase it. Enemies take the shortest open road to the core.
-Defense.TurretHint,"Throw a square or bigger onto open paper to pin it as a turret. E recruits triangles, F merges the last one forward."
+Defense.BuildHint,Right-drag in the box to draw blocks (10 ink a cell); right-drag a block to erase it. Enemies take the shortest open road to the core.
 Defense.WaveBanner,Wave {Wave}!
 Defense.ClearBanner,Wave cleared · +{Count} stickers
-Defense.Respawn,Back beside the core in {Seconds} s
+Defense.Respawn,Back on the platform in {Seconds} s
 Defense.Denied.1,Not enough ink
 Defense.Denied.2,That stroke would seal the core off — enemies always need a road
 Defense.Denied.3,Someone is standing there
@@ -268,12 +267,12 @@ Result.Next,Next page
 Result.CoreLost,The core fell.
 Result.Held,Every wave held.
 Prank.Title,Trolling level
-Prank.0,Off
-Prank.1,Friendly
-Prank.2,Chaos
-Prank.0.Note,"Nobody can be grabbed or thrown, and friendly fire never shoves."
-Prank.1.Note,Only players who allow it can be grabbed and thrown; friendly fire shoves a little.
-Prank.2.Note,Anyone can be grabbed and thrown at any time; friendly fire shoves hard.
+Prank.0,Chubby
+Prank.1,Bouncy shots
+Prank.2,Glass cannons
+Prank.0.Note,"Double health, a little slower"
+Prank.1.Note,Every shot bounces off walls twice
+Prank.2.Note,Hit and be hit half as hard again
 Throwable.On,Teammates may throw me: on
 Throwable.Off,Teammates may throw me: off
 Throwable.Tag,throwable
@@ -323,6 +322,9 @@ Hub.Title,{Name}'s hub
 Hub.Kind.0,Offline · only you
 Hub.Kind.1,Steam room · friends only
 Hub.Kind.2,Direct room (testing)
+Hub.KindShort.0,Offline
+Hub.KindShort.1,Friends
+Hub.KindShort.2,Direct
 Hub.Seats,{Count} / 8 players
 Hub.Invite,Invite friends
 Hub.Here,In the room ({Count}/8)
@@ -337,19 +339,9 @@ Hub.Back,Back to the hub
 Hub.InviteUnavailable,Invites need a Steam room; this hub is not one right now.
 Hub.DeployHostOnly,Only the host can deploy.
 Board.Mode.0,Line defense
-Board.Mode.1,Expedition (soon)
-Board.Mode.2,Party playlist (soon)
-Board.ModeSoon,This mode opens in a later update.
+Board.Mode.1,Expedition
+Board.Mode.2,Party playlist
 Board.BotsFriends,"With friends in the room, no AI teammates come along."
-Coming.Stamp,Opening soon
-Coming.Stickers,Your stickers: {Count}
-Coming.1,"Every player's achievements will hang here, the ones done and the ones still missing. For now the wall knows who is in the room."
-Coming.2,"Spend stickers to unlock weapons and wall types, and buy items for a single run (two per run at most)."
-Coming.3,"Raise health, damage, ink capacity, throw power, speed and pickup range, five ranks each. In someone else's room your ranks are capped by the room's difficulty."
-Coming.4,Change your outfit and pick a party title. Looks only: nothing here changes a fight.
-Npc.2,Pentagon at the counter: “The crates are still on their way. Save up your stickers!”
-Npc.3,"Triangle at the desk: “Formulas first, upgrades later. Come back soon.”"
-Npc.4,Square at the wardrobe: “Hats are coming. Every shape deserves a good hat.”
 Door.0,"Steam is not connected, so only you can be in this hub. Start Steam and press the button below: the hub reopens as a room your friends can join."
 Door.1,"This hub is a Steam room: your Steam friends can join, up to eight players. Send invites from the Steam overlay."
 Door.2,This is a direct room for testing; invites need a Steam room.
@@ -372,21 +364,18 @@ Training.Replay,Replay the tutorial
 Training.ReplayAlone,The tutorial can be replayed while you are alone in the hub.
 Tutorial.Title,Tutorial
 Tutorial.Step,step {Step} of {Count}
-Tutorial.0.Title,Walk
+Tutorial.0.Title,Walk the platform
 Tutorial.1.Title,Shoot
-Tutorial.2.Title,Recruit
-Tutorial.3.Title,Merge
-Tutorial.4.Title,Pin a turret
-Tutorial.5.Title,Draw walls
-Tutorial.6.Title,Hold the line
-Tutorial.0,Walk with WASD into the blinking ring.
-Tutorial.1,Aim with the mouse and hold the left button: break both paper targets.
-Tutorial.2,Walk up to a triangle and press E. Recruit two into your tail.
-Tutorial.3,Press F: the last triangle in your tail merges into the one before it and makes a square. Sides are the tier.
-Tutorial.4,Hold Q to charge and release to throw the square onto empty paper: it pins itself as a turret.
-Tutorial.TurretRetry,A square that hits a target bursts into triangles: recruit them and merge again.
-Tutorial.5,Hold the right button and drag across the blinking cells: three cells of wall make the enemies walk around.
-Tutorial.6,Press Enter for the wave and hold the core: your turret fires with you.
+Tutorial.2.Title,Draw blocks
+Tutorial.3.Title,Raise a tower
+Tutorial.4.Title,Hang a ladder
+Tutorial.5.Title,Hold the line
+Tutorial.0,You start up on the platform round the box. Walk along it with WASD to the blinking ring.
+Tutorial.1,Aim down into the box with the mouse and hold the left button: break both paper targets.
+Tutorial.2,Hold the right button and drag across the blinking cells: three blocks make the enemies walk around.
+Tutorial.3,"Click the blinking open floor: a ring of builds pops up round it. Pick the bolt tower (40 ink): it shoots enemies in reach, right over your blocks."
+Tutorial.4,"Right-click the blinking platform cell: a ladder goes down the box wall (30 ink). Walk into it to climb down, and again to climb back up."
+Tutorial.5,Press Enter for the wave and hold the core: your tower fires with you.
 Tutorial.StepDone,Done!
 Tutorial.Skip,Skip the tutorial
 Tutorial.Finished,You're ready
@@ -401,3 +390,667 @@ Network.HostLeft,"The host left, so you are back in your own hub."
 Network.JoiningFriend,Joining your friend's hub…
 Network.InviteFailed,That invite could not be opened; the room may have closed.
 Key.Use,Recruit / use
+Defense.TowerHint,"Click open floor for the build ring: a bolt tower ({Tower} ink), a mortar, a tesla coil or barbed wire; click a tower to grow or rub it out. Right-click the platform's edge for a ladder ({Ladder} ink). Building stops when the wave starts."
+Defense.TeamHint,Q throws a willing teammate down into the box as bait. A fallen teammate waits on the platform: stand by their outline and press E to bring them back ({Ink} ink).
+Defense.ReviveHint,A teammate beside your outline can bring you back now for {Ink} ink.
+Hub.Respawn,Back on your feet in {Seconds} s
+Defense.Denied.4,A ladder's foot stands there
+Defense.Denied.5,"Towers stand on open floor, not on blocks"
+Defense.Denied.6,No open floor below — a ladder needs somewhere to stand
+Key.Revive,Revive {Name} · {Ink} ink
+Key.ClimbUp,Walk into the ladder to climb up
+Key.ClimbDown,Walk into the ladder to climb down
+Key.DrawBox,Blocks · ladders
+Key.Tower,Tower
+Key.GrabRevive,Grab / revive
+Box.Ladder,Ladder · {Ink} ink
+Box.LadderErase,Rub out the ladder (ink back)
+Box.Tower,Tower · {Ink} ink
+Box.TowerGrow,Grow to {Sides} sides · {Ink} ink
+Training.Tower,Merge triangles here; in the box: click open floor to build
+Tutorial.LadderNote,"Careful: when someone stands up here, runners passing close to a ladder climb it too."
+Attr.Step,+{Percent}% per rank
+Meta.Buy,Buy · {Price}
+Meta.FromAchievement,Achievement: {Name}
+Meta.InUse,In use
+Meta.Use,Use
+Meta.Wear,Wear
+Meta.Wearing,Wearing
+Research.Full,Maxed
+Research.Note,"Backpack: the expedition bag holds 10 slots (the hotbar's 5 among them), one more per rank."
+Research.Total,Total +{Percent}%
+Research.Up,Study · {Price}
+Shop.Bring,Bring
+Shop.Empty,Empty
+Shop.ItemSlot,Item
+Shop.ItemsNote,Two items at most; they are used up when a mission starts.
+Shop.Loadout,Your loadout
+Shop.PenSlot,Pen
+Shop.Stock,In stock: {Count}
+Shop.WeaponSlot,Weapon
+Tier.HostOnly,Only the host picks the difficulty tier.
+Tier.Summary,"Tier {Tier}: stickers ×{Reward}, enemy health ×{Health}, enemy hits ×{Damage}"
+Tier.Title,Difficulty
+Title.Award,Won as an end-of-mission title
+Toast.Title,Achievement unlocked
+Wall.Reward,+{Count} stickers
+Wardrobe.Hats,Hats
+Wardrobe.Titles,Titles
+Ach.0,First stroke
+Ach.0.Note,Draw a wall.
+Ach.1,Wall apprentice
+Ach.1.Note,Draw 300 walls.
+Ach.2,First page
+Ach.2.Note,Clear page 1-1.
+Ach.3,First notebook
+Ach.3.Note,Clear every page of chapter 1.
+Ach.4,Full marks
+Ach.4.Note,Earn all three stars on a page.
+Ach.5,Nine stars
+Ach.5.Note,Earn every star of chapter 1.
+Ach.6,A bit harder
+Ach.6.Note,Clear a page on tier 2 or higher.
+Ach.7,Tough cookie
+Ach.7.Note,Clear a page on tier 3 or higher.
+Ach.8,Veteran
+Ach.8.Note,Clear a page on tier 5.
+Ach.9,Lift-off
+Ach.9.Note,Get thrown by a teammate.
+Ach.10,Human cannonball
+Ach.10.Note,Get thrown 25 times.
+Ach.11,Pitcher
+Ach.11.Note,Throw teammates 25 times.
+Ach.12,Bait
+Ach.12.Note,Hold 10 enemies as bait.
+Ach.13,Professional bait
+Ach.13.Note,Hold 200 enemies as bait.
+Ach.14,Bullseye
+Ach.14.Note,Hit the training bullseye with a throw.
+Ach.15,Sharpshooter
+Ach.15.Note,Land 25 bullseyes.
+Ach.16,Good mate
+Ach.16.Note,Pour 300 ink to teammates.
+Ach.17,First study
+Ach.17.Note,Buy a research rank.
+Ach.18,Specialist
+Ach.18.Note,Raise an attribute to rank 5.
+Ach.19,Doctorate
+Ach.19.Note,Raise every attribute to rank 5.
+Ach.20,Armory
+Ach.20.Note,Own every weapon.
+Ach.21,Stationery set
+Ach.21.Note,Own every pen.
+Ach.22,Hat collector
+Ach.22.Note,Own four hats.
+Ach.23,Sticker tycoon
+Ach.23.Note,Earn 5000 stickers in all.
+Ach.24,A thousand down
+Ach.24.Note,Defeat 1000 enemies.
+Ach.25,MVP
+Ach.25.Note,Win the MVP award.
+Ach.26,Scapegoat
+Ach.26.Note,Win the scapegoat award.
+Ach.27,Party
+Ach.27.Note,Play a mission with four or more players.
+Ach.28,Full house
+Ach.28.Note,Play a mission with eight players.
+Ach.29,Lone wolf
+Ach.29.Note,"Clear a page alone, without AI teammates."
+Ach.30,Untouched
+Ach.30.Note,Clear chapter 1's last page with the core untouched.
+Ach.31,Well supplied
+Ach.31.Note,Bring two items into a mission.
+Attr.0,Health
+Attr.1,Damage
+Attr.2,Ink
+Attr.3,Throw power
+Attr.4,Speed
+Attr.5,Pickup reach
+Hat.0,Bare head
+Hat.1,Paper hat
+Hat.2,Beanie
+Hat.3,Cap
+Hat.4,Top hat
+Hat.5,Antenna
+Hat.6,Pencil
+Hat.7,Crown
+Item.0,Ink bottle
+Item.0.Note,Ink capacity +40% for one mission.
+Item.1,Tape
+Item.1.Note,The core gets +150 health.
+Item.2,Tower kit
+Item.2.Note,Your first tower in the box costs no ink.
+Item.3,Plaster
+Item.3.Note,Your first fall: back up on the spot after 2 s at half health.
+Item.4,Ink magnet
+Item.4.Note,"Kills pay a quarter more ink, and ink lying around is picked up from three times as far."
+Item.5,Carbon paper
+Item.5.Note,Blocks cost a quarter less ink.
+Pen.0,Fountain pen
+Pen.0.Note,Draws plain walls (10 ink a cell).
+Pen.0.Wall,Plain wall
+Pen.1,Marker
+Pen.1.Note,Draws thick walls: every bite takes half as much (16 ink a cell).
+Pen.1.Wall,Thick wall
+Pen.2,Highlighter
+Pen.2.Note,"Draws glossy walls that bounce shots back, twice at most (13 ink a cell)."
+Pen.2.Wall,Bounce wall
+Shop.Tab.0,Weapons
+Shop.Tab.1,Pens
+Shop.Tab.2,Items
+Tier.1.How,Open from the start
+Tier.2.How,Opens with six stars
+Tier.3.How,Opens with twelve stars across the chapters
+Tier.4.How,Opens by clearing page 3-3 on tier 3
+Tier.5.How,Opens by clearing page 3-3 on tier 4
+Title.0,No title
+Title.1,MVP
+Title.2,Best bait
+Title.3,Human cannonball
+Title.4,Wall artist
+Title.5,Scapegoat
+Title.6,Sharpshooter
+Title.7,Doctor
+Title.8,Margin keeper
+Title.9,Sticker tycoon
+Title.10,Ink veteran
+Weapon.0.Note,Everyone's from the start: steady and accurate.
+Weapon.1.Note,Fast rounds with a long reach.
+Weapon.2.Note,Six pellets at close range.
+Weapon.3.Note,Heavy shots that pierce one enemy.
+Weapon.4.Note,A hail of light rounds.
+Weapon.5.Note,"Hold to charge, release to lob a shell over walls: it bursts on friend and foe alike."
+Level.2-1,Broken rim
+Level.2-2,Three islands
+Level.2-3,Lookouts
+Level.3-1,Over the rim
+Level.3-2,Four hooks
+Level.3-3,Last page
+Board.ChapterTab,Chapter {Index}
+Defense.RimHint,"The platform is broken by rock: its pieces join only through the box. Hang a ladder on each side to cross, or split the team between them."
+Defense.RaidHint,"Raiders climb in over the coral ladders on the outer rim: they hunt whoever is up on the platform, then drop into the box."
+Board.Roll,Roll & deploy
+Mode.1.Title,Expedition
+Mode.1.Note,"A dungeon drawn on paper: four stages of 3, 4, 5 and 6 floors, rooms joined by corridors. Fights lock their doors, shops take the stickers in your pouch, and a boss waits at the end of every stage. Only those who walk out alive keep their pouch."
+Mode.1.Facts,"18 floors · five slots: 1-5, G drops, Tab for the kit · a fall drops everything, teammates draw you back with ink · a wipe keeps nothing"
+Mode.2.Title,Party playlist
+Mode.2.Note,"Deploy, and the board rolls the mission for you: any page you have opened, with a party twist on top."
+Mode.2.Facts,"A random open page · one twist: chaos trolling, rocket launchers for everyone, or twice the ink · lighter pay than the pages"
+Twist.1,Chaos trolling
+Twist.2,Rocket party
+Twist.3,Ink rain
+Twist.Tag,Party twist: {Name}
+Board.HowItPlays,How it plays
+Build.0,Bolt tower
+Build.1,Mortar
+Build.2,Tesla coil
+Build.3,Barbed wire
+Build.Cost,{Ink} ink
+Box.Build,{Name} · {Ink} ink
+Key.Dodge,Dodge
+Ring.Upgrade,Upgrade
+Ring.Remove,Rub out
+Ring.Refund,+{Ink} ink back
+Ring.Sides,To {Sides} sides
+Ring.Level,To level {Level}
+Ring.WireLeft,{Left}% left
+Ring.Denied.1,No ink
+Ring.Denied.2,Seals the road
+Ring.Denied.3,Someone there
+Ring.Denied.4,Ladder foot
+Ring.Denied.7,Fully grown
+Box.Click,Build
+Box.ClickTower,Upgrade · rub out
+Key.FireBuild,Fire · build
+Menu.Steam,Steam: {Name}
+Menu.SteamOff,Steam offline · you will play solo
+Door.FriendRooms,Friends in a room now
+Door.NoFriendRooms,"None of your Steam friends is in a room right now. Once a friend opens the game, their hub shows up here."
+Door.Join,Join
+Network.FindingFriend,Looking up your friend's room…
+Network.FriendRoomGone,That room has closed or can no longer be joined.
+Board.BotsExpedition,The expedition is for people only: no AI teammates come along.
+Team.Seat,Player {Index}
+Key.Drop,Drop
+Key.Kit,Kit
+Key.Take,Take / buy / open
+Key.Slots,Slots
+Weapon.Fists,Bare hands
+Expedition.Pair,Dual {Name}
+Gear.0,2B eraser
+Gear.0.Note,"Click: rubs out the enemy in front; a boss loses a tool, or half its health"
+Gear.1,Paper & pen
+Gear.1.Note,Click: draw a fallen teammate back with ink
+Gear.2,Sticky note
+Gear.2.Note,Click: the next big hit tears it instead of you
+Gear.3,Ink capsule
+Gear.3.Note,"Click: +60 ink for everyone, pushes enemies back"
+Gear.4,Correction fluid
+Gear.4.Note,Click: a white patch that heals friends and wipes hazards
+Gear.5,Paper crane
+Gear.5.Note,Click: a decoy that draws enemies for 6 s
+Gear.6,Red stamp
+Gear.6.Note,Click: stamped enemies take 35% more for 10 s
+Gear.7,Tape trap
+Gear.7.Note,Click: a sticky line that holds enemies for 3.5 s
+Gear.8,Hair dryer
+Gear.8.Note,Click: blows bolts away and shoves enemies into walls
+Gear.9,Recycling scissors
+Gear.9.Note,Click: cuts a spare gun or look on the floor into stickers
+Gear.10,Bandage box
+Gear.10.Note,Click: heals half your health over 3 s
+Gear.11,Gold dust
+Gear.11.Note,Click: hits on a gilded enemy shake stickers loose
+Gear.12,Carbon paper
+Gear.12.Note,Every 5th shot fires a half-strength copy
+Gear.13,Magnet clips
+Gear.13.Note,Stickers and ink fly to you from far away
+Gear.14,Tape roll
+Gear.14.Note,Click: a 60-point shield on you or a hurt friend
+Gear.15,Plastic ruler
+Gear.15.Note,In hand: reflects bolts from the front
+Gear.16,Spring refill
+Gear.16.Note,"Magazines +35%, reloads 20% faster"
+Gear.17,Pencil sharpener
+Gear.17.Note,Click: a little turret for 12 s
+Gear.18,Big ink bottle
+Gear.18.Note,Ink holds 180; every kill gives +4 ink
+Gear.19,Kraft liner
+Gear.19.Note,18% less damage; safe for 4 s in a new room
+Gear.20,Cutting mat
+Gear.20.Note,Your shots push enemies 45% harder
+Gear.21,Neon marker
+Gear.21.Note,Hits mark enemies: everyone crits them harder
+Gear.22,Sticker album
+Gear.22.Note,+25% on the stickers you pick up and bring out
+Gear.23,Phoenix charm
+Gear.23.Note,Once a stage: you stand back up at 30% instead of falling
+Gear.24,Paper stand-in
+Gear.24.Note,Solo: stands you back up once when you fall
+GearUse.0,Click to use (one time)
+GearUse.1,Works while carried
+GearUse.2,Click to use · ready again in {Seconds} s
+GearUse.3,Hold it in hand
+GearUse.4,Relic: works from any slot
+GearUse.Revive,Click: open the emergency sheet
+GearUse.Fists,"a shove, little more"
+Hat.8,Paper boat
+Look.1.1,3D glasses
+Look.1.2,Eye patch
+Look.1.3,Scribbled shades
+Look.2.1,Crane wings
+Look.2.2,Red scarf
+Look.2.3,Spiral wings
+Look.3.1,Eraser charm
+Look.3.2,Paperclip chain
+Look.3.3,Tiny compass
+Look.4.1,Rainbow prints
+Look.4.2,Pencil scratches
+Look.4.3,Bamboo steps
+Wear.0,Hat
+Wear.1,Mask
+Wear.2,Cape
+Wear.3,Charm
+Wear.4,Trail
+Wear.5,Title
+Biome.0,Pencil sketch
+Biome.1,Watercolour
+Biome.2,Fountain ink
+Biome.3,Ballpoint
+Biome.4,Brush & ink
+Trait.0,Pencil
+Trait.0.Note,Draft rewrite: a graphite shield of 25% that grows back; once a floor a lethal hit leaves 1 health.
+Trait.1,Watercolour
+Trait.1.Note,Wash: heals 1.5% a second; the trail slows and wets enemies.
+Trait.2,Fountain pen
+Trait.2.Note,Sharp nib: 20% more crits and shots pierce one more; heals 15% less.
+Trait.3,Ballpoint
+Trait.3.Note,Carbon copy: fires and reloads 15% faster; every 8th shot sends a seeking copy.
+Trait.4,Brush
+Trait.4.Note,"Mountain of ink: 40% less knockback, an ink wave every 4 s, and the party gains 15% more ink."
+Boss.0,The Drafting Machine
+Boss.1,The Rainbow Wash
+Boss.2,The Iron Editor
+Boss.3,The Clockwork Warlord
+Boss.4,The Ink Sage
+Room.0,Start
+Room.1,Fight
+Room.2,Portal room
+Room.3,Boss room
+Room.4,Shop
+Room.5,Treasure
+Room.6,Event
+Event.0,The weighing scale
+Event.1,Wishing well
+Event.2,Nib forge
+Event.3,Prank vote
+Event.4,Chained chest
+Event.5,Sticker wheel
+Event.6,Pen rack
+Event.7,Paper arena
+Event.8,Copier
+Event.9,Clinic
+Event.10,Blind box
+Event.11,Rubbing table
+Event.12,Early exit
+Service.0,Heal everyone
+Service.1,Health for ink
+Service.2,Spin
+Service.3,Big spin
+Service.4,Make a wish
+Service.5,Copy the item
+Service.6,Rub a twin
+Service.7,Weigh & sell
+Service.8,Start the arena
+Service.9,Blind draw
+Expedition.Pick,Pick up {Name}
+Expedition.PickPair,Pick up {Name}: one in each hand!
+Expedition.PickStack,Pick up {Name} (stacks)
+Expedition.Full,"No room for {Name}: the bag is full (Tab sorts the kit, G drops what is in hand)"
+Expedition.WearLook,Wear {Name}
+Expedition.SwapLook,Swap {Worn} for {Name} (or leave it for a friend)
+Expedition.Buy,Buy {Name} · {Price} stickers (coins first)
+Expedition.Machine,{Name} · {Price} stickers
+Expedition.MachineFree,{Name} · free
+Expedition.OpenChest,Open the chest
+Expedition.ExitHold,Hold E: leave now with {Count} stickers
+Expedition.ChainHold,Hold E in the ring to break the chains
+Expedition.Arming,Doors shut in {Seconds}
+Expedition.Wave,Wave {Wave} / {Waves}
+Expedition.PortalOpen,Portal open
+Expedition.Cleared,Cleared
+Expedition.Pouch,in the pouch · banked only if you walk out
+Expedition.Tag.Out,Out
+Expedition.Tag.Early,Left early
+Expedition.Tag.Ghost,Ghost
+Expedition.Tag.Lost,Lost
+Expedition.LookOf,{Owner}'s {Name}
+Expedition.FinalDoor,The way out
+Expedition.EarlyDoor,Early exit · hold E
+Expedition.Portal,Portal
+Expedition.PortalCount,Portal: {In} / {Count} in
+Expedition.PortalLeaves,leaves in {Seconds}
+Expedition.GhostTag,{Name} · ghost
+Expedition.Denied.20,Hotbar and bag are full
+Expedition.Denied.21,Not enough stickers and coins
+Expedition.Denied.22,Not enough ink
+Expedition.Denied.23,Nothing to do that with
+Expedition.Denied.24,That drawing does not close
+Expedition.Denied.25,Already used
+Expedition.Denied.26,Not now
+Expedition.Floor,Floor {Stage}-{Floor} · {Pen}
+Expedition.FloorBoss,Boss floor {Stage}-{Floor} · {Pen}
+Expedition.DoorsShut,Doors shut!
+Expedition.WaveCall,Wave {Wave}!
+Expedition.RoomClear,Room cleared · everyone heals 20%
+Expedition.PortalBanner,The portal is open
+Expedition.WayOut,The way out is open
+Expedition.OutTitle,Out with {Count} stickers
+Expedition.OutNote,Safely banked. Watch the others make their way out.
+Expedition.OutLast,Everyone else is out or down: the run ends.
+Expedition.GhostTitle,You fell
+Expedition.GhostNote,"Your kit lies where you fell. A teammate can draw you back with ink, or you return on the next floor at half health."
+Expedition.GhostAlone,Nobody is left standing.
+Kit.Title,Kit & bag
+Kit.Note,Drop what a teammate needs. Tab or Esc closes.
+Kit.Pouch,Sticker pouch
+Kit.PouchNote,"Not banked yet: spend it in shops, drop it for a friend, or carry it out alive."
+Kit.Trait,Drawn with: {Name}
+Kit.Drop25,Drop 25
+Kit.DropAll,Drop all
+Kit.Looks,Looks worn
+Kit.DropLook,Drop
+Kit.Hotbar,Hotbar
+Kit.GunNote,A pistol takes one hand: a second one in the other hand fires with it.
+Revive.Hint.Slot,"{Name} fell: press {Slot}, then click to draw them back"
+Revive.NoGhost,Nobody to draw back
+Revive.Sent,Drawing sent
+Revive.Danger,{Count} enemies close by!
+Revive.Title,Emergency sheet
+Revive.Note,"Draw one closed shape. The bigger it is, the bigger and tougher they stand up, and the more ink it costs."
+Revive.Empty,Hold the left button and draw a loop
+Revive.Who,Who
+Revive.Pen,Pen
+Revive.Open,Not closed: draw it again (nothing is spent)
+Revive.Area,Area {Percent}% · {Ink} ink (you have {Have})
+Revive.Body,Size ×{Size} · health ×{Health} · speed ×{Speed}
+Revive.Small,Too small to hold anyone
+Revive.NoInk,"Needs {Ink} ink, you have {Have}"
+Revive.Bonus.1,A circle: +5% speed
+Revive.Bonus.2,A triangle: +8% damage
+Revive.Bonus.3,A rectangle: +10% armour
+Revive.Hint,Draw a closed loop on the sheet
+Revive.Submit,Bring them back
+Revive.Redraw,Redraw
+Revive.Cancel,Cancel · Esc
+Expedition.Result.Final,ESCAPED
+Expedition.Result.Early,OUT EARLY
+Expedition.Result.Lost,LOST
+Expedition.Banked,{Count} stickers banked
+Expedition.LostAll,The pouch stayed behind: nothing banked
+Expedition.Reached,Reached floor {Stage}-{Floor} · {Floors} floors cleared
+Expedition.Tally,{Kills} enemies · {Elites} elites · {Chests} chests · {Fights} fights won
+Foe.0,Scribble Ball
+Foe.1,Dashed Phantom
+Foe.2,Shaving Darter
+Foe.3,Draft Shield
+Foe.4,Pencil Stub
+Foe.5,Drop Slime
+Foe.6,Two-Tone Striker
+Foe.7,Paint Sprayer
+Foe.8,Bubble Zapper
+Foe.9,Thirsty Sponge
+Foe.10,Nib Lancer
+Foe.11,Ink Bug
+Foe.12,Hatch Crab
+Foe.13,Inkwell Sniper
+Foe.14,Paper Saw
+Foe.15,Bead Shooter
+Foe.16,Red Marker
+Foe.17,Carbon Twin
+Foe.18,Roller Tank
+Foe.19,Abacus Gunner
+Foe.20,Ink Wisp
+Foe.21,Paper Parasol
+Foe.22,Seal Stone
+Foe.23,Brush Column
+Foe.24,Dry-Brush Pinwheel
+Foe.25,Lead Cannon King
+Foe.26,Eraser Giant
+Foe.27,Palette Lord
+Foe.28,Wet Pen Eel
+Foe.29,Twin-Nib Swordsaint
+Foe.30,Iron Inkwell Inspector
+Foe.31,Four-Color Clicker
+Foe.32,Carbon Mirror
+Foe.33,Wild Script Beast
+Foe.34,Twin-Seal Judge
+Foe.35,Sticker Thief
+Foe.36,Spoiled Draft
+Foe.37,The Drafting Machine
+Foe.38,The Rainbow Wash
+Foe.39,The Iron Editor
+Foe.40,The Clockwork Warlord
+Foe.41,The Ink Sage
+Foe.42,Red Spirit
+Foe.43,Yellow Spirit
+Foe.44,Blue Spirit
+Foe.45,Written Soldier
+Foe.46,Written Shield
+Boss.Dragon,The Wild-Script Dragon
+Part.37.0,Pencil gatling
+Part.37.1,Gold compass
+Part.39.0,Gilded revolver
+Part.39.1,Paper blade
+Part.40.0,Four-color gatling
+Part.40.1,Carbon shield
+Part.41.0,Brass paperweight
+BossPhase.Dragon,The sage becomes a dragon!
+BossPhase.Split,It splits into three spirits!
+BossPhase.Merge,The colors run back together
+Service.10,Reforge the nib
+Service.11,Ballot box
+Service.12,Borrow a pen
+Service.VoteFor,Vote: {Name}
+Service.BorrowPen,Borrow: {Name}
+Expedition.PrankChip,Floor prank: {Name}
+Expedition.PrankBanner,Prank: {Name}!
+Expedition.Ballot,Vote with E · {Seconds} s left
+Nib.0,Pencil nib: hits now and then smudge an enemy still for half a second.
+Nib.1,Watercolor nib: hits slow and soak the enemy.
+Nib.2,Fountain-pen nib: shots pierce one more enemy.
+Nib.3,Ballpoint nib: every fourth shot fires a carbon copy.
+Nib.4,Brush nib: shots hit 10% harder and shove.
+Afflict.Bleeding,Bleeding
+Afflict.Circled,Red circle: +20% hurt
+Afflict.Sealed,Sealed: no items
+Afflict.Smeared,Ink in your eyes
+Afflict.Dragged,Slowed
+Afflict.Fogged,Hidden in dust
+Afflict.Streak,Cinnabar crits
+Afflict.DryBrush,Dry brush +15%
+Wall.Page.0,Pages & room · {Count}/32
+Wall.Page.1,Expedition · {Count}/32
+Ach.32,First floor down
+Ach.32.Note,Clear a floor of the expedition.
+Ach.33,Drafting table down
+Ach.33.Note,"Fell the Drafting Machine, the pencil sketchbook's boss."
+Ach.34,All the way out
+Ach.34.Note,Walk out through the last boss's exit door.
+Ach.35,Quit while ahead
+Ach.35.Note,Leave by an early exit door with 500 stickers or more.
+Ach.36,Heavy pouch
+Ach.36.Note,Bank 1000 stickers or more from one run.
+Ach.37,Five pens tamed
+Ach.37.Note,Fell the boss of every pen biome.
+Ach.38,Dragon slayer
+Ach.38.Note,Fell the Ink Sage in its dragon form.
+Ach.39,Rubbed out
+Ach.39.Note,Rub out a boss's tool with an eraser.
+Ach.40,Bare-handed editor
+Ach.40.Note,Rub out both of the Iron Editor's weapons.
+Ach.41,Half a boss
+Ach.41.Note,Rub out half of a skill boss in one swipe.
+Ach.42,Clean page
+Ach.42.Note,Rub out 10 enemies with erasers.
+Ach.43,Drawn back
+Ach.43.Note,Draw a fallen teammate back with paper and pen.
+Ach.44,Just a scribble
+Ach.44.Note,Draw a teammate back with a shape under a tenth of the sheet.
+Ach.45,Geometry class
+Ach.45.Note,"Earn the circle, triangle and rectangle bonuses in revive drawings."
+Ach.46,Borrowed brilliance
+Ach.46.Note,Draw a teammate back with a pen borrowed from a pen rack.
+Ach.47,Left and right
+Ach.47.Note,Hold a pistol in each hand.
+Ach.48,Staple storm
+Ach.48.Note,Hold a stapler pistol in each hand.
+Ach.49,Dressed to the nines
+Ach.49.Note,Wear a look in all six categories at once.
+Ach.50,Elite hunter
+Ach.50.Note,Fell 25 elites.
+Ach.51,"Stop, thief!"
+Ach.51.Note,Catch the sticker thief before it gets away.
+Ach.52,Thirty in thirty
+Ach.52.Note,Clear the thirty-second arena in time.
+Ach.53,Unchained
+Ach.53.Note,Hold a chained chest open.
+Ach.54,Copy that
+Ach.54.Note,Copy an eraser at the copier.
+Ach.55,High roller
+Ach.55.Note,Spin the big sticker wheel.
+Ach.56,Double nib
+Ach.56.Note,Reforge two nibs in one run.
+Ach.57,Democracy
+Ach.57.Note,Finish a prank ballot with four or more players voting.
+Ach.58,Sharing is caring
+Ach.58.Note,Drop 200 stickers that your teammates pick up.
+Ach.59,Not a scratch
+Ach.59.Note,Fell a boss with nobody falling in the fight.
+Ach.60,Party of four
+Ach.60.Note,Walk out of the last door in a run of four or more.
+Ach.61,Hard copy
+Ach.61.Note,Walk out of the last door on tier 3 or higher.
+Ach.62,Sticker baron
+Ach.62.Note,"Bank 10,000 stickers from expeditions in all."
+Ach.63,So close
+Ach.63.Note,Lose 300 stickers or more in a wipe.
+Quality.0,Plain
+Quality.1,Green
+Quality.2,Blue
+Quality.3,Purple
+Quality.4,Orange
+Quality.5,Red
+Gun.0,Stapler Pistol
+Gun.0.Note,"Faster shots, 14 rounds; its staples go through one enemy, and a quarter of hits leave it bleeding (1 a second for 10 s)."
+Gun.1,Thumbtack Shotgun
+Gun.1.Note,"Eight tacks a shot; each may pin an enemy for 0.4 s (not bosses), and a quarter of hits leave it bleeding (1 a second for 10 s)."
+Gun.2,Ice-Ink Rifle
+Gun.2.Note,Hits slow enemies and soak them (wet ones are slower still).
+Gun.3,Rubber-Band Gun
+Gun.3.Note,Its rounds bounce off walls twice.
+Gun.4,Neon Bolt Sniper
+Gun.4.Note,A hit arcs on to 3 enemies nearby for 45% each.
+Gun.5,Blotting-Paper Rifle
+Gun.5.Note,"A tenth of the damage you deal soaks into a shield, up to a fifth of your max health."
+Gun.6,Wax-Seal Launcher
+Gun.6.Note,A wider blast that leaves enemies burning for 3 s.
+Gun.7,Rainbow Crayon Gatling
+Gun.7.Note,"Rounds take turns: red burns, blue slows, yellow arcs, green pierces."
+Expedition.OpenChestQ,Open the chest ({Quality})
+Expedition.ChestTag,{Quality} chest
+Expedition.Trade,Sell for expedition coins
+Service.13,The buyer
+Expedition.Denied.27,No buyer in reach
+Revive.Hint.Bag,{Name} fell: your paper & pen is in the bag; Tab moves it to the hotbar
+Kit.BagNote,"Slots 1–2 are your hands, for guns: a long gun takes both, a pistol one. Slots 3–5 hold items, which only work there; the bag only stores."
+Kit.TabBag,Bag
+Kit.TabLooks,Looks
+Kit.Coins,Expedition coins
+Kit.CoinNote,"Coins are for this run only: shops take coins first (10 = 1 sticker); a fall scatters them, and they never leave the dungeon."
+Kit.Coins100,Drop 100
+Kit.CoinsAll,Drop all
+Kit.Locked,Research desk
+Kit.Bag,Bag · {Open} of {Count} slots
+Kit.MoveHint,Click another slot to move it there; click it again to let go.
+Kit.PickHint,Click a slot to pick it.
+Kit.Picked,Picked
+Kit.InHand,In hand
+Kit.EmptySlot,An empty slot.
+Kit.QualityTag,{Quality} quality
+Kit.NoQuality,Plain · an armoury gun
+Kit.BagIdle,In the bag it does nothing: move it to slots 3–5.
+Kit.Fetch,The buyer pays {Coins} coins
+Kit.DropSlot,Drop it
+Trade.Title,The buyer
+Trade.Note,"Pick a gun or an item and sell it for expedition coins (never stickers). Shops take coins first, 10 to a sticker. Walk away to close."
+Trade.Sell,Sell · {Coins} coins
+Research.Whole,"Research is yours: every rank counts in any room, and each player counts their own."
+Research.BagTotal,Bag: {Count} slots
+Attr.6,Backpack
+Attr.StepSlot,+1 slot per rank
+Kit.LongNote,A long gun takes both hands (slots 1 and 2).
+Kit.BagGun,Move it to slot 1 or 2 to hold it.
+Kit.Hands,1–2 · Hands (guns)
+Kit.Belt,3–5 · Items (work here)
+Kit.LeftHand,Left hand
+Kit.RightHand,Right hand
+Expedition.PickBag,Pick up {Name} (into the bag)
+Expedition.PairOf,Dual: {Left} + {Right}
+Expedition.Denied.28,Slots 1 and 2 are your hands: guns only
+Expedition.Denied.29,Slots 3–5 hold items; guns go in your hands or the bag
+Expedition.Denied.30,No free bag slot for the other pistol
+Key.Mend,Ink mend
+Mend.Self,Mending with ink · 1 ink = 1 health
+Revive.Prompt,Draw {Name} back
+Revive.PromptNoKit,Draw {Name} back · ink ×2 without paper & pen
+Revive.NoteNoKit,"No paper & pen: you can still draw them back, for twice the ink. One closed shape; bigger means tougher and costlier."
+Mend.Area,Mending with ink · shared by {Count}
+Spectate.Watching,Watching {Name}
+Spectate.Switch,Left / right click: switch teammate
+Attr.7,Dodge cooldown
+Attr.8,Dodge speed
+Attr.StepCut,-{Percent}% per rank
+Research.TotalCut,Total -{Percent}%
+Revive.Hint.NoKit,{Name} fell: walk to the outline and press E to draw them back (ink ×2)
+Mend.Mate,Mending {Name} with ink · 1 ink = 1 health

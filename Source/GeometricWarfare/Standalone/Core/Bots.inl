@@ -12,7 +12,8 @@ inline int Battle::addBot()
     u.id = nextId++;
     u.team = 1;
     u.bot = true;
-    u.position = defenseMode() ? coreSpawn(index + 4) : spawnPosition(index + 6);
+    u.position = defenseMode() ? deckSpawn(index + 4) : spawnPosition(index + 6);
+    u.deck = defenseMode() && maze.hasDeck();
     u.seat = freeSeat();
     defense.botsUsed |= defenseMode();
     u.level = sharedLevel;
@@ -96,6 +97,7 @@ inline void Battle::updateBot(Unit& u, double dt)
     {
         u.aim = (enemy->position - u.position).normalized();
         u.input.fire = !lineOfFireBlocked(u, enemy->position);
+        aimRocket(u, enemy->position);
     }
     Vec2 goal = u.position;
     if (leader)

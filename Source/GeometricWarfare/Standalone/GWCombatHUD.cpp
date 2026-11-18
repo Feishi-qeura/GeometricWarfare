@@ -1,6 +1,8 @@
 #include "Engine/Canvas.h"
 #include "GWCinematic.h"
 #include "GWController.h"
+#include "GWMotion.h"
+#include "InputCoreTypes.h"
 #include "GWGameState.h"
 #include "GWHUD.h"
 #include "GWPalette.h"
@@ -59,7 +61,8 @@ FText AGWHUD::TeammateName(AGWGameState* S, const FGWUnitView& Unit) const
     for (const auto& State : S->PlayerArray)
         if (auto* PS = Cast<AGWPlayerState>(State); PS && PS->UnitId == Unit.Id)
             return FText::FromString(PS->GetPlayerName());
-    return FText::GetEmpty();
+    // A player whose machine is gone (left mid-run) still has a seat to go by.
+    return Unit.Human && Unit.Seat >= 0 ? GWText::Number(TEXT("Team.Seat"), TEXT("Index"), Unit.Seat + 1) : FText::GetEmpty();
 }
 
 void AGWHUD::Combat(AGWGameState* S)
@@ -80,65 +83,160 @@ void AGWHUD::Combat(AGWGameState* S)
             Box(Width - T * .5f, 0, T * .5f, Height, Edge);
         }
     }
-    if (FGWCinematic::Get().Clean)
+    const FGWCinematic& Cinematic = FGWCinematic::Get();
+    if (Cinematic.Clean)
+    {
+        // A promo's clean frame may keep what the HUD says over the field: names, bait countdowns, wave banners.
+        if (Cinematic.Story)
+        {
+            WorldTags(S, U);
+            PrankTags(S, nullptr);
+            if (S->Defense() && !S->Finished)
+                DefenseBanners(S);
+        }
         return;
+    }
+    const bool Furniture = !Cinematic.Promo;
+    // An ink smear on the expedition: blots of ink creeping in over the field from the screen's edges (under the
+    // tags and the cards, so the player's own numbers stay readable).
+    if (U && S->Expedition() && U->Alive && (U->Act & EGWAfflict::Smeared))
+        for (int32 K = 0; K < 14; ++K)
+        {
+            const float A = K * 2 * PI / 14 + Clock * .2f;
+            const float Edge = FMath::Max(Width, Height) * .62f;
+            const FVector2D At = FVector2D(Width * .5f, Height * .5f) + FVector2D(FMath::Cos(A) * Edge, FMath::Sin(A) * Edge * .75f);
+            const float Size = (120 + 50 * FMath::Sin(K * 2.3f + Clock * 2)) * Scale;
+            Circle(At, Size, Ink.CopyWithNewOpacity(.7f), Size * .9f, 4900 + K);
+        }
     WorldTags(S, U);
-    PrankTags(S, U);
+    PrankTags(S, Furniture ? U : nullptr);
+    // The expedition's tags over the floor's wares, loot, doors and ghosts lie under the cards.
+    if (S->Expedition())
+        ExpeditionTags(S, U);
+    // Every card comes onto the page as the scene is revealed: the board drops from the top, the side cards slide
+    // in from their edges, the gear pops up last.
+    const float Entry = SceneAge(S);
     // The hub has no board of its own (its room card is drawn with the hub screen below).
     if (S->Hub())
     {
     }
     else if (S->Defense())
     {
-        DefenseBoard(S, U);
+        {
+            const auto Drop = DropIn(FVector2D(Width * .5f, 60 * Scale), Entry, .1f, 70);
+            DefenseBoard(S, U);
+        }
         DefenseBanners(S);
     }
-    else
-        TopBoard(S);
-    if (U)
+    else if (S->Expedition())
     {
-        PlayerCard(S, *U);
-        SquadCard(S, *U);
+        // The expedition: its floor board, the minimap in the top-right corner, and the room banners.
+        {
+            const auto Drop = DropIn(FVector2D(Width * .5f, 60 * Scale), Entry, .1f, 70);
+            ExpeditionBoard(S, U);
+        }
+        if (Furniture && !S->Finished)
+        {
+            const auto Slide = SlideIn(FVector2D(Width - 130 * Scale, 110 * Scale), Entry, FVector2D(170, 0), .3f);
+            Minimap(S, U);
+        }
+        ExpeditionBanners(S, U);
+    }
+    else
+    {
+        const auto Drop = DropIn(FVector2D(Width * .5f, 60 * Scale), Entry, .1f, 70);
+        TopBoard(S);
+    }
+    if (S->Twist > 0 && !S->Finished && !S->Hub())
+    {
+        const auto Slide = SlideIn(FVector2D(Width - 120 * Scale, 160 * Scale), Entry, FVector2D(160, 0), .45f);
+        TwistTag(S);
+    }
+    if (U && S->Expedition())
+        ExpeditionScreen(S, U, Entry);
+    else if (U)
+    {
+        {
+            const auto Slide = SlideIn(FVector2D(220 * Scale, Height - 140 * Scale), Entry, FVector2D(-160, 40), .2f);
+            PlayerCard(S, *U);
+        }
+        DodgeBar(S, *U);
+        if (Furniture)
+        {
+            const auto Slide = SlideIn(FVector2D(Width - 180 * Scale, Height - 140 * Scale), Entry, FVector2D(160, 40), .28f);
+            SquadCard(S, *U);
+        }
         // In the hub the roster lists everyone; in the tutorial there is nobody else.
-        if (!S->Hub() && !S->Tutorial)
+        if (Furniture && !S->Hub() && !S->Tutorial)
+        {
+            const auto Slide = SlideIn(FVector2D(150 * Scale, 150 * Scale), Entry, FVector2D(-160, 0), .32f);
             TeamCard(S, *U);
+        }
         if (!U->Alive && !S->Finished)
         {
-            Box(0, 0, Width, Height, Ink.CopyWithNewOpacity(.28f));
+            const float Down = Since(HashCombine(static_cast<uint32>(U->Id), 0xDEADu));
+            Box(0, 0, Width, Height, Ink.CopyWithNewOpacity(.28f * GWEase::Clamp01(Down / .3f)));
             const float W = 520 * Scale, H = 120 * Scale, X = (Width - W) * .5f, Y = Height * .4f;
+            const auto Drop = DropIn(FVector2D(Width * .5f, Y + H * .5f), Down, .1f, 60);
             Card(X, Y, W, H, Paper, Ink, 811, 1.6f);
             Tape(FVector2D(X + 40 * Scale, Y + 6 * Scale), 70 * Scale, 20 * Scale, -30, Coral);
             const bool Returns = S->Defense() || S->Hub();
             Glyph(Returns ? 6 : 17, FVector2D(X + 72 * Scale, Y + H * .5f), 50 * Scale, Returns ? Teal : Coral, 813);
-            // Defense brings fallen players back at the core (the hub at its spawn); Survival has no respawn.
-            if (Returns)
+            // Defense brings fallen players back up on the platform (sooner if a teammate pays ink at their outline);
+            // the hub at its spawn; Survival has no respawn.
+            if (Returns && S->Defense())
+            {
                 Label(GWText::Number(TEXT("Defense.Respawn"), TEXT("Seconds"), FMath::Max(1, FMath::CeilToInt(U->Respawn))), X + 128 * Scale,
+                      Y + 26 * Scale, 24 * Scale, Ink, false, W - 150 * Scale, EFace::Bold);
+                Label(GWText::Number(TEXT("Defense.ReviveHint"), TEXT("Ink"), FMath::RoundToInt(S->ReviveInk)), X + 128 * Scale, Y + 64 * Scale,
+                      15 * Scale, InkSoft, false, W - 150 * Scale);
+            }
+            else if (Returns)
+                Label(GWText::Number(TEXT("Hub.Respawn"), TEXT("Seconds"), FMath::Max(1, FMath::CeilToInt(U->Respawn))), X + 128 * Scale,
                       Y + H * .5f - 16 * Scale, 26 * Scale, Ink, false, W - 150 * Scale, EFace::Bold);
             else
                 Key(TEXT("Combat.NoRespawn"), X + 128 * Scale, Y + H * .5f - 16 * Scale, 26 * Scale, Ink, false, W - 150 * Scale, EFace::Bold);
+            SpectateTag(S, *U, Y + H + 22 * Scale);
         }
     }
-    if (S->Defense() && !S->Finished && !S->Tutorial)
+    if (Furniture && S->Defense() && !S->Finished && !S->Tutorial)
         DefenseHints(S, U);
-    Controls();
-    // Settings tab: a paper corner with a geometric gear.
+    if (Furniture && S->Defense() && !S->Finished)
+        BoxCursor(S, U);
+    // The build ring sits over the cards (it closes itself when the build phase ends).
+    BuildRing(S, U);
+    if (Furniture)
+        Controls(Entry);
+    // Settings tab: a paper corner with a geometric gear that turns as the mouse comes near.
+    if (Furniture)
     {
         const float X = 22 * Scale, Y = 18 * Scale, Sz = 56 * Scale;
+        const auto Pop = PopIn(FVector2D(X + Sz * .5f, Y + Sz * .5f), Entry, .4f);
         const bool Hover = Hovered(X, Y, Sz, Sz);
-        Card(X, Y - (Hover ? 2 * Scale : 0), Sz, Sz, Paper, Ink, 44, Hover ? 1.6f : 1.1f);
-        Glyph(10, FVector2D(X + Sz * .5f, Y + Sz * .5f - (Hover ? 2 * Scale : 0)), Sz * .62f, Hover ? Marigold : PaperShade, 45);
-        Hits.Add({FBox2D(FVector2D(X, Y), FVector2D(X + Sz, Y + Sz)), 4});
+        const float Lift = Eased(0x6EA2u, Hover ? 1.f : 0.f, 14);
+        Card(X, Y - 2 * Scale * Lift, Sz, Sz, Paper, Ink, 44, 1.1f + .5f * Lift);
+        {
+            const FVector2D Hub(X + Sz * .5f, Y + Sz * .5f - 2 * Scale * Lift);
+            PushMotion(Hub, FVector2D::ZeroVector, Lift * 45 + 6 * FMath::Sin(static_cast<float>(Clock) * .7f));
+            const FMotionGuard Turn(this);
+            Glyph(10, Hub, Sz * .62f, FMath::Lerp(PaperShade, Marigold, Lift), 45);
+        }
+        AddHit(FBox2D(FVector2D(X, Y), FVector2D(X + Sz, Y + Sz)), 4);
     }
     if (S->SharedLevel > SeenLevel && SeenLevel > 0)
+    {
         LevelBanner = Clock;
+        Confetti(FVector2D(Width * .5f, Height * .26f + 30 * Scale), 26, 900, 7);
+    }
     SeenLevel = S->SharedLevel;
     const float Age = Clock - LevelBanner;
     if (Age < 2.4f && !S->UpgradePaused)
     {
-        const float In = FMath::Clamp(Age / .25f, 0.f, 1.f), Out = FMath::Clamp((2.4f - Age) / .4f, 0.f, 1.f);
-        const float Y = Height * .26f - (1 - In) * 40 * Scale;
-        Tape(FVector2D(Width * .5f, Y + 30 * Scale), 420 * Scale, 64 * Scale, -2, Marigold.CopyWithNewOpacity(Out));
-        Lettering(GWText::Get(TEXT("Combat.LevelUp")), Width * .5f, Y + 4 * Scale, 42 * Scale, Ink.CopyWithNewOpacity(Out), 61);
+        // The tape unrolls from the middle, the letters drop onto it, and it all lifts away at the end.
+        const float Out = FMath::Clamp((2.4f - Age) / .4f, 0.f, 1.f), Y = Height * .26f;
+        const auto Pop = PopIn(FVector2D(Width * .5f, Y + 30 * Scale), Age);
+        Tape(FVector2D(Width * .5f, Y + 30 * Scale), 420 * Scale * GWEase::OutBack(Age / .35f), 64 * Scale, -2, Marigold.CopyWithNewOpacity(Out));
+        Lettering(GWText::Get(TEXT("Combat.LevelUp")), Width * .5f, Y + 4 * Scale, 42 * Scale, Ink.CopyWithNewOpacity(Out), 61, Age - .1f);
     }
     if (S->UpgradePaused && U && !Settings && !S->Finished)
         DrawUpgradeChoices(S, *U);
@@ -148,6 +246,8 @@ void AGWHUD::Combat(AGWGameState* S)
             TutorialFinished(S);
         else if (S->Defense())
             DefenseResults(S);
+        else if (S->Expedition())
+            ExpeditionResults(S);
         else
             DrawResults(S);
     }
@@ -156,6 +256,20 @@ void AGWHUD::Combat(AGWGameState* S)
     // Last, so a station sheet lies over everything (and takes every click while it is open).
     if (S->Hub())
         HubScreen(S, U);
+    // The expedition's kit and revive sheets lie over everything too; they fold away with the run.
+    if (S->Expedition() && !S->Finished && !Settings)
+    {
+        if (KitSheet)
+            DrawKitSheet(S, U);
+        if (ReviveSheet)
+            DrawReviveSheet(S, U);
+    }
+    else if (!S->Expedition() || S->Finished)
+    {
+        KitSheet = false;
+        if (ReviveSheet)
+            CloseRevive();
+    }
 }
 
 void AGWHUD::TopBoard(AGWGameState* S)
@@ -187,6 +301,63 @@ void AGWHUD::TopBoard(AGWGameState* S)
     }
 }
 
+void AGWHUD::DodgeBar(AGWGameState* S, const FGWUnitView& Local)
+{
+    // The dodge's cooldown: a small pencil bar over the player's head, filling back up.
+    auto* C = Cast<AGWController>(PlayerOwner);
+    if (!C || !Local.Alive || C->DodgeCooldown() <= 0)
+        return;
+    FVector World;
+    if (!C->PredictedPosition(Local.Id, World))
+        World = Local.Position;
+    FVector2D Head;
+    if (!WorldToScreen(S, World + FVector(0, 0, (Local.Deck ? gwgame::DeckHeight : 0) + Local.Radius * 2.6f + 40), Head))
+        return;
+    const float W = 52 * Scale, H = 7 * Scale, Fill = 1.f - static_cast<float>(C->DodgeCooldown() / FMath::Max(.05, C->DodgeRest()));
+    Box(Head.X - W * .5f - Scale, Head.Y - H * .5f - Scale, W + 2 * Scale, H + 2 * Scale, Ink);
+    Box(Head.X - W * .5f, Head.Y - H * .5f, W, H, Paper);
+    Box(Head.X - W * .5f, Head.Y - H * .5f, W * FMath::Clamp(Fill, 0.f, 1.f), H, Teal);
+}
+
+void AGWHUD::SpectateTag(AGWGameState* S, const FGWUnitView& Local, float Y)
+{
+    auto* C = Cast<AGWController>(PlayerOwner);
+    const FGWUnitView* Watch = C && !Local.Alive ? S->FindUnit(C->SpectateId) : nullptr;
+    if (!Watch)
+        return;
+    FFormatNamedArguments Args;
+    Args.Add(TEXT("Name"), TeammateName(S, *Watch));
+    const FText Name = FText::Format(GWText::Get(TEXT("Spectate.Watching")), Args);
+    const FText Switch = GWText::Get(TEXT("Spectate.Switch"));
+    const bool More = C->SpectateCount > 1;
+    const float NameSize = 17 * Scale, SwitchSize = 13 * Scale;
+    const float NameW = Measure(Name, NameSize, EFace::Heavy).X, SwitchW = More ? Measure(Switch, SwitchSize, EFace::Bold).X + 24 * Scale : 0;
+    const float W = NameW + SwitchW + 70 * Scale, H = 42 * Scale, X = (Width - W) * .5f;
+    Card(X, Y, W, H, Paper, Ink, 960, 1.2f);
+    Tape(FVector2D(X + 22 * Scale, Y + 4 * Scale), 46 * Scale, 16 * Scale, -24, Seat(Watch->Seat));
+    // An eye: two lids and the pupil in the watched player's colour.
+    const FVector2D Eye(X + 30 * Scale, Y + H * .5f);
+    Arc(Eye + FVector2D(0, 7 * Scale), 13 * Scale, -PI * .82f, -PI * .18f, Ink, 2.2f * Scale);
+    Arc(Eye - FVector2D(0, 7 * Scale), 13 * Scale, PI * .18f, PI * .82f, Ink, 2.2f * Scale);
+    Disc(Eye, 4.5f * Scale, Seat(Watch->Seat));
+    Label(Name, X + 52 * Scale, Y + 10 * Scale, NameSize, Ink, false, 0, EFace::Heavy);
+    if (More)
+        Label(Switch, X + 52 * Scale + NameW + 24 * Scale, Y + 14 * Scale, SwitchSize, InkSoft, false, 0, EFace::Bold);
+}
+
+void AGWHUD::TwistTag(AGWGameState* S)
+{
+    // The party playlist's twist on this mission, pinned under the top-right card (the teammates card holds the left).
+    const FText Name = GWText::Get(FString::Printf(TEXT("Twist.%d"), FMath::Clamp(static_cast<int32>(S->Twist), 1, 3)));
+    FFormatNamedArguments Args;
+    Args.Add(TEXT("Name"), Name);
+    const FText Text = FText::Format(GWText::Get(TEXT("Twist.Tag")), Args);
+    const float Size = 15 * Scale, W = Measure(Text, Size, EFace::Bold).X + 48 * Scale, H = 34 * Scale, X = Width - W - 24 * Scale, Y = 144 * Scale;
+    Card(X, Y, W, H, Hex(0xFFE3F1), Magenta, 680, 1.f);
+    Glyph(15, FVector2D(X + 18 * Scale, Y + H * .5f), 18 * Scale, Magenta, 681);
+    Label(Text, X + 34 * Scale, Y + 7 * Scale, Size, Ink, false, 0, EFace::Bold);
+}
+
 void AGWHUD::PlayerCard(AGWGameState* S, const FGWUnitView& U)
 {
     // Defense adds a row for the player's own ink between health and weapon.
@@ -200,9 +371,16 @@ void AGWHUD::PlayerCard(AGWGameState* S, const FGWUnitView& U)
     Circle(Portrait, 38 * Scale, Ink, 2 * Scale, 612);
     Glyph(ShapeGlyph(U.Shape), Portrait, 46 * Scale, TeamColor, 613);
     const float BarX = X + 104 * Scale, BarW = W - 124 * Scale;
-    Key(TEXT("Combat.Health"), BarX, Y + 10 * Scale, 15 * Scale, InkSoft, false, BarW * .5f, EFace::Bold);
+    // Health reads from a plus mark and its number (no label); the number jumps when it changes.
+    Glyph(7, FVector2D(BarX + 8 * Scale, Y + 19 * Scale), 15 * Scale, U.HP < U.MaxHP * .3f ? Danger : TeamColor, 617);
     const FText Health = FText::FromString(FString::Printf(TEXT("%.0f / %.0f"), U.HP, U.MaxHP));
-    Label(Health, BarX + BarW - Measure(Health, 15 * Scale, EFace::Bold).X, Y + 9 * Scale, 15 * Scale, Ink, false, 0, EFace::Bold);
+    {
+        const float HealthW = Measure(Health, 15 * Scale, EFace::Bold).X;
+        const FVector2D Spot(BarX + BarW - HealthW * .5f, Y + 19 * Scale);
+        PushMotion(Spot, FVector2D::ZeroVector, 0, Bump(HashCombine(static_cast<uint32>(U.Id), 0x4E41u), FMath::CeilToFloat(U.HP)));
+        const FMotionGuard Pulse(this);
+        Label(Health, BarX + BarW - HealthW, Y + 9 * Scale, 15 * Scale, Ink, false, 0, EFace::Bold);
+    }
     Meter(BarX, Y + 32 * Scale, BarW, 18 * Scale, U.MaxHP > 0 ? U.HP / U.MaxHP : 0, U.HP < U.MaxHP * .3f ? Danger : TeamColor, 614);
     if (U.Armor > 0)
         Meter(BarX, Y + 54 * Scale, BarW, 7 * Scale, U.Armor / 140.f, Frost, 615, false);
@@ -294,11 +472,24 @@ void AGWHUD::SquadCard(AGWGameState* S, const FGWUnitView& U)
         if (A.Alive && A.FollowerOf == U.Id)
             Squad.Add(&A);
     Squad.Sort([](const FGWUnitView& A, const FGWUnitView& B) { return A.TailOrder < B.TailOrder; });
+    // On the box and in the hub a squad is the exception: the card only comes up while there is one (Survival is built
+    // around it and keeps it up).
+    const bool SquadMode = !S->Defense() && !S->Hub() && !S->Tutorial && !S->Expedition();
+    const float Shown = Eased(0x5A0Du, SquadMode || !Squad.IsEmpty() || (C && C->ChargeProgress() >= 0) ? 1.f : 0.f, 9);
+    if (Shown < .02f)
+        return;
+    PushMotion(FVector2D(X + W, Y + H), FVector2D((1 - Shown) * 120 * Scale, 0), 0, 1, Shown);
+    const FMotionGuard Away(this);
     Card(X, Y, W, H, Paper, Ink, 711, 1.4f);
     Tape(FVector2D(X + W - 12 * Scale, Y + 8 * Scale), 60 * Scale, 18 * Scale, 40, Teal);
-    Key(TEXT("Combat.Squad"), X + 18 * Scale, Y + 10 * Scale, 17 * Scale, InkSoft, false, W * .5f, EFace::Bold);
-    Label(FText::FromString(FString::Printf(TEXT("× %d"), Squad.Num())), X + 18 * Scale, Y + 30 * Scale, 34 * Scale, Teal, false, 0,
-          EFace::Heavy);
+    Glyph(3, FVector2D(X + 28 * Scale, Y + 22 * Scale), 20 * Scale, Teal, 712);
+    {
+        const FVector2D Spot(X + 40 * Scale, Y + 50 * Scale);
+        PushMotion(Spot, FVector2D::ZeroVector, 0, Bump(0x5A0Eu, static_cast<float>(Squad.Num())));
+        const FMotionGuard Pulse(this);
+        Label(FText::FromString(FString::Printf(TEXT("× %d"), Squad.Num())), X + 18 * Scale, Y + 30 * Scale, 34 * Scale, Teal, false, 0,
+              EFace::Heavy);
+    }
     for (int32 I = 0; I < Squad.Num() && I < 10; ++I)
     {
         const FVector2D P(X + 110 * Scale + (I % 5) * 30 * Scale, Y + 32 * Scale + (I / 5) * 30 * Scale);
@@ -336,8 +527,11 @@ void AGWHUD::WorldTags(AGWGameState* S, const FGWUnitView* Local)
     auto* C = Cast<AGWController>(PlayerOwner);
     if (!C || !C->WorldView)
         return;
-    // Recruit / join prompt floats above the highlighted candidate like a speech bubble.
-    if (Local && Local->Alive && !Settings && !S->UpgradePaused && !S->Finished)
+    // Recruit / join prompt floats above the highlighted candidate like a speech bubble. The expedition offers only a
+    // teammate to grab, and only with nothing of the floor's in reach (E is ExpeditionPrompts' then).
+    FReach Reach;
+    const bool FloorFirst = S->Expedition() && Local && ExpeditionReach(S, *Local, Reach);
+    if (Local && Local->Alive && !Settings && !S->UpgradePaused && !S->Finished && !FloorFirst)
         if (const auto* Candidate = S->FindUnit(C->WorldView->SelectedCandidate))
         {
             FVector World = Candidate->Position;
@@ -447,8 +641,44 @@ void AGWHUD::PrankTags(AGWGameState* S, const FGWUnitView* Local)
     for (const auto& U : S->Units)
         if (U.Alive && U.Carried && U.FollowerOf == Local->Id)
             Holding = &U;
+    // The box: a fallen teammate's outline in reach up on the platform (E brings them back for ink), or the end of a
+    // ladder (walking into it climbs).
+    const FGWUnitView* Fallen = nullptr;
+    bool AtLadder = false;
+    if (S->Defense() && !Local->Carried && Local->Bait <= 0 && !Local->Climbing)
+    {
+        float Nearest = S->ReviveReach;
+        if (Local->Deck)
+            for (const auto& U : S->Units)
+                if (!U.Alive && U.Id != Local->Id && U.Kind == 0 && (U.Human || U.Bot) && U.Respawn > 0 && U.Team == Local->Team &&
+                    FVector::Dist2D(U.Position, Local->Position) < Nearest)
+                {
+                    Nearest = FVector::Dist2D(U.Position, Local->Position);
+                    Fallen = &U;
+                }
+        if (C->WorldView)
+            for (const auto& Net : S->Ladders)
+            {
+                gwgame::Ladder L;
+                L.deck = Net.Deck;
+                L.pit = Net.Pit;
+                if (!C->WorldView->Geometry.isDeck(L.deck) || L.pit < 0)
+                    continue;
+                const gwgame::Vec2 End = Local->Deck ? gwgame::ladderHead(C->WorldView->Geometry, L) : gwgame::ladderFoot(C->WorldView->Geometry, L);
+                AtLadder |= FVector2D::Distance(FVector2D(End.x, End.y), FVector2D(Local->Position)) < gwgame::LadderUse * 1.3f;
+            }
+    }
     FText Hint;
-    if (Local->Carried)
+    if (Fallen)
+    {
+        FFormatNamedArguments Args;
+        Args.Add(TEXT("Name"), TeammateName(S, *Fallen));
+        Args.Add(TEXT("Ink"), FMath::RoundToInt(S->ReviveInk));
+        Bubble(FText::FromString(TEXT("E")), FText::Format(GWText::Get(TEXT("Key.Revive")), Args), 30);
+    }
+    else if (AtLadder && !Holding)
+        Bubble(FText::FromString(Local->Deck ? TEXT("↓") : TEXT("↑")), GWText::Get(Local->Deck ? TEXT("Key.ClimbDown") : TEXT("Key.ClimbUp")), 30);
+    else if (Local->Carried)
     {
         Bubble(FText::FromString(TEXT("E")), GWText::Get(TEXT("Key.Wriggle")), 30);
         const FGWUnitView* Holder = S->FindUnit(Local->FollowerOf);
@@ -479,28 +709,65 @@ void AGWHUD::PrankTags(AGWGameState* S, const FGWUnitView* Local)
     }
 }
 
-void AGWHUD::Controls()
+void AGWHUD::Controls(float Entry)
 {
+    // The key strip shows while a scene is new (its first eight seconds) and whenever Tab is held; otherwise it
+    // folds down into a single Tab keycap in the same place. The expedition's Tab opens the kit sheet (which lists the
+    // keys), so there the strip shows on arrival only.
+    const auto* State = GetWorld()->GetGameState<AGWGameState>();
+    const bool Expedition = State && State->Expedition();
+    const bool Held = PlayerOwner && PlayerOwner->IsInputKeyDown(EKeys::Tab) && !Expedition;
+    const float Open = Eased(0xC0E7u, Held || Entry < 8.f ? 1.f : 0.f, 8);
+    if (Open < .97f && !Expedition)
+    {
+        const FText Tab = FText::FromString(TEXT("Tab"));
+        const float Size = 26 * Scale, KeyW = Measure(Tab, Size * .55f, EFace::Bold).X + Size * .55f;
+        const float X = Width * .5f - KeyW * .5f - 16 * Scale, Y = Height - 46 * Scale;
+        PushMotion(FVector2D(Width * .5f, Y), FVector2D(0, Open * 40 * Scale), 0, 1, 1 - Open);
+        const FMotionGuard Folded(this);
+        Keycap(Tab, X, Y, Size, InkSoft);
+        Glyph(10, FVector2D(X + KeyW + 18 * Scale, Y + Size * .5f), 18 * Scale, PaperDeep, 4120);
+    }
+    if (Open <= .02f)
+        return;
+    const auto Slide = SlideIn(FVector2D(Width * .5f, Height - 40 * Scale), Entry, FVector2D(0, 80), .5f);
+    PushMotion(FVector2D(Width * .5f, Height - 40 * Scale), FVector2D(0, (1 - Open) * 70 * Scale), 0, 1, Open);
+    const FMotionGuard Fold(this);
     struct FControl
     {
         FText Key;
         const TCHAR* Text;
     };
-    const auto* State = GetWorld()->GetGameState<AGWGameState>();
+    // In a defense page's build phase the left button also opens the build ring on the floor (the tutorial's from its
+    // drawing step on).
+    const bool Building = State && State->Building();
     TArray<FControl> Items = {{FText::FromString(TEXT("WASD")), TEXT("Key.Move")},
                               {GWText::Get(TEXT("Key.Mouse")), TEXT("Key.Aim")},
-                              {GWText::Get(TEXT("Key.LMB")), TEXT("Key.Fire")}};
+                              {GWText::Get(TEXT("Key.LMB")), Building ? TEXT("Key.FireBuild") : TEXT("Key.Fire")}};
     if (State && State->Hub())
         Items.Append({{FText::FromString(TEXT("E")), TEXT("Key.Use")},
                       {FText::FromString(TEXT("F")), TEXT("Key.Merge")},
                       {FText::FromString(TEXT("Q")), TEXT("Key.Throw")},
                       {GWText::Get(TEXT("Key.Wheel")), TEXT("Key.Zoom")}});
     else if (State && State->Defense())
-        Items.Append({{GWText::Get(TEXT("Key.RMB")), TEXT("Key.Draw")},
-                      {FText::FromString(TEXT("E")), TEXT("Key.Recruit")},
-                      {FText::FromString(TEXT("F")), TEXT("Key.Merge")},
+    {
+        // Blocks and ladders go up only while building: not in a wave, nor before the tutorial's drawing step.
+        if (Building)
+            Items.Add({GWText::Get(TEXT("Key.RMB")), TEXT("Key.DrawBox")});
+        Items.Append({{FText::FromString(TEXT("E")), TEXT("Key.GrabRevive")},
+                      {FText::FromString(TEXT("R")), TEXT("Key.Mend")},
+                      {FText::FromString(TEXT("Shift")), TEXT("Key.Dodge")},
                       {FText::FromString(TEXT("Q")), TEXT("Key.Throw")},
                       {GWText::Get(TEXT("Key.Enter")), TEXT("Defense.StartWave")}});
+    }
+    else if (Expedition)
+        Items.Append({{FText::FromString(TEXT("E")), TEXT("Key.Take")},
+                      {FText::FromString(TEXT("1-5")), TEXT("Key.Slots")},
+                      {FText::FromString(TEXT("G")), TEXT("Key.Drop")},
+                      {FText::FromString(TEXT("Tab")), TEXT("Key.Kit")},
+                      {FText::FromString(TEXT("R")), TEXT("Key.Mend")},
+                      {FText::FromString(TEXT("Shift")), TEXT("Key.Dodge")},
+                      {FText::FromString(TEXT("Q")), TEXT("Key.Throw")}});
     else
         Items.Append({{FText::FromString(TEXT("E")), TEXT("Key.Recruit")},
                       {FText::FromString(TEXT("Q")), TEXT("Key.Throw")},
@@ -547,10 +814,13 @@ void AGWHUD::DrawUpgradeChoices(AGWGameState* S, const FGWUnitView& Unit)
               true, W - 40 * Scale);
         return;
     }
-    const float BannerY = Height * .1f;
-    Tape(FVector2D(Width * .5f, BannerY + 24 * Scale), FMath::Min(Width * .6f, 700 * Scale), 56 * Scale, -1, Marigold.CopyWithNewOpacity(1.6f));
-    Key(TEXT("Combat.WorldPaused"), Width * .5f, BannerY + 6 * Scale, 30 * Scale, Ink, true, Width * .55f, EFace::Heavy);
-    Key(TEXT("Combat.ChooseHint"), Width * .5f, BannerY + 64 * Scale, 17 * Scale, Paper, true, Width * .7f, EFace::Bold);
+    const float BannerY = Height * .1f, Dealt = Since(HashCombine(static_cast<uint32>(Unit.Id), 0xCA4Du + static_cast<uint32>(Unit.PendingUpgrades)));
+    {
+        const auto Pop = PopIn(FVector2D(Width * .5f, BannerY + 24 * Scale), Dealt);
+        Tape(FVector2D(Width * .5f, BannerY + 24 * Scale), FMath::Min(Width * .6f, 700 * Scale) * GWEase::OutBack(Dealt / .35f), 56 * Scale, -1,
+             Marigold.CopyWithNewOpacity(1.6f));
+        Key(TEXT("Combat.WorldPaused"), Width * .5f, BannerY + 6 * Scale, 30 * Scale, Ink, true, Width * .55f, EFace::Heavy);
+    }
     // Spare slots all mean "recovery"; show that card once.
     TArray<int32> Shown;
     bool Recovery = false;
@@ -566,16 +836,21 @@ void AGWHUD::DrawUpgradeChoices(AGWGameState* S, const FGWUnitView& Unit)
     {
         const int32 Index = Shown[Slot], Skill = Unit.Choices[Index];
         const float X = Left + Slot * (W + Gap);
+        // Dealt like playing cards: up from below the table, fanned, one after another.
+        const float P = GWEase::Clamp01((Dealt - .15f - Slot * .1f) / .45f);
+        PushMotion(FVector2D(X + W * .5f, Top + H), FVector2D(0, (1 - GWEase::OutBack(P, 1.2f)) * Height * .6f), (1 - GWEase::OutCubic(P)) * (Slot - 1) * 18.f, 1,
+                   GWEase::Clamp01(P * 3));
+        const FMotionGuard Deal(this);
         const bool Hover = Hovered(X, Top, W, H);
-        const float Rise = Hover ? 10 * Scale : 0, Y = Top - Rise;
+        const float Rise = Eased(HashCombine(static_cast<uint32>(Index), 0xCA4Eu), Hover ? 1.f : 0.f, 14) * 10 * Scale, Y = Top - Rise;
         const FLinearColor Family = SkillFamily(Skill);
         Card(X, Y, W, H, Paper, Hover ? Family : Ink, 700 + Index * 31, Hover ? 2.8f : 1.6f, (Hover ? 3.4f : 2.2f) * Scale);
         Box(X + 8 * Scale, Y + 8 * Scale, W - 16 * Scale, 78 * Scale, Family.CopyWithNewOpacity(.9f));
         Hatch(X + 8 * Scale, Y + 8 * Scale, W - 16 * Scale, 78 * Scale, (Family * .5f).CopyWithNewOpacity(.4f), 9 * Scale, 1.4f * Scale,
               Index);
+        // Cards are picked with the mouse (design v2.1 4.1: 1-5 belong to the expedition's hotbar alone).
         Key(Skill < 0 ? TEXT("Skill.Recovery") : *FString::Printf(TEXT("Skill.Family.%d"), FMath::Clamp(Skill / 4, 0, 4)),
             X + 22 * Scale, Y + 18 * Scale, 16 * Scale, Paper, false, W * .6f, EFace::Heavy);
-        Keycap(FText::AsNumber(Index + 1), X + W - 46 * Scale, Y + 16 * Scale, 30 * Scale, Ink);
         Tape(FVector2D(X + W * .5f, Y + 4 * Scale), 80 * Scale, 20 * Scale, (Index - 1) * 6.f, Paper.CopyWithNewOpacity(1.3f));
         SkillIcon(Skill, FVector2D(X + W * .5f, Y + 104 * Scale), 76 * Scale, 760 + Index);
         const FText Title = GWText::Get(Skill < 0 ? TEXT("Skill.Recovery") : FString::Printf(TEXT("Skill.%d"), Skill));
@@ -585,9 +860,9 @@ void AGWHUD::DrawUpgradeChoices(AGWGameState* S, const FGWUnitView& Unit)
             const int32 Rank = Unit.Skills.IsValidIndex(Skill) ? Unit.Skills[Skill] : 0;
             for (int32 Pip = 0; Pip < 5; ++Pip)
             {
-                const FVector2D P(X + W * .5f + (Pip - 2) * 30 * Scale, Y + 200 * Scale);
+                const FVector2D Pin(X + W * .5f + (Pip - 2) * 30 * Scale, Y + 200 * Scale);
                 const bool Owned = Pip < Rank, Next = Pip == Rank;
-                Glyph(6, P, (Next ? 26 : 20) * Scale, Owned ? Ink : Next ? Family : PaperShade, 780 + Pip);
+                Glyph(6, Pin, (Next ? 26 : 20) * Scale, Owned ? Ink : Next ? Family : PaperShade, 780 + Pip);
             }
             if (Rank == 0)
             {
@@ -604,19 +879,22 @@ void AGWHUD::DrawUpgradeChoices(AGWGameState* S, const FGWUnitView& Unit)
              1);
         Paragraph(GWText::Get(Skill < 0 ? TEXT("Skill.Recovery.Description") : FString::Printf(TEXT("Skill.%d.Description"), Skill)),
                   X + 24 * Scale, Y + 264 * Scale, 18 * Scale, W - 48 * Scale, Ink);
-        Hits.Add({FBox2D(FVector2D(X, Y), FVector2D(X + W, Top + H)), 100 + Index});
+        AddHit(FBox2D(FVector2D(X, Y), FVector2D(X + W, Top + H)), 100 + Index);
     }
 }
 
 void AGWHUD::DrawResults(AGWGameState* S)
 {
     auto* P = PlayerOwner->GetPlayerState<AGWPlayerState>();
-    Box(0, 0, Width, Height, Paper.CopyWithNewOpacity(.9f));
-    Grained(0, 0, Width, Height);
+    const float Age = Since(HashCombine(S->Seed, 0x4E5Du));
+    Box(0, 0, Width, Height, Paper.CopyWithNewOpacity(.9f * GWEase::Clamp01(Age / .25f)));
+    if (Age > .25f)
+        Grained(0, 0, Width, Height);
     const bool Won = S->Winner == 1;
     const FLinearColor Stamp = Won ? Coral : InkSoft;
     const float W = FMath::Min(Width * .62f, 820 * Scale), H = FMath::Min(Height * .7f, 560 * Scale);
     const float X = (Width - W) * .5f, Y = (Height - H) * .45f;
+    const auto Drop = DropIn(FVector2D(Width * .5f, Height * .5f), Age, .05f, 90);
     Card(X, Y, W, H, Paper, Ink, 990, 2.4f, 2.6f * Scale);
     Tape(FVector2D(X + 30 * Scale, Y + 18 * Scale), 90 * Scale, 26 * Scale, -38, Stamp);
     Tape(FVector2D(X + W - 30 * Scale, Y + 18 * Scale), 90 * Scale, 26 * Scale, 38, Stamp);
@@ -633,14 +911,20 @@ void AGWHUD::DrawResults(AGWGameState* S)
         const FVector2D Local(Corner.X * (Size.X * .5f + 34 * Scale), Corner.Y * (Size.Y * .5f + 14 * Scale));
         Border.Add(Center + FVector2D(Local.X * FMath::Cos(A) - Local.Y * FMath::Sin(A), Local.X * FMath::Sin(A) + Local.Y * FMath::Cos(A)));
     }
-    Polygon(Border, Stamp.CopyWithNewOpacity(.08f), Stamp, 4 * Scale, 991);
-    Lettering(Result, Center.X, Center.Y - Size.Y * .5f, StampSize, Stamp, 992);
+    {
+        // The stamp slams down onto the card (confetti on a win).
+        const auto Slam = StampIn(Center, Age, .35f);
+        Polygon(Border, Stamp.CopyWithNewOpacity(.08f), Stamp, 4 * Scale, 991);
+        Lettering(Result, Center.X, Center.Y - Size.Y * .5f, StampSize, Stamp, 992);
+    }
+    if (Won && Age > .55f && Once(HashCombine(S->Seed, 0x57A9u)))
+        Confetti(Center, 46, 1100, 8);
     if (Won)
         Key(TEXT("Result.Survived"), X + W * .5f, Y + H * .47f, 26 * Scale, Ink, true, W * .8f, EFace::Bold);
     Label(GWText::Number(TEXT("Result.Reached"), TEXT("Level"), S->SharedLevel), X + W * .5f, Y + H * .56f, 21 * Scale, InkSoft, true,
           W * .8f, EFace::Bold);
-    Label(GWText::Number(TEXT("Result.Survival"), TEXT("Seconds"), FMath::FloorToInt(S->Elapsed)), X + W * .5f, Y + H * .63f,
-          19 * Scale, InkSoft, true, W * .8f);
+    Label(GWText::Number(TEXT("Result.Survival"), TEXT("Seconds"), FMath::FloorToInt(S->Elapsed)), X + W * .5f, Y + H * .63f, 19 * Scale, InkSoft,
+          true, W * .8f);
     Button(220, GWText::Get(TEXT("Menu.Lobby")), X + W * .08f, Y + H * .76f, W * .4f, 62 * Scale, P && P->Identity == S->HostIdentity,
            false, Teal);
     Button(214, GWText::Get(TEXT("Menu.Leave")), X + W * .52f, Y + H * .76f, W * .4f, 62 * Scale, true, false, Coral);

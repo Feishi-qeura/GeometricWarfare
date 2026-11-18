@@ -5,11 +5,11 @@
 namespace gwgame
 {
 // Meta progression (局外养成, design doc phase 4): what a player keeps between missions. Unlocks (weapons, pens,
-// items) travel into every room whole; research ranks count only up to the room's difficulty tier; hats, titles
-// and achievements are for show. Everything here is plain data and rules shared by the profile (written only by
+// items) and research ranks travel into every room whole (each player's own ranks count for that player, whatever the
+// room's tier: the user's call of 2026-11-16 lifted the old tier cap); hats, titles and achievements are for show. Everything here is plain data and rules shared by the profile (written only by
 // its own player's machine) and the host (which checks what a guest reports, caps it and computes rewards).
 
-// ---- Research desk (研究台): six attributes, five ranks each ----
+// ---- Research desk (研究台): seven attributes, five ranks each ----
 enum class Attribute : uint8_t
 {
     Health,
@@ -18,15 +18,22 @@ enum class Attribute : uint8_t
     Throw,
     Speed,
     Reach,
+    // The expedition's backpack (背包扩容, 2026-11-16): one more bag slot per rank (Expedition.h packSlots).
+    Pack,
+    // The dodge (2026-11-17): its cooldown shorter (冲刺冷却) and its kick stronger (冲刺速度), rank by rank.
+    DashCooldown,
+    DashSpeed,
     Count
 };
 constexpr int AttributeCount = static_cast<int>(Attribute::Count);
 constexpr int MaxRank = 5;
 using Ranks = std::array<uint8_t, AttributeCount>;
-// Per rank (design doc table): health +5%, damage +4%, ink capacity +6%, throw power +5%, speed +2%, pickup +6%.
+// Per rank (design doc table): health +5%, damage +4%, ink capacity +6%, throw power +5%, speed +2%, pickup +6%; the
+// backpack is counted in slots, not percent (attributeStep 0: attributeScale leaves it at 1); the dodge's cooldown -8%
+// (a negative step: the scale shrinks) and its kick +6%.
 inline double attributeStep(Attribute a)
 {
-    static const double Steps[AttributeCount] = {.05, .04, .06, .05, .02, .06};
+    static const double Steps[AttributeCount] = {.05, .04, .06, .05, .02, .06, 0, -.08, .06};
     const int i = static_cast<int>(a);
     return i >= 0 && i < AttributeCount ? Steps[i] : 0;
 }
@@ -50,9 +57,8 @@ inline int researchCost(int current)
 constexpr int MinTier = 1, MaxTier = 5;
 struct TierInfo
 {
-    // cap: the highest research rank that counts; reward: the sticker multiplier; enemyHealth / enemyDamage: how
-    // much tougher and harder-hitting enemies are; elite: the extra share of elites.
-    int cap;
+    // reward: the sticker multiplier; enemyHealth / enemyDamage: how much tougher and harder-hitting enemies are;
+    // elite: the extra share of elites.
     double reward, enemyHealth, enemyDamage, elite;
 };
 inline int clampTier(int tier)
@@ -62,22 +68,40 @@ inline int clampTier(int tier)
 inline const TierInfo& tierInfo(int tier)
 {
     static const TierInfo Tiers[MaxTier] = {
-        {1, 1.0, 1.0, 1.0, 0}, {2, 1.3, 1.25, 1.1, .02}, {3, 1.7, 1.55, 1.2, .04}, {4, 2.2, 1.9, 1.35, .06}, {5, 3.0, 2.3, 1.5, .08}};
+        {1.0, 1.0, 1.0, 0}, {1.3, 1.25, 1.1, .02}, {1.7, 1.55, 1.2, .04}, {2.2, 1.9, 1.35, .06}, {3.0, 2.3, 1.5, .08}};
     return Tiers[clampTier(tier) - 1];
 }
-// The rank that counts in a room of this tier (design doc: 生效等级 = min(自己的等级, 难度档)).
+// The rank that counts in a room (the design doc's min(rank, tier) cap was lifted on 2026-11-16 at the user's request:
+// research is the player's own, in every room and in every party). The tier stays in the signature for callers.
 inline int effectiveRank(int rank, int tier)
 {
-    return std::min(sanitizeRank(rank), tierInfo(tier).cap);
+    (void)tier;
+    return sanitizeRank(rank);
 }
-// Stickers per cleared wave and for a page's first clear, both at the room's tier multiplier.
+// Stickers per cleared wave and for a page's first clear, both at the room's tier multiplier. The expedition refactor
+// (design v2.1, 2.1) halves line defense to a steady starter's income: (4 + wave) a wave, about 95-130 for a page of ten.
 inline int waveStickers(int wave, int tier)
 {
-    return static_cast<int>(std::lround((10 + 2 * std::max(0, wave)) * tierInfo(tier).reward));
+    return static_cast<int>(std::lround((4 + std::max(0, wave)) * tierInfo(tier).reward));
 }
 inline int firstClearStickers(int tier)
 {
     return static_cast<int>(std::lround(50 * tierInfo(tier).reward));
+}
+// The expedition is where stickers come from (high risk, high return): each player banks what their pouch holds when
+// they walk out alive, plus this bonus through the last boss's exit door. A wipe banks nothing.
+constexpr double ExpeditionClearBase = 150;
+inline int expeditionClearBonus(int tier)
+{
+    return static_cast<int>(std::lround(ExpeditionClearBase * tierInfo(tier).reward));
+}
+// The party playlist is the light, silly option: its missions pay 55% of what they would (the stickers they settle
+// are cut by 45%), and the room's MVP gets 20 on top.
+constexpr double PlaylistShare = .55;
+constexpr int PlaylistMvpBonus = 20;
+inline int playlistStickers(int stickers)
+{
+    return static_cast<int>(std::lround(std::max(0, stickers) * PlaylistShare));
 }
 
 // ---- Shop (商店): weapons, pens and single-mission items ----
@@ -108,9 +132,9 @@ enum class Item : uint8_t
 {
     InkBottle, // ink capacity +40% for the mission
     Tape,      // the core gets +150 health
-    Pouch,     // start with a square and two triangles in the tail
+    Pouch,     // the tower kit: the first tower costs no ink
     Plaster,   // the first fall: back up on the spot after 2 s at half health
-    Magnet,    // ink drops are picked up from three times as far
+    Magnet,    // kills pay a quarter more ink, and ink lying around is picked up from three times as far
     Carbon,    // walls cost a quarter less ink
     Count
 };
@@ -120,7 +144,7 @@ inline int itemPrice(int item)
     static const int Prices[ItemCount] = {40, 60, 50, 70, 40, 50};
     return item >= 0 && item < ItemCount ? Prices[item] : -1;
 }
-constexpr double BottleInk = 1.4, TapeCore = 150, MagnetReach = 3, CarbonInk = .75, PlasterDelay = 2;
+constexpr double BottleInk = 1.4, TapeCore = 150, MagnetReach = 3, MagnetInk = 1.25, CarbonInk = .75, PlasterDelay = 2;
 using ItemSlotsArray = std::array<int, ItemSlots>;
 
 // ---- Wardrobe (衣柜): hats and titles, looks only ----
@@ -174,7 +198,43 @@ inline AwardScores awardWinners(const std::vector<AwardScores>& scores)
     return winners;
 }
 
-// ---- Achievements (成就墙): a 64-bit map per player, 32 used so far ----
+// ---- The expedition's feats: one-off moments of a run, a bit each (PlayerStats::feats; Counters keeps every one ever) ----
+enum class Feat : uint8_t
+{
+    FloorCleared, // a floor of the expedition behind you
+    FinalExit,    // out through the last boss's door
+    EarlyRich,    // out through an early exit door with 500 stickers or more
+    BigBank,      // 1000 stickers or more banked in one run
+    Dragon,       // the sage's dragon felled
+    Disarm,       // a boss's part rubbed out with an eraser
+    Toolless,     // the editor's last weapon rubbed out
+    HalfErase,    // half a skill boss rubbed out in one swipe
+    Revive,       // a teammate drawn back
+    TinyRevive,   // a teammate drawn back with a sliver of a shape (under a tenth of the sheet)
+    BorrowedPen,  // a teammate drawn back with a borrowed pen
+    Pair,         // a pistol in each hand (2026-11-17: long guns take both hands)
+    StaplerPair,  // a stapler pistol in each hand (was two rocket launchers, no longer possible)
+    AllLooks,     // a look in every one of the six categories at once
+    Thief,        // the sticker thief caught
+    Arena,        // the thirty-second arena beaten
+    Chained,      // a chained chest held open
+    CopyEraser,   // an eraser copied
+    BigSpin,      // the big wheel spun
+    Reforge2,     // two nibs reforged in one run
+    Vote4,        // a prank ballot with four players or more
+    Flawless,     // a boss felled with nobody falling in the fight
+    TeamExit,     // out through the last door with four players or more in the run
+    Tier3Exit,    // out through the last door on tier 3 or higher
+    WipedRich,    // wiped out with 300 stickers or more in the pouch
+    Count
+};
+constexpr int FeatCount = static_cast<int>(Feat::Count);
+constexpr uint64_t featBit(Feat f)
+{
+    return uint64_t(1) << static_cast<int>(f);
+}
+
+// ---- Achievements (成就墙): a 64-bit map per player; 0-31 the pages and the room, 32-63 the expedition ----
 enum class Achievement : uint8_t
 {
     FirstStroke,    // draw a wall
@@ -209,11 +269,44 @@ enum class Achievement : uint8_t
     LoneWolf,       // clear a page alone, without AI teammates
     Untouched,      // clear chapter 1's last page with the core untouched
     Supplied,       // bring two items into a mission
+    // The expedition (design v2.1 9.1: the 32 spare bits).
+    ExpFirstFloor,  // clear an expedition floor
+    ExpPencilBoss,  // fell the drafting table (the pencil's boss)
+    ExpWalkOut,     // walk out through the last boss's door
+    ExpEarlyRich,   // leave by an early exit door with 500 stickers
+    ExpBigBank,     // bank 1000 stickers in one run
+    ExpAllBosses,   // fell all five biome bosses
+    ExpDragon,      // fell the sage's dragon
+    ExpDisarm,      // rub out a boss's part
+    ExpBareHands,   // leave the editor empty-handed
+    ExpHalfErase,   // rub out half a skill boss in one swipe
+    ExpEraser10,    // rub out 10 enemies with erasers
+    ExpRevive,      // draw a teammate back
+    ExpTinyRevive,  // draw a teammate back with a sliver of a shape
+    ExpGeometry,    // earn the circle, triangle and rectangle bonuses
+    ExpBorrowed,    // draw a teammate back with a borrowed pen
+    ExpPair,        // hold the same gun in both hands
+    ExpStaplerPair, // hold a stapler pistol in each hand
+    ExpAllLooks,    // wear a look in all six categories at once
+    ExpElites,      // fell 25 elites
+    ExpThief,       // catch the sticker thief
+    ExpArena,       // beat the thirty-second arena
+    ExpChained,     // hold a chained chest open
+    ExpCopier,      // copy an eraser
+    ExpBigSpin,     // spin the big wheel
+    ExpReforge,     // reforge two nibs in one run
+    ExpVote,        // finish a prank ballot with four or more
+    ExpGenerous,    // drop 200 stickers that teammates pick up
+    ExpFlawless,    // fell a boss with nobody falling
+    ExpTeamExit,    // walk out of the last door with four or more in the run
+    ExpTier3,       // walk out of the last door on tier 3 or higher
+    ExpRich,        // bank 10000 stickers from expeditions in all
+    ExpWiped,       // lose 300 stickers in a wipe
     Count
 };
 constexpr int AchievementCount = static_cast<int>(Achievement::Count);
 static_assert(AchievementCount <= 64, "the room's achievement map is 64 bits");
-constexpr uint64_t AchievementMask = AchievementCount >= 64 ? ~uint64_t(0) : (uint64_t(1) << AchievementCount) - 1;
+constexpr uint64_t AchievementMask = AchievementCount >= 64 ? ~uint64_t(0) : (uint64_t(1) << (AchievementCount % 64)) - 1;
 struct AchievementInfo
 {
     // Stickers it pays once (design doc: 贴纸 come from waves, first clears and achievements); the hat and the
@@ -226,18 +319,26 @@ inline const AchievementInfo& achievementInfo(int index)
         {25, 0, 0},  {50, 0, 0},  {25, 0, 0},  {100, 0, 8}, {50, 0, 0},  {100, 0, 0}, {50, 0, 0},  {100, 0, 0},
         {200, 7, 10}, {25, 0, 0}, {50, 0, 0},  {50, 0, 0},  {25, 0, 0},  {100, 0, 0}, {25, 0, 0},  {50, 0, 6},
         {50, 0, 0},  {25, 0, 0},  {50, 0, 0},  {200, 0, 7}, {100, 0, 0}, {50, 0, 0},  {50, 0, 0},  {100, 0, 9},
-        {100, 0, 0}, {50, 0, 0},  {50, 0, 0},  {50, 0, 0},  {100, 0, 0}, {50, 0, 0},  {50, 0, 0},  {25, 0, 0}};
+        {100, 0, 0}, {50, 0, 0},  {50, 0, 0},  {50, 0, 0},  {100, 0, 0}, {50, 0, 0},  {50, 0, 0},  {25, 0, 0},
+        // The expedition's.
+        {25, 0, 0},  {50, 0, 0},  {150, 0, 0}, {75, 0, 0},  {100, 0, 0}, {250, 0, 0}, {150, 0, 0}, {50, 0, 0},
+        {100, 0, 0}, {75, 0, 0},  {75, 0, 0},  {25, 0, 0},  {50, 0, 0},  {100, 0, 0}, {50, 0, 0},  {25, 0, 0},
+        {75, 0, 0},  {50, 0, 0},  {100, 0, 0}, {75, 0, 0},  {50, 0, 0},  {50, 0, 0},  {50, 0, 0},  {25, 0, 0},
+        {50, 0, 0},  {50, 0, 0},  {75, 0, 0},  {100, 0, 0}, {100, 0, 0}, {150, 0, 0}, {200, 0, 0}, {25, 0, 0}};
     static const AchievementInfo None{0, 0, 0};
     return index >= 0 && index < AchievementCount ? Infos[index] : None;
 }
 
 // ---- Difficulty unlocks ----
-// Chapter 1 is the only notebook so far (three pages, nine stars), so the doc's gates (12 stars in chapters 1,
-// 2 and 3, then chapter 3's last page on tier 4) stand in as: six chapter-1 stars open tier 2, all nine open
-// tier 3, chapter 1's last page cleared on tier 3 opens tier 4, and on tier 4 opens tier 5. Replaced by the doc's
-// gates when chapters 2 and 3 arrive (phase 6).
+// Three notebooks of three pages (27 stars). The doc names 12 stars across chapters 1-3 and chapter 3's last page;
+// the gates (Claude's call, 2026-11-11): six stars anywhere open tier 2, twelve open tier 3, the last page (3-3)
+// cleared on tier 3 opens tier 4, and cleared on tier 4 opens tier 5.
+// The expedition keeps one record of its own, beside the pages.
+constexpr const char* ExpeditionId = "EX";
 inline bool knownPage(const std::string& page)
 {
+    if (page == ExpeditionId)
+        return true;
     for (const auto& level : defenseLevels())
         if (page == level.id)
             return true;
@@ -276,6 +377,8 @@ struct Loadout
     int weapon = 0, pen = 0, hat = 0, title = 0;
     ItemSlotsArray items{{-1, -1}};
     uint64_t achievements = 0;
+    // The weapons the player owns (a bit per kind; the pistol always): the expedition's loot favours them.
+    uint32_t weapons = 1;
 };
 // The host's check on a guest's report (进房校验): anything outside the game's lists counts as nothing.
 inline Loadout sanitize(const Loadout& in)
@@ -295,6 +398,9 @@ inline Loadout sanitize(const Loadout& in)
         if (item < 0 || item >= ItemCount)
             item = -1;
     out.achievements &= AchievementMask;
+    out.weapons = (out.weapons & ((1u << WeaponCount) - 1)) | 1u;
+    if (!((out.weapons >> out.weapon) & 1u))
+        out.weapons |= 1u << out.weapon;
     return out;
 }
 
@@ -305,7 +411,14 @@ struct Counters
     int64_t missions = 0, wins = 0, loneWins = 0;
     int maxParty = 0, maxItems = 0;
     std::array<int, AwardCount> awards{};
+    // The expedition: every feat ever earned (a bit each), enemies erased, elites felled, stickers dropped for teammates,
+    // stickers banked on the way out, the biome bosses felled and the revive shape bonuses drawn (a bit each).
+    uint64_t feats = 0;
+    int64_t erased = 0, elites = 0, given = 0, banked = 0;
+    int bosses = 0, shapes = 0;
 };
+// The most an expedition's exit may settle in one packet (a whole run's pouch at once).
+constexpr int ExpeditionRewardCap = 5000;
 // One player's share of a mission since the host's last packet (a wave, the end, a bullseye in the hub).
 struct Tally
 {
@@ -314,19 +427,30 @@ struct Tally
     bool final = false, won = false, bots = false;
     int players = 0, items = 0;
     uint8_t awards = 0;
+    // The expedition's share (PlayerStats): feats, erased, elites, stickers given and banked, bosses and shape bits.
+    uint64_t feats = 0;
+    int erased = 0, elites = 0, given = 0, banked = 0, bosses = 0, shapes = 0;
 };
 // What one packet may carry at most; a packet beyond any bound is dropped whole (design doc: 奖励包上限).
 inline bool plausible(const Tally& t)
 {
     auto in = [](int value, int most) { return value >= 0 && value <= most; };
     return in(t.kills, 3000) && in(t.damage, 3000000) && in(t.walls, 3000) && in(t.thrown, 500) && in(t.throws, 500) && in(t.held, 3000) &&
-           in(t.inkGiven, 200000) && in(t.bullseyes, 500) && in(t.players, 8) && in(t.items, ItemSlots) && t.awards < (1 << AwardCount);
+           in(t.inkGiven, 200000) && in(t.bullseyes, 500) && in(t.players, 8) && in(t.items, ItemSlots) && t.awards < (1 << AwardCount) &&
+           t.feats < (uint64_t(1) << FeatCount) && in(t.erased, 500) && in(t.elites, 500) && in(t.given, 100000) &&
+           in(t.banked, ExpeditionRewardCap) && in(t.bosses, 31) && in(t.shapes, 7);
 }
 
 // A player's profile as rules see it (the UE save mirrors these fields).
 struct MetaProfile
 {
-    static constexpr int MaxStickersPerReward = 400;
+    // A reward packet above its cap is dropped whole (design doc: 奖励包上限). An expedition's exit settles a whole run's
+    // pouch at once (400-1500 and more on high tiers), so its record has a cap of its own.
+    static constexpr int MaxStickersPerReward = 400, MaxExpeditionStickersPerClear = ExpeditionRewardCap;
+    static int rewardCap(const std::string& page)
+    {
+        return page == ExpeditionId ? MaxExpeditionStickersPerClear : MaxStickersPerReward;
+    }
     int stickers = 0, stickersTotal = 0, wavesCleared = 0, levelsCleared = 0;
     std::map<std::string, uint8_t> results;
     Ranks ranks{};
@@ -381,12 +505,12 @@ struct MetaProfile
     }
     int unlockedTier() const
     {
-        const int chapterStars = starCount("1-");
-        const std::string last = lastPage("1-");
+        const int allStars = starCount("");
+        const std::string last = lastPage("3-");
         int tier = 1;
-        if (chapterStars >= 6)
+        if (allStars >= 6)
             tier = 2;
-        if (chapterStars >= 9)
+        if (allStars >= 12)
             tier = 3;
         if (tier >= 3 && bestTier(last) >= 3)
             tier = 4;
@@ -523,7 +647,7 @@ struct MetaProfile
     {
         if (firstClear)
             *firstClear = 0;
-        if (!knownPage(page) || gain < 0 || gain > MaxStickersPerReward)
+        if (!knownPage(page) || gain < 0 || gain > rewardCap(page))
             return -1;
         tier = clampTier(tier);
         const int bonus = clear && !cleared(page) ? firstClearStickers(tier) : 0;
@@ -556,6 +680,13 @@ struct MetaProfile
         counters.held += t.held;
         counters.inkGiven += t.inkGiven;
         counters.bullseyes += t.bullseyes;
+        counters.feats |= t.feats;
+        counters.erased += t.erased;
+        counters.elites += t.elites;
+        counters.given += t.given;
+        counters.bosses |= t.bosses;
+        counters.shapes |= t.shapes;
+        counters.banked += t.banked;
         if (t.final)
         {
             ++counters.missions;
@@ -669,6 +800,76 @@ struct MetaProfile
         case Achievement::Supplied:
             return c.maxItems >= ItemSlots;
         default:
+            break;
+        }
+        auto feat = [&](Feat f) { return (c.feats & featBit(f)) != 0; };
+        switch (a)
+        {
+        case Achievement::ExpFirstFloor:
+            return feat(Feat::FloorCleared);
+        case Achievement::ExpPencilBoss:
+            return (c.bosses & 1) != 0;
+        case Achievement::ExpWalkOut:
+            return feat(Feat::FinalExit);
+        case Achievement::ExpEarlyRich:
+            return feat(Feat::EarlyRich);
+        case Achievement::ExpBigBank:
+            return feat(Feat::BigBank);
+        case Achievement::ExpAllBosses:
+            return (c.bosses & 31) == 31;
+        case Achievement::ExpDragon:
+            return feat(Feat::Dragon);
+        case Achievement::ExpDisarm:
+            return feat(Feat::Disarm);
+        case Achievement::ExpBareHands:
+            return feat(Feat::Toolless);
+        case Achievement::ExpHalfErase:
+            return feat(Feat::HalfErase);
+        case Achievement::ExpEraser10:
+            return c.erased >= 10;
+        case Achievement::ExpRevive:
+            return feat(Feat::Revive);
+        case Achievement::ExpTinyRevive:
+            return feat(Feat::TinyRevive);
+        case Achievement::ExpGeometry:
+            return (c.shapes & 7) == 7;
+        case Achievement::ExpBorrowed:
+            return feat(Feat::BorrowedPen);
+        case Achievement::ExpPair:
+            return feat(Feat::Pair);
+        case Achievement::ExpStaplerPair:
+            return feat(Feat::StaplerPair);
+        case Achievement::ExpAllLooks:
+            return feat(Feat::AllLooks);
+        case Achievement::ExpElites:
+            return c.elites >= 25;
+        case Achievement::ExpThief:
+            return feat(Feat::Thief);
+        case Achievement::ExpArena:
+            return feat(Feat::Arena);
+        case Achievement::ExpChained:
+            return feat(Feat::Chained);
+        case Achievement::ExpCopier:
+            return feat(Feat::CopyEraser);
+        case Achievement::ExpBigSpin:
+            return feat(Feat::BigSpin);
+        case Achievement::ExpReforge:
+            return feat(Feat::Reforge2);
+        case Achievement::ExpVote:
+            return feat(Feat::Vote4);
+        case Achievement::ExpGenerous:
+            return c.given >= 200;
+        case Achievement::ExpFlawless:
+            return feat(Feat::Flawless);
+        case Achievement::ExpTeamExit:
+            return feat(Feat::TeamExit);
+        case Achievement::ExpTier3:
+            return feat(Feat::Tier3Exit);
+        case Achievement::ExpRich:
+            return c.banked >= 10000;
+        case Achievement::ExpWiped:
+            return feat(Feat::WipedRich);
+        default:
             return false;
         }
     }
@@ -715,6 +916,7 @@ struct MetaProfile
             out.items[i] = item >= 0 && item < ItemCount && before < items[item] ? item : -1;
         }
         out.achievements = achievements & AchievementMask;
+        out.weapons = weapons;
         return sanitize(out);
     }
 };

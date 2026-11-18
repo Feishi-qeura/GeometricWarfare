@@ -9,7 +9,7 @@ public class GeometricWarfare : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "NetCore", "FUOnlineSession" });
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "RenderCore", "Json", "DeveloperSettings", "CoreOnline", "OnlineSubsystem", "OnlineSubsystemUtils", "Niagara" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "RenderCore", "Json", "DeveloperSettings", "CoreOnline", "OnlineSubsystem", "OnlineSubsystemUtils", "Niagara", "MediaAssets", "AudioMixer" });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

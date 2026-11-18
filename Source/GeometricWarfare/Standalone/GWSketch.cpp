@@ -5,6 +5,7 @@
 #include "Fonts/FontMeasure.h"
 #include "Framework/Application/SlateApplication.h"
 #include "GWHUD.h"
+#include "GWMotion.h"
 #include "GWPalette.h"
 #include "GWText.h"
 #include "TextureResource.h"
@@ -39,6 +40,9 @@ UFont* AGWHUD::FaceFont(EFace Face) const
 
 void AGWHUD::Line(FVector2D A, FVector2D B, FLinearColor Color, float Thickness)
 {
+    Color.A *= Fade;
+    if (Color.A <= .002f)
+        return;
     FCanvasLineItem Item(A, B);
     Item.SetColor(Color);
     Item.LineThickness = Thickness;
@@ -77,7 +81,8 @@ void AGWHUD::Pen(FVector2D A, FVector2D B, FLinearColor Color, float Thickness, 
 
 void AGWHUD::Fill(const TArray<FVector2D>& Points, FLinearColor Color)
 {
-    if (Points.Num() < 3 || Color.A <= 0)
+    Color.A *= Fade;
+    if (Points.Num() < 3 || Color.A <= .002f)
         return;
     TArray<FCanvasUVTri> Triangles;
     for (int32 I = 1; I + 1 < Points.Num(); ++I)
@@ -97,6 +102,9 @@ void AGWHUD::Fill(const TArray<FVector2D>& Points, FLinearColor Color)
 
 void AGWHUD::Box(float X, float Y, float W, float H, FLinearColor Color)
 {
+    Color.A *= Fade;
+    if (Color.A <= .002f)
+        return;
     FCanvasTileItem Tile(FVector2D(X, Y), FVector2D(W, H), Color);
     Tile.BlendMode = SE_BLEND_Translucent;
     Canvas->DrawItem(Tile);
@@ -104,7 +112,8 @@ void AGWHUD::Box(float X, float Y, float W, float H, FLinearColor Color)
 
 void AGWHUD::Grained(float X, float Y, float W, float H, float)
 {
-    if (!Grain || !Grain->GetResource() || W <= 0 || H <= 0)
+    // Grain multiplies what is under it, so it cannot fade: a card still fading in goes without it.
+    if (!Grain || !Grain->GetResource() || W <= 0 || H <= 0 || Fade < .98f)
         return;
     const float Tile = 256 * FMath::Max(.75f, Scale);
     FCanvasTileItem Item(FVector2D(X, Y), Grain->GetResource(), FVector2D(W, H), FVector2D(X / Tile, Y / Tile),
@@ -236,8 +245,14 @@ void AGWHUD::Polygon(const TArray<FVector2D>& Points, FLinearColor FillColor, FL
 
 void AGWHUD::Meter(float X, float Y, float W, float H, float Value, FLinearColor Color, int32 Seed, bool Ticks)
 {
-    Value = FMath::Clamp(Value, 0.f, 1.f);
+    // The fill eases to its value; a drop leaves a pale ghost of what was lost that drains after it.
+    float Ghost = 0;
+    // Keyed by its seed and size (not its place: a health bar over a unit moves every frame).
+    const uint32 Id = HashCombine(static_cast<uint32>(Seed), HashCombine(static_cast<uint32>(FMath::RoundToInt(W)), static_cast<uint32>(FMath::RoundToInt(H * 10))));
+    Value = FMath::Clamp(Eased(Id, FMath::Clamp(Value, 0.f, 1.f), 12, &Ghost), 0.f, 1.f);
     Box(X, Y, W, H, GWPalette::PaperShade);
+    if (Ghost > Value + .002f)
+        Box(X + W * Value, Y, W * (FMath::Min(Ghost, 1.f) - Value), H, FMath::Lerp(Color, GWPalette::Paper, .55f).CopyWithNewOpacity(.95f));
     if (Value > 0)
     {
         Box(X, Y, W * Value, H, Color.CopyWithNewOpacity(.88f));
@@ -485,7 +500,7 @@ void AGWHUD::Keycap(const FText& KeyText, float X, float Y, float Size, FLinearC
 
 void AGWHUD::Doodles(FBox2D Area, int32 Seed, float Alpha)
 {
-    const FLinearColor Pencil = GWPalette::Pencil.CopyWithNewOpacity(Alpha);
+    const FLinearColor Lead = GWPalette::Pencil.CopyWithNewOpacity(Alpha);
     for (int32 I = 0; I < 18; ++I)
     {
         const FVector2D P(FMath::Lerp(Area.Min.X, Area.Max.X, .5f + .5f * Noise(Seed, I)),
@@ -493,29 +508,29 @@ void AGWHUD::Doodles(FBox2D Area, int32 Seed, float Alpha)
         const float S = (10 + 8 * FMath::Abs(Noise(Seed, I + 99))) * Scale;
         const int32 Kind = (I + Seed) % 5;
         if (Kind == 0)
-            Circle(P, S * .5f, Pencil, 1.2f * Scale, Seed + I);
+            Circle(P, S * .5f, Lead, 1.2f * Scale, Seed + I);
         else if (Kind == 1)
         {
             const FVector2D A = P + FVector2D(0, -S * .55f), B = P + FVector2D(S * .5f, S * .35f), C = P + FVector2D(-S * .5f, S * .35f);
-            Pen(A, B, Pencil, 1.2f * Scale, Seed + I);
-            Pen(B, C, Pencil, 1.2f * Scale, Seed + I + 1);
-            Pen(C, A, Pencil, 1.2f * Scale, Seed + I + 2);
+            Pen(A, B, Lead, 1.2f * Scale, Seed + I);
+            Pen(B, C, Lead, 1.2f * Scale, Seed + I + 1);
+            Pen(C, A, Lead, 1.2f * Scale, Seed + I + 2);
         }
         else if (Kind == 2)
         {
             const float H = S * .45f;
-            Pen(P + FVector2D(-H, -H), P + FVector2D(H, -H), Pencil, 1.2f * Scale, Seed + I);
-            Pen(P + FVector2D(H, -H), P + FVector2D(H, H), Pencil, 1.2f * Scale, Seed + I + 1);
-            Pen(P + FVector2D(H, H), P + FVector2D(-H, H), Pencil, 1.2f * Scale, Seed + I + 2);
-            Pen(P + FVector2D(-H, H), P + FVector2D(-H, -H), Pencil, 1.2f * Scale, Seed + I + 3);
+            Pen(P + FVector2D(-H, -H), P + FVector2D(H, -H), Lead, 1.2f * Scale, Seed + I);
+            Pen(P + FVector2D(H, -H), P + FVector2D(H, H), Lead, 1.2f * Scale, Seed + I + 1);
+            Pen(P + FVector2D(H, H), P + FVector2D(-H, H), Lead, 1.2f * Scale, Seed + I + 2);
+            Pen(P + FVector2D(-H, H), P + FVector2D(-H, -H), Lead, 1.2f * Scale, Seed + I + 3);
         }
         else if (Kind == 3)
         {
-            Pen(P + FVector2D(-S * .5f, 0), P + FVector2D(S * .5f, 0), Pencil, 1.2f * Scale, Seed + I);
-            Pen(P + FVector2D(0, -S * .5f), P + FVector2D(0, S * .5f), Pencil, 1.2f * Scale, Seed + I + 1);
+            Pen(P + FVector2D(-S * .5f, 0), P + FVector2D(S * .5f, 0), Lead, 1.2f * Scale, Seed + I);
+            Pen(P + FVector2D(0, -S * .5f), P + FVector2D(0, S * .5f), Lead, 1.2f * Scale, Seed + I + 1);
         }
         else
-            Arc(P, S * .45f, 0, PI * 1.5f, Pencil, 1.2f * Scale);
+            Arc(P, S * .45f, 0, PI * 1.5f, Lead, 1.2f * Scale);
     }
 }
 
@@ -529,6 +544,9 @@ FVector2D AGWHUD::Measure(const FText& Text, float Size, EFace Face) const
 
 void AGWHUD::Label(const FText& Text, float X, float Y, float Size, FLinearColor Color, bool Center, float MaxWidth, EFace Face)
 {
+    Color.A *= Fade;
+    if (Color.A <= .002f)
+        return;
     if (MaxWidth > 0)
     {
         const FVector2D Extent = Measure(Text, Size, Face);
@@ -545,9 +563,13 @@ void AGWHUD::Key(const TCHAR* Id, float X, float Y, float Size, FLinearColor Col
     Label(GWText::Get(Id), X, Y, Size, Color, Center, MaxWidth, Face);
 }
 
-void AGWHUD::Lettering(const FText& Text, float X, float Y, float Size, FLinearColor Color, int32 Seed)
+void AGWHUD::Lettering(const FText& Text, float X, float Y, float Size, FLinearColor Color, int32 Seed, float Age)
 {
-    // Hand lettering: each glyph sits a little off the baseline with a soft graphite shadow.
+    // Hand lettering: each glyph sits a little off the baseline with a soft graphite shadow. Given an age, the
+    // letters drop onto the line one after another and bounce once.
+    Color.A *= Fade;
+    if (Color.A <= .002f)
+        return;
     const FString Source = Text.ToString();
     TArray<float> Widths;
     float Total = 0;
@@ -561,25 +583,47 @@ void AGWHUD::Lettering(const FText& Text, float X, float Y, float Size, FLinearC
     for (int32 I = 0; I < Source.Len(); ++I)
     {
         const FText Char = FText::FromString(Source.Mid(I, 1));
-        const float Jitter = Noise(Seed + Boil / 2, I) * Size * .035f, Grow = 1 + Noise(Seed, I + 40) * .04f;
-        const float Sz = Size * Grow;
-        FCanvasTextItem Shadow(FVector2D(Cursor + 3 * Scale, Y + Jitter + 4 * Scale), Char,
-                               FSlateFontInfo(FaceFont(EFace::Heavy), FMath::RoundToInt(Sz)), GWPalette::Ink.CopyWithNewOpacity(.16f));
-        Canvas->DrawItem(Shadow);
-        for (const FVector2D& Offset : {FVector2D(0, 0), FVector2D(.7f * Scale, .4f * Scale)})
+        float Drop = 0, Alpha = 1;
+        if (Age >= 0)
         {
-            FCanvasTextItem Item(FVector2D(Cursor, Y + Jitter) + Offset, Char, FSlateFontInfo(FaceFont(EFace::Heavy), FMath::RoundToInt(Sz)),
-                                 Color);
-            Canvas->DrawItem(Item);
+            const float P = (Age - I * .045f) / .34f;
+            Drop = -(1 - GWEase::OutBack(P, 2.4f)) * Size * .55f;
+            Alpha = GWEase::Clamp01(P * 3);
+        }
+        const float Jitter = Noise(Seed + Boil / 2, I) * Size * .035f + Drop, Grow = 1 + Noise(Seed, I + 40) * .04f;
+        const float Sz = Size * Grow;
+        if (Alpha > .01f)
+        {
+            FCanvasTextItem Shadow(FVector2D(Cursor + 3 * Scale, Y + Jitter + 4 * Scale - Drop * .4f), Char,
+                                   FSlateFontInfo(FaceFont(EFace::Heavy), FMath::RoundToInt(Sz)),
+                                   GWPalette::Ink.CopyWithNewOpacity(.16f * Alpha * Fade));
+            Canvas->DrawItem(Shadow);
+            for (const FVector2D& Offset : {FVector2D(0, 0), FVector2D(.7f * Scale, .4f * Scale)})
+            {
+                FCanvasTextItem Item(FVector2D(Cursor, Y + Jitter) + Offset, Char, FSlateFontInfo(FaceFont(EFace::Heavy), FMath::RoundToInt(Sz)),
+                                     Color.CopyWithNewOpacity(Color.A * Alpha));
+                Canvas->DrawItem(Item);
+            }
         }
         Cursor += Widths[I] + Size * .02f;
     }
 }
 
+float AGWHUD::LetteringWidth(const FString& Text, float Size) const
+{
+    float Total = 0;
+    for (int32 I = 0; I < Text.Len(); ++I)
+        Total += Measure(FText::FromString(Text.Mid(I, 1)), Size, EFace::Heavy).X + Size * .02f;
+    return Total;
+}
+
 bool AGWHUD::Hovered(float X, float Y, float W, float H) const
 {
     float MX = -1, MY = -1;
-    return PlayerOwner && PlayerOwner->GetMousePosition(MX, MY) && MX >= X && MY >= Y && MX <= X + W && MY <= Y + H;
+    if (!PlayerOwner || !PlayerOwner->GetMousePosition(MX, MY))
+        return false;
+    const FVector2D M = FromScreen(FVector2D(MX, MY));
+    return M.X >= X && M.Y >= Y && M.X <= X + W && M.Y <= Y + H;
 }
 
 void AGWHUD::Button(int32 Id, const FText& Text, float X, float Y, float W, float H, bool Enabled, bool Selected,
@@ -587,11 +631,13 @@ void AGWHUD::Button(int32 Id, const FText& Text, float X, float Y, float W, floa
 {
     const FLinearColor Mark = Accent.A > 0 ? Accent : GWPalette::Teal;
     const bool Hover = Enabled && Hovered(X, Y, W, H);
-    const float Rise = Hover ? 2.5f * Scale : 0;
+    // Hover eases in: the card lifts and a marker stroke sweeps across under the caption.
+    const float Lift = Eased(HashCombine(static_cast<uint32>(Id), 0x6B7u), Hover ? 1.f : 0.f, 16);
+    const float Rise = Lift * 3 * Scale;
     const FLinearColor Face = !Enabled ? GWPalette::PaperShade : Selected ? Mark : GWPalette::Paper;
-    Card(X, Y - Rise, W, H, Face, Enabled ? GWPalette::Ink : GWPalette::Pencil, Id * 13 + 5, Hover ? 1.6f : 1, 2 * Scale);
-    if (Hover && !Selected)
-        Highlight(X + W * .1f, Y - Rise + H * .22f, W * .8f, H * .56f, GWPalette::Marigold.CopyWithNewOpacity(.42f), Id);
+    Card(X, Y - Rise, W, H, Face, Enabled ? GWPalette::Ink : GWPalette::Pencil, Id * 13 + 5, 1 + .7f * Lift, 2 * Scale);
+    if (Lift > .02f && !Selected)
+        Highlight(X + W * .1f, Y - Rise + H * .22f, W * .8f * Lift, H * .56f, GWPalette::Marigold.CopyWithNewOpacity(.42f), Id);
     const float Size = FMath::Min(22 * Scale, H * .42f);
     if (!Enabled)
     {
@@ -604,7 +650,7 @@ void AGWHUD::Button(int32 Id, const FText& Text, float X, float Y, float W, floa
     Label(Text, X + W * .5f, Y - Rise + (H - Size * 1.25f) * .5f, Size,
           !Enabled ? GWPalette::InkSoft : Selected ? GWPalette::Paper : GWPalette::Ink, true, W - 26 * Scale, EFace::Bold);
     if (Enabled)
-        Hits.Add({FBox2D(FVector2D(X, Y - Rise), FVector2D(X + W, Y + H)), Id});
+        AddHit(FBox2D(FVector2D(X, Y - Rise), FVector2D(X + W, Y + H)), Id);
 }
 
 float AGWHUD::Paragraph(const FText& Text, float X, float Y, float Size, float MaxWidth, FLinearColor Color)

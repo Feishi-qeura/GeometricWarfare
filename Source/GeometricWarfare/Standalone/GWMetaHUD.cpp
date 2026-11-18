@@ -17,12 +17,12 @@ using namespace GWPalette;
 
 namespace
 {
-// Icon kinds for MetaIcon: items 0-5, hats 10-17, pens 20-22, attributes 30-35.
+// Icon kinds for MetaIcon: items 0-5, hats 10-17, pens 20-22, attributes 30-38.
 constexpr int32 HatIcon = 10, PenIcon = 20, AttributeIcon = 30;
 FLinearColor AttributeColor(int32 A)
 {
-    const FLinearColor Colors[] = {Coral, Fire, Cobalt, Teal, Marigold, Leaf};
-    return Colors[FMath::Clamp(A, 0, 5)];
+    const FLinearColor Colors[] = {Coral, Fire, Cobalt, Teal, Marigold, Leaf, Kraft, Violet, Frost};
+    return Colors[FMath::Clamp(A, 0, 8)];
 }
 FLinearColor PenColor(int32 P)
 {
@@ -45,7 +45,11 @@ FBadge Badge(int32 Index)
         {1, Kraft},  {2, Kraft},     {8, Coral},    {8, Cobalt}, {5, Marigold}, {5, Coral},    {11, Marigold}, {11, Coral},
         {18, Marigold}, {15, Teal},  {15, Coral},   {15, Cobalt}, {0, Coral},   {0, Plum},     {10, Coral},    {10, Marigold},
         {23, Cobalt}, {14, Teal},    {14, Cobalt},  {18, Teal},  {20, Kraft},   {6, Leaf},     {22, Plum},     {5, Leaf},
-        {17, Danger}, {5, Fire},     {17, Pencil},  {4, Teal},   {4, Coral},    {3, Cobalt},   {21, Leaf},     {20, Teal}};
+        {17, Danger}, {5, Fire},     {17, Pencil},  {4, Teal},   {4, Coral},    {3, Cobalt},   {21, Leaf},     {20, Teal},
+        {8, Teal},    {18, Kraft},   {16, Teal},    {16, Leaf},  {5, Marigold}, {18, Danger},  {18, Plum},     {22, Kraft},
+        {22, Danger}, {22, Plum},    {22, Marigold}, {14, Leaf}, {0, Leaf},     {3, Teal},     {14, Plum},     {20, Coral},
+        {20, Fire},   {12, Magenta}, {18, Magenta}, {6, Marigold}, {11, Leaf},  {15, Kraft},   {22, Teal},     {10, Fire},
+        {11, Magenta}, {4, Magenta}, {5, Coral},    {16, Marigold}, {4, Cobalt}, {11, Danger},  {5, Teal},      {17, Pencil}};
     return Badges[FMath::Clamp(Index, 0, gwgame::AchievementCount - 1)];
 }
 // The hat (or title) an achievement opens, for "Achievement: <name>" lines.
@@ -231,6 +235,28 @@ void AGWHUD::MetaIcon(int32 Kind, FVector2D C, float Size, FLinearColor Color, i
         Arc(C, R * .58f, -PI * .8f, PI * .3f, Color, W * 2.2f);
         Arc(C, R * .9f, -PI * .7f, PI * .2f, Color, W * 2.2f);
         break;
+    case AttributeIcon + 6:
+        // The backpack: a kraft satchel with its flap, a strap and a buckle.
+        Arc(P(0, -.42f), R * .34f, PI, 2 * PI, Ink, W * 1.8f);
+        Polygon({P(-.72f, -.4f), P(.72f, -.4f), P(.8f, .82f), P(-.8f, .82f)}, Color, Ink, W * 1.4f, Seed);
+        Polygon({P(-.72f, -.4f), P(.72f, -.4f), P(.6f, .22f), P(-.6f, .22f)}, Color * FLinearColor(1.12f, 1.12f, 1.12f, 1), Ink, W * 1.4f, Seed + 1);
+        Polygon({P(-.14f, .1f), P(.14f, .1f), P(.14f, .4f), P(-.14f, .4f)}, Marigold, Ink, W, Seed + 2);
+        break;
+    case AttributeIcon + 7:
+        // The dodge's cooldown (2026-11-17): a clock whose violet wedge is cut short, its hands at a quarter past.
+        Disc(C, R * .86f, Paper);
+        Arc(C, R * .58f, -PI * .5f, PI * .25f, Color, R * .5f);
+        Circle(C, R * .86f, Ink, W * 1.4f, Seed);
+        Pen(C, P(0, -.6f), Ink, W * 1.6f, Seed + 1, .1f);
+        Pen(C, P(.45f, 0), Ink, W * 1.6f, Seed + 2, .1f);
+        Disc(C, R * .1f, Ink);
+        break;
+    case AttributeIcon + 8:
+        // The dodge's kick (2026-11-17): a frost arrowhead with three speed lines trailing behind it.
+        for (int32 I = 0; I < 3; ++I)
+            Pen(P(-.95f + I * .12f, -.42f + I * .42f), P(-.12f, -.42f + I * .42f), Color, W * 2.2f, Seed + I, .2f);
+        Polygon({P(-.05f, -.7f), P(.95f, 0), P(-.05f, .7f), P(.2f, 0)}, Color, Ink, W * 1.3f, Seed + 4);
+        break;
     default:
         if (Kind >= AttributeIcon && Kind < AttributeIcon + 4)
         {
@@ -411,31 +437,32 @@ void AGWHUD::ResearchPanel(AGWGameState* S, float X, float Y, float W, float H)
     if (!Save)
         return;
     const gwgame::MetaProfile P = Save->ToCore();
-    // The room's cap first (Gate 4: a veteran in a newcomer's room sees exactly how much of their research counts).
-    const int32 Tier = FMath::Clamp(static_cast<int32>(S->Tier), gwgame::MinTier, gwgame::MaxTier);
-    FFormatNamedArguments CapArgs;
-    CapArgs.Add(TEXT("Tier"), Tier);
-    const FText Cap = FText::Format(GWText::Get(Tier >= gwgame::MaxTier ? TEXT("Research.CapAll") : TEXT("Research.Cap")), CapArgs);
-    const float CapW = FMath::Min(Measure(Cap, 17 * Scale, EFace::Bold).X + 70 * Scale, W * .66f);
-    Card(X, Y, CapW, 40 * Scale, Hex(0xE6F0FB), Ink, 2400, 1.f);
-    Polygon({FVector2D(X + 14 * Scale, Y + 8 * Scale), FVector2D(X + 40 * Scale, Y + 8 * Scale), FVector2D(X + 40 * Scale, Y + 32 * Scale),
-             FVector2D(X + 14 * Scale, Y + 32 * Scale)},
-            Cobalt, Ink, 1.4f * Scale, 2401);
-    Label(FText::AsNumber(Tier), X + 27 * Scale, Y + 9 * Scale, 17 * Scale, Paper, true, 0, EFace::Heavy);
-    Label(Cap, X + 52 * Scale, Y + 10 * Scale, 17 * Scale, Ink, false, CapW - 60 * Scale, EFace::Bold);
+    // Research is the player's own (2026-11-16): every rank counts in any room, for this player alone.
+    const FText Whole = GWText::Get(TEXT("Research.Whole"));
+    const float WholeW = FMath::Min(Measure(Whole, 17 * Scale, EFace::Bold).X + 64 * Scale, W * .66f);
+    Card(X, Y, WholeW, 40 * Scale, Hex(0xE6F7EE), Ink, 2400, 1.f);
+    Glyph(16, FVector2D(X + 26 * Scale, Y + 20 * Scale), 22 * Scale, Teal, 2401);
+    Label(Whole, X + 48 * Scale, Y + 10 * Scale, 17 * Scale, Ink, false, WholeW - 56 * Scale, EFace::Bold);
     StickerChip(P.stickers, X + W, Y + 2 * Scale);
-    const float Top = Y + 56 * Scale, RowH = (Y + H - Top - 34 * Scale) / gwgame::AttributeCount;
+    (void)S;
+    const float Top = Y + 54 * Scale, RowH = (Y + H - Top - 30 * Scale) / gwgame::AttributeCount;
     for (int32 A = 0; A < gwgame::AttributeCount; ++A)
     {
         const auto Attr = static_cast<gwgame::Attribute>(A);
-        const int32 Rank = P.ranks[A], Counted = gwgame::effectiveRank(Rank, Tier);
+        const bool Bag = Attr == gwgame::Attribute::Pack;
+        const int32 Rank = P.ranks[A], Counted = Rank;
         const float RY = Top + A * RowH, Mid = RY + (RowH - 6 * Scale) * .5f;
         Card(X, RY, W, RowH - 6 * Scale, A % 2 ? Paper : Hex(0xFBF7EC), Ink, 2410 + A, .7f);
         const FLinearColor Mark = AttributeColor(A);
         MetaIcon(AttributeIcon + A, FVector2D(X + 32 * Scale, Mid), FMath::Min(40 * Scale, RowH * .62f), Mark, 2420 + A);
         const int32 Step = FMath::RoundToInt(gwgame::attributeStep(Attr) * 100);
-        Label(GWText::Get(FString::Printf(TEXT("Attr.%d"), A)), X + 64 * Scale, Mid - 20 * Scale, 19 * Scale, Ink, false, W * .2f, EFace::Heavy);
-        Label(GWText::Number(TEXT("Attr.Step"), TEXT("Percent"), Step), X + 64 * Scale, Mid + 4 * Scale, 14 * Scale, InkSoft, false, W * .2f, EFace::Bold);
+        const float NameSize = FMath::Min(19 * Scale, RowH * .32f);
+        Label(GWText::Get(FString::Printf(TEXT("Attr.%d"), A)), X + 64 * Scale, Mid - NameSize * 1.25f - 2 * Scale, NameSize, Ink, false, W * .2f, EFace::Heavy);
+        // A negative step (the dodge's cooldown) is a cut, not a gain.
+        Label(Bag ? GWText::Get(TEXT("Attr.StepSlot")) : Step < 0 ? GWText::Number(TEXT("Attr.StepCut"), TEXT("Percent"), -Step)
+                                                                  : GWText::Number(TEXT("Attr.Step"), TEXT("Percent"), Step),
+              X + 64 * Scale, Mid + 1 * Scale,
+              FMath::Min(14 * Scale, RowH * .24f), InkSoft, false, W * .2f, EFace::Bold);
         // Five pips: earned and counted here (solid), earned but above this room's tier (hatched), not yet earned.
         const float PipX = X + W * .3f, Pip = FMath::Min(30 * Scale, RowH * .48f);
         for (int32 K = 0; K < gwgame::MaxRank; ++K)
@@ -454,10 +481,13 @@ void AGWHUD::ResearchPanel(AGWGameState* S, float X, float Y, float W, float H)
         }
         // What the ranks are worth: in all, and in this room when the tier holds some back.
         const float InfoX = PipX + gwgame::MaxRank * (Pip + 10 * Scale) + 14 * Scale, InfoW = X + W - 220 * Scale - InfoX;
-        Label(GWText::Number(TEXT("Research.Total"), TEXT("Percent"), Step * Rank), InfoX, Mid - 20 * Scale, 17 * Scale, Ink, false, InfoW, EFace::Heavy);
-        if (Counted < Rank)
-            Label(GWText::Number(TEXT("Research.Counted"), TEXT("Percent"), Step * Counted), InfoX, Mid + 4 * Scale, 14 * Scale, Cobalt, false, InfoW,
-                  EFace::Bold);
+        if (Bag)
+            Label(GWText::Number(TEXT("Research.BagTotal"), TEXT("Count"), gwgame::HotbarSlots + gwgame::PackBase + Rank), InfoX, Mid - 12 * Scale, 17 * Scale, Ink,
+                  false, InfoW, EFace::Heavy);
+        else
+            Label(Step < 0 && Rank > 0 ? GWText::Number(TEXT("Research.TotalCut"), TEXT("Percent"), -Step * Rank)
+                                       : GWText::Number(TEXT("Research.Total"), TEXT("Percent"), FMath::Max(0, Step * Rank)),
+                  InfoX, Mid - 12 * Scale, 17 * Scale, Ink, false, InfoW, EFace::Heavy);
         const int32 Cost = gwgame::researchCost(Rank);
         const float BW = 196 * Scale, BH = FMath::Min(44 * Scale, RowH * .64f);
         Button(GWDefenseAction::Research + A, Cost < 0 ? GWText::Get(TEXT("Research.Full")) : GWText::Number(TEXT("Research.Up"), TEXT("Price"), Cost),
@@ -553,9 +583,22 @@ void AGWHUD::AchievementsPanel(AGWGameState* S, float X, float Y, float W, float
         if (const auto* PS = Cast<AGWPlayerState>(S->PlayerArray[I]))
         {
             const FGWUnitView* U = S->FindUnit(PS->UnitId);
-            Columns.Add({PS, U && U->Seat >= 0 ? U->Seat : I, FMath::CountBits(PS->Achievements & gwgame::AchievementMask)});
+            Columns.Add({PS, U && U->Seat >= 0 ? U->Seat : I, static_cast<int32>(FMath::CountBits64(PS->Achievements & gwgame::AchievementMask))});
         }
-    const int32 Half = (gwgame::AchievementCount + 1) / 2;
+    // Two pages of 32: the pages and the room, and the expedition's.
+    const int32 PerPage = 32, First = FMath::Clamp(WallPage, 0, 1) * PerPage, Half = PerPage / 2;
+    const float TabH = 30 * Scale, TabW = FMath::Min(200 * Scale, W * .3f);
+    for (int32 WallSheet = 0; WallSheet < 2; ++WallSheet)
+    {
+        int32 Mine = 0;
+        for (const auto& Item : S->PlayerArray)
+            if (const auto* PS = Cast<AGWPlayerState>(Item); PS && PlayerOwner && PS == PlayerOwner->PlayerState)
+                Mine = static_cast<int32>(FMath::CountBits64(PS->Achievements & (WallSheet ? ~uint64(0) << 32 : (uint64(1) << 32) - 1)));
+        const FText TabLabel = GWText::Number(*FString::Printf(TEXT("Wall.Page.%d"), WallSheet), TEXT("Count"), Mine);
+        Button(GWDefenseAction::WallTab + WallSheet, TabLabel, X + WallSheet * (TabW + 10 * Scale), Y, TabW, TabH, true, WallPage == WallSheet, WallSheet ? Magenta : Teal);
+    }
+    Y += TabH + 8 * Scale;
+    H -= TabH + 8 * Scale;
     const float Gap = 26 * Scale, BlockW = (W - Gap) * .5f, Col = FMath::Min(30 * Scale, BlockW * .5f / FMath::Max(1, Columns.Num()));
     const float NameW = BlockW - Col * Columns.Num() - 8 * Scale, HeadH = 30 * Scale, LegendH = 54 * Scale;
     const float RowH = (H - HeadH - LegendH - 10 * Scale) / Half;
@@ -575,7 +618,7 @@ void AGWHUD::AchievementsPanel(AGWGameState* S, float X, float Y, float W, float
         }
         for (int32 R = 0; R < Half; ++R)
         {
-            const int32 Index = Block * Half + R;
+            const int32 Index = First + Block * Half + R;
             if (Index >= gwgame::AchievementCount)
                 break;
             const float RY = Y + HeadH + R * RowH;
@@ -675,7 +718,6 @@ void AGWHUD::TierSummary(AGWGameState* S, float X, float Y, float W)
     Args.Add(TEXT("Reward"), Multiplier(Info.reward));
     Args.Add(TEXT("Health"), Multiplier(Info.enemyHealth));
     Args.Add(TEXT("Damage"), Multiplier(Info.enemyDamage));
-    Args.Add(TEXT("Cap"), Info.cap);
     const FText Text = FText::Format(GWText::Get(TEXT("Tier.Summary")), Args);
     Highlight(X - 4 * Scale, Y + 3 * Scale, FMath::Min(Measure(Text, 15 * Scale, EFace::Bold).X, W) + 8 * Scale, 20 * Scale,
               (Tier >= 4 ? Coral : Tier >= 2 ? Marigold : Teal).CopyWithNewOpacity(.25f), 2820);
@@ -701,7 +743,11 @@ void AGWHUD::Toasts()
         return;
     const float Age = static_cast<float>(Clock - ToastStart);
     const float In = FMath::Clamp(Age / .25f, 0.f, 1.f), Out = FMath::Clamp((Show - Age) / .3f, 0.f, 1.f), Shown = FMath::Min(In, Out);
-    const float W = 380 * Scale, H = 92 * Scale, X = Width - W - 22 * Scale + (1 - Shown) * 60 * Scale, Y = 128 * Scale;
+    const float W = 380 * Scale, H = 92 * Scale, X = Width - W - 22 * Scale + (1 - Out) * 60 * Scale, Y = 128 * Scale;
+    // Pinned up with a bounce and a burst of paper round its badge; slid away to the right at the end.
+    if (Age > .3f && Once(HashCombine(static_cast<uint32>(ToastShowing), GetTypeHash(ToastStart))))
+        Confetti(FVector2D(X + 44 * Scale, Y + H * .5f), 18, 650, 6);
+    const auto Drop = DropIn(FVector2D(X + W * .5f, Y + H * .5f), Age, 0, 50);
     Card(X, Y, W, H, Hex(0xFFF7D6).CopyWithNewOpacity(Shown), Ink.CopyWithNewOpacity(Shown), 2900, 1.8f);
     Tape(FVector2D(X + W * .5f, Y + 3 * Scale), 100 * Scale, 22 * Scale, -3, Marigold.CopyWithNewOpacity(.9f * Shown));
     AchievementIcon(ToastShowing, FVector2D(X + 44 * Scale, Y + H * .5f), 50 * Scale, true, 2901);

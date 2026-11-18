@@ -79,6 +79,13 @@ gwgame::MetaProfile UGWProfileSave::ToCore() const
     C.maxItems = MaxItems;
     for (int32 I = 0; I < gwgame::AwardCount; ++I)
         C.awards[I] = Awards.IsValidIndex(I) ? Awards[I] : 0;
+    C.feats = Feats & ((uint64(1) << gwgame::FeatCount) - 1);
+    C.erased = Erased;
+    C.elites = Elites;
+    C.given = Given;
+    C.banked = Banked;
+    C.bosses = Bosses & 31;
+    C.shapes = Shapes & 7;
     return Core;
 }
 
@@ -126,6 +133,13 @@ void UGWProfileSave::FromCore(const gwgame::MetaProfile& Core)
     Awards.SetNum(gwgame::AwardCount);
     for (int32 I = 0; I < gwgame::AwardCount; ++I)
         Awards[I] = C.awards[I];
+    Feats = C.feats;
+    Erased = C.erased;
+    Elites = C.elites;
+    Given = C.given;
+    Banked = C.banked;
+    Bosses = C.bosses;
+    Shapes = C.shapes;
     PlayedAt = FDateTime::Now();
 }
 

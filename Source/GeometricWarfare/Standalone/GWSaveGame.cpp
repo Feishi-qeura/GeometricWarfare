@@ -28,7 +28,7 @@ bool Count(FArchive& Ar, int32& Value, int32 Limit)
         Ar.SetError();
     return !Ar.IsError();
 }
-void Unit(FArchive& Ar, gwgame::SavedUnit& U)
+void SerializeUnit(FArchive& Ar, gwgame::SavedUnit& U)
 {
     Ar << U.id << U.team << U.owner << U.followerOf << U.burnOwner;
     Raw(Ar, U.kind);
@@ -74,7 +74,7 @@ void Run(FArchive& Ar, gwgame::RunSnapshot& S)
         return;
     S.units.resize(Units);
     for (auto& U : S.units)
-        Unit(Ar, U);
+        SerializeUnit(Ar, U);
     int32 Crates = static_cast<int32>(S.crates.size());
     if (!Count(Ar, Crates, 512))
         return;

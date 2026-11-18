@@ -2,7 +2,7 @@
 
 使用 Unreal Engine 5.8 开发的 Win64 独立游戏。安装 UE 5.8 和 Windows C++ 工具链后，打开 `GeometricWarfare.uproject`，构建 `GeometricWarfareEditor` 的 Win64 Development 目标，然后在编辑器里点击 **Play**。
 
-`FUOnlineSession` 随项目提供，负责 LAN、Steam 和 Epic Online Services 的会话接入。Steam 配置里的 `480` 是开发测试 App ID。EOS 需要填写自己的项目配置。相关设置见 [插件文档](Plugins/FUOnlineSession/README.md)。
+`FUOnlineSession` 随项目提供，负责 LAN、Steam 和 Epic Online Services 的会话接入。Steam 配置里的 `480` 是开发测试 App ID。EOS 需要填写自己的项目配置。相关设置见 [插件文档](Plugins/FUOnlineSession/README.md)。两台电脑的 Steam 联机测试步骤见 [Steam 联机测试说明](Docs/SteamTest.zh.md)。
 
 ## 在编辑器里预览和开发
 

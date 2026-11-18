@@ -133,8 +133,11 @@ public:
                 return Wait(.1);
             Test->TestEqual(TEXT("Seats follow the room's join order"), Mate->seat, 1);
             Test->TestTrue(TEXT("The guest's permission reached the simulation"), Mate->throwable);
-            Holder->position = B->maze.center(5 * B->maze.width + 4);
-            Holder->aim = {1, 0};
+            Test->TestTrue(TEXT("Both are born up on the platform"), Holder->deck && Mate->deck);
+            // Side by side on the platform's top edge, over the box.
+            Holder->deck = Mate->deck = true;
+            Holder->position = B->maze.center(4);
+            Holder->aim = {0, 1};
             Mate->position = Holder->position + Vec2{90, 0};
             Test->TestEqual(TEXT("E grabs the willing teammate"), B->recruit(HostUnit), GuestUnit);
             Test->TestTrue(TEXT("The teammate rides in the holder's tail"), Mate->carried && Mate->followerOf == HostUnit);
@@ -152,7 +155,7 @@ public:
             if (!B)
                 return Wait(.1);
             Test->TestTrue(TEXT("Charging with a teammate in hand"), B->beginCharge(HostUnit));
-            Test->TestEqual(TEXT("Q throws the teammate"), B->releaseCharge(HostUnit, {1, 0}), GuestUnit);
+            Test->TestEqual(TEXT("Q throws the teammate down into the box"), B->releaseCharge(HostUnit, {0, 1}), GuestUnit);
             ThrownAt = B->elapsed;
             S->Publish();
             return Wait(1.6);
@@ -161,6 +164,7 @@ public:
         {
             const Unit* Mate = B ? B->find(GuestUnit) : nullptr;
             Test->TestTrue(TEXT("The thrown teammate landed as bait"), Mate && Mate->bait > 0);
+            Test->TestTrue(TEXT("...down on the floor of the box"), Mate && !Mate->deck);
             if (!Mate)
                 return Wait(.1);
             // Enemies around the bait: they leave their road and come for it.

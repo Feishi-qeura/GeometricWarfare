@@ -35,6 +35,13 @@ struct FGWSaveSummary
     FString RoomName;
 };
 
+// A Steam friend who is in a Geometric Warfare room right now: the hub's door lists them with a Join button.
+struct FGWFriendRoom
+{
+    FString Name;
+    FUniqueNetIdPtr Id;
+};
+
 // How this machine is in the room it is in: alone offline, through a Steam room, or by a direct address
 // (development and the automated two-process tests).
 enum class EGWRoomKind : uint8
@@ -52,6 +59,8 @@ public:
     static constexpr int32 RoomCapacity = 8;
     virtual void Init() override;
     virtual void Shutdown() override;
+    // Process-local: never persisted to a player save and never replayed on map travel.
+    bool StartupIntroAttempted = false;
     // The one road into play (design doc: 大厅即房间): this player's own hub. With Steam up it opens as a
     // friends-only Steam room for up to eight; without Steam (or if the room cannot be made) the same hub
     // opens offline.
@@ -65,6 +74,14 @@ public:
     void ReturnHome(const TCHAR* NoticeKey);
     // Steam's invite dialog for this room (false when the room is not a Steam room).
     bool ShowInvite();
+    // Steam friends in a Geometric Warfare room right now (read from their Steam presence; the door station lists
+    // them). A refresh reads the friends list again, at most every few seconds.
+    TArray<FGWFriendRoom> FriendRooms;
+    void RefreshFriendRooms();
+    // Joins a listed friend's room without the Steam overlay: the same road as an accepted invite.
+    void JoinFriendRoom(int32 Index);
+    // The Steam app id this process runs as (480, Spacewar, in development builds); 0 without Steam.
+    int32 SteamAppId() const;
     EGWRoomKind RoomKind() const;
     // The host closes the Steam room while a mission runs and opens it again in the hub (players only ever
     // join in the hub).
@@ -155,6 +172,15 @@ private:
     void HookInvites();
     void OpenOfflineHub();
     void InviteAccepted(bool bWasSuccessful, int32 ControllerId, FUniqueNetIdPtr UserId, const FOnlineSessionSearchResult& Result);
+    // An invite or a listed friend's room: this player's own room closes on the way to the friend's hub.
+    void JoinFriendResult(const FOnlineSessionSearchResult& Result, const FString& Host);
+    bool ReadingFriends = false;
+    double FriendsReadAt = -100;
+    FString FriendJoining;
+    FDelegateHandle FriendSessionHandle;
+    TWeakPtr<IOnlineSession, ESPMode::ThreadSafe> FriendSessions;
+    void FriendsRead(int32 LocalUserNum, bool bWasSuccessful, const FString& ListName, const FString& Error);
+    void FriendSessionFound(int32 LocalUserNum, bool bWasSuccessful, const TArray<FOnlineSessionSearchResult>& Results);
     void NetworkFailure(UWorld* World, UNetDriver* Driver, ENetworkFailure::Type Type, const FString& Error);
     bool HasSession(EFU_OnlineProvider Provider) const;
     void EpicLoginComplete(int32 LocalUserNum, bool bWasSuccessful, const FUniqueNetId& UserId, const FString& Error);

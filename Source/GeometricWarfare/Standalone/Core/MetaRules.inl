@@ -2,8 +2,8 @@
 namespace gwgame
 {
 static_assert(AttributeCount == static_cast<int>(std::tuple_size<decltype(Perks::ranks)>::value), "Perks hold one rank per attribute");
-// Meta progression inside a room: research ranks (capped by the room's tier), the starting weapon, the pen that
-// decides the wall type, and single-mission items. Defense pages and the hub play by them; Survival does not.
+// Meta progression inside a room: research ranks (each player's own, whole in every room), the starting weapon, the
+// pen that decides the wall type, and single-mission items. Defense pages and the hub play by them; Survival does not.
 inline int Battle::effectiveRankOf(const Unit& u, Attribute a) const
 {
     const int i = static_cast<int>(a);
@@ -17,10 +17,17 @@ inline double Battle::perk(const Unit& u, Attribute a) const
 }
 inline double Battle::healthCapacity(const Unit& u) const
 {
-    return 300 * perk(u, Attribute::Health);
+    double health = 300 * perk(u, Attribute::Health);
+    // On the expedition a revive drawing's body and the hat worn change it too (and a chubby floor doubles it, EV04).
+    if (expeditionMode() && u.kind == UnitKind::Fighter)
+        health *= u.kit.hpScale * lookPerks(u.kit).health * (expedition.floorPrank == static_cast<int>(FloorPrank::Chubby) ? 2 : 1);
+    return health;
 }
 inline double Battle::inkCapacity(const Unit& u) const
 {
+    // The expedition's ink tank (design 5.2): 100, 15% more per research rank, 180 with the glass ink bottle.
+    if (expeditionMode())
+        return (carries(u, Gear::InkBottle) ? BottleInkCap : 100.) * (1 + .15 * effectiveRankOf(u, Attribute::Ink));
     return config.inkMax * perk(u, Attribute::Ink) * (u.perks.bottle ? BottleInk : 1);
 }
 inline double Battle::enemyPower() const
@@ -44,7 +51,7 @@ inline void Battle::refreshCapacities(Unit& u)
         if (u.alive)
             u.hp = full ? health : std::clamp(share * health, 1., health);
     }
-    if (defenseMode())
+    if (defenseMode() || expeditionMode())
     {
         const double ink = inkCapacity(u);
         if (std::abs(ink - u.maxInk) > 1e-9)
@@ -61,10 +68,34 @@ inline bool Battle::setLoadout(int id, const Loadout& loadout)
     if (!u || !u->human || u->kind != UnitKind::Fighter)
         return false;
     const Loadout clean = sanitize(loadout);
+    const int previous = u->perks.weapon;
     u->perks.ranks = clean.ranks;
     u->perks.pen = clean.pen;
     u->perks.hat = clean.hat;
+    u->perks.title = clean.title;
+    u->perks.weapons = clean.weapons;
     u->perks.weapon = clean.weapon;
+    if (expeditionMode())
+    {
+        // The expedition: the armoury's gun goes into slot 1 in place of the starting pistol (only while slot 1 still
+        // holds the gun the room last knew), and the wardrobe's hat and title are worn into the dungeon.
+        HotSlot& first = u->kit.slots[0];
+        if (first.kind == SlotKind::Weapon && first.count == 1 && first.what == previous && first.what != clean.weapon)
+        {
+            stowHand(*u);
+            first = {SlotKind::Weapon, clean.weapon, 1, magazine(clean.weapon, false), 0};
+            syncHand(*u);
+        }
+        if (!u->kit.ghost)
+        {
+            if (u->kit.wear[0] < 0 || u->kit.wearOwner[0] < 0)
+                u->kit.wear[0] = clean.hat;
+            if (u->kit.wear[5] < 0 || u->kit.wearOwner[5] < 0)
+                u->kit.wear[5] = clean.title;
+        }
+        refreshCapacities(*u);
+        return true;
+    }
     // The starting weapon is in hand whenever no crate weapon is.
     if (!survivalMode() && !u->hasPickupWeapon && u->weapon != clean.weapon)
     {
@@ -109,32 +140,11 @@ inline ItemSlotsArray Battle::useItems(int id, const ItemSlotsArray& items)
             defense.coreMaxHealth += TapeCore;
             break;
         case Item::Pouch:
-        {
-            int room = config.tailLimit;
-            for (int member : tailIds(id))
-                room -= !find(member)->human;
-            if (room < 3)
+            // The tower kit: the player's first tower in the box costs no ink.
+            if (u->perks.towerKit)
                 continue;
-            for (int sides : {4, 3, 3})
-            {
-                Unit a;
-                a.id = nextId++;
-                a.kind = UnitKind::Companion;
-                a.team = u->team;
-                a.sides = sides;
-                a.shape = polygonShape(sides);
-                a.maxHp = a.hp = CompanionHealth * sideHealth(sides);
-                a.position = u->position;
-                a.followerOf = id;
-                a.state = UnitState::Following;
-                a.tailOrder = nextTailOrder++;
-                syncSquadWeapon(a, *u);
-                event(EffectStyle::SpawnAlly, a.position, a.position, u->team, a.radius, .5);
-                queueUnit(a);
-            }
-            flushUnits();
+            u->perks.towerKit = true;
             break;
-        }
         case Item::Plaster:
             if (u->perks.plaster)
                 continue;

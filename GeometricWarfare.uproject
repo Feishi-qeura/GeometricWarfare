@@ -1,9 +1,9 @@
 {
 	"FileVersion": 3,
-	"DisableEnginePluginsByDefault": true,
 	"EngineAssociation": "5.8",
 	"Category": "",
 	"Description": "",
+	"DisableEnginePluginsByDefault": true,
 	"Modules": [
 		{
 			"Name": "GeometricWarfare",
@@ -17,9 +17,26 @@
 		}
 	],
 	"Plugins": [
-		{ "Name": "FUOnlineSession", "Enabled": true },
-		{ "Name": "OnlineSubsystem", "Enabled": true },
-		{ "Name": "Niagara", "Enabled": true },
+		{
+			"Name": "WmfMedia",
+			"Enabled": true,
+			"PlatformAllowList": ["Win64"]
+		},
+		{
+			"Name": "FUOnlineSession",
+			"Enabled": true,
+			"SupportedTargetPlatforms": [
+				"Win64"
+			]
+		},
+		{
+			"Name": "OnlineSubsystem",
+			"Enabled": true
+		},
+		{
+			"Name": "Niagara",
+			"Enabled": true
+		},
 		{
 			"Name": "ModelingToolsEditorMode",
 			"Enabled": true,
@@ -27,5 +44,8 @@
 				"Editor"
 			]
 		}
+	],
+	"TargetPlatforms": [
+		"Windows"
 	]
 }

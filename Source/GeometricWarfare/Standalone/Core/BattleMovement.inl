@@ -56,11 +56,18 @@ inline void Battle::moveUnits(double dt)
         {
             if (u.human)
                 consumeInput(u);
+            // On a ladder: nothing but the climb until the other end is reached.
+            if (u.climb >= 0)
+            {
+                updateClimb(u, dt);
+                continue;
+            }
             if (u.state == UnitState::Launched)
             {
+                // A throw sails over the platform's edge (from it or onto it); drawn walls and rock still stop it.
                 Vec2 from = u.position, proposed = u.position + (u.velocity + u.impulse) * dt;
-                bool wall = !maze.clear(from, proposed, u.radius);
-                u.position = maze.move(from, (u.velocity + u.impulse) * dt, u.radius);
+                bool wall = !maze.clear(from, proposed, u.radius, true);
+                u.position = maze.move(from, (u.velocity + u.impulse) * dt, u.radius, true);
                 u.impulse = u.impulse * std::exp(-5 * dt);
                 bool hit = false;
                 // Throw power (research) is the thrower's, and their shards carry it too.
@@ -87,6 +94,7 @@ inline void Battle::moveUnits(double dt)
                 if (wall || hit || u.launchTime <= 0)
                 {
                     u.state = u.human ? UnitState::Free : UnitState::Idle;
+                    settle(u);
                     landed(u);
                     u.launchOwner = -1;
                     u.velocity = {};
@@ -113,7 +121,10 @@ inline void Battle::moveUnits(double dt)
                     u.velocity = u.impulse = {};
                     continue;
                 }
-                u.velocity = u.bait > 0 ? Vec2{} : u.input.move * (config.playerSpeed * perk(u, Attribute::Speed));
+                // Steering into a ladder from either end climbs it.
+                if (u.bait <= 0 && tryLadder(u, u.input.move))
+                    continue;
+                u.velocity = u.bait > 0 ? Vec2{} : u.input.move * (config.playerSpeed * moveScale(u));
                 if (u.trail.empty() || (u.trail.back() - u.position).length() >= 7)
                 {
                     u.trail.push_back(u.position);
@@ -122,7 +133,19 @@ inline void Battle::moveUnits(double dt)
                 }
             }
             else if (u.bot)
-                updateBot(u, dt);
+            {
+                if (defenseMode() && maze.hasDeck() && u.deck)
+                {
+                    u.input.fire = false;
+                    u.state = UnitState::Free;
+                    if (config.aiEnabled)
+                        updateDeckBot(u, dt);
+                    else
+                        u.velocity = {};
+                }
+                else
+                    updateBot(u, dt);
+            }
             else if (u.kind == UnitKind::Companion)
             {
                 u.velocity = {};
@@ -146,11 +169,13 @@ inline void Battle::moveUnits(double dt)
                 u.state = UnitState::Free;
                 if (defenseMode())
                     updateSiege(u, dt);
+                else if (expeditionMode())
+                    updateFoe(u, dt);
                 else
                     updateAI(u, dt);
             }
             double speedFactor = u.slowTime > 0 ? .5 : 1;
-            u.position = maze.move(u.position, (u.velocity * speedFactor + u.impulse) * dt, u.radius);
+            u.position = maze.moveOn(u.deck, u.position, (u.velocity * speedFactor + u.impulse) * dt, u.radius);
             u.impulse = u.impulse * std::exp(-5 * dt);
         }
     for (auto& p : units)
@@ -196,7 +221,9 @@ inline void Battle::moveUnits(double dt)
                     target = head - tangent * remaining;
                 }
                 Vec2 destination = target;
-                if (!maze.clear(u.position, target, u.radius))
+                // Up on the platform the trail itself is the road (the platform has no walls to path around).
+                u.deck = p.deck;
+                if (!p.deck && !maze.clear(u.position, target, u.radius))
                 {
                     if (u.think <= 0 || u.path.empty())
                     {
@@ -214,7 +241,9 @@ inline void Battle::moveUnits(double dt)
                 }
                 Vec2 delta = destination - u.position;
                 double travel = std::min(delta.length(), config.playerSpeed * 1.7 * dt);
-                u.position = maze.move(u.position, delta.normalized() * travel + u.impulse * dt, u.radius);
+                u.position = maze.moveOn(u.deck, u.position, delta.normalized() * travel + u.impulse * dt, u.radius);
+                if (u.deck && !maze.deckWalkable(u.position, u.radius))
+                    u.position = p.position;
                 u.impulse = u.impulse * std::exp(-5 * dt);
                 if (u.human)
                 {
@@ -263,6 +292,10 @@ inline void Battle::moveUnits(double dt)
                         // must never move its predicted player or feed back into its trail.
                         if (chainA >= 0 && chainA == chainB)
                             continue;
+                        // Bodies meet only on the same level, and never in the middle of a climb. Teammates slip past
+                        // each other on the platform's narrow walkway (nobody can body-block the ring).
+                        if (a.deck != b.deck || a.climb >= 0 || b.climb >= 0 || (a.deck && a.team == b.team))
+                            continue;
                         Vec2 d = a.position - b.position;
                         double min = a.radius + b.radius, len = d.length();
                         const bool fixedA = a.turret || a.dummy, fixedB = b.turret || b.dummy;
@@ -273,9 +306,9 @@ inline void Battle::moveUnits(double dt)
                         // whole correction.
                         Vec2 correction = n * ((min - len) * (fixedA || fixedB ? 1. : .5));
                         if (!fixedA)
-                            a.position = maze.move(a.position, correction, a.radius);
+                            a.position = maze.moveOn(a.deck, a.position, correction, a.radius);
                         if (!fixedB)
-                            b.position = maze.move(b.position, correction * (-1), b.radius);
+                            b.position = maze.moveOn(b.deck, b.position, correction * (-1), b.radius);
                     }
                 }
             grid[key(x, y)].push_back(i);
@@ -283,7 +316,7 @@ inline void Battle::moveUnits(double dt)
     // The core is solid to the team; enemies are meant to reach it (that is how they hurt it).
     if (defenseMode())
         for (auto& u : units)
-            if (u.alive && u.team == 1 && u.state != UnitState::Launched)
+            if (u.alive && u.team == 1 && u.state != UnitState::Launched && !u.deck && u.climb < 0)
             {
                 const Vec2 d = u.position - defense.core;
                 const double reach = DefenseState::CoreRadius + u.radius, len = d.length();

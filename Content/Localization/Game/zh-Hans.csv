@@ -1,4 +1,5 @@
 ﻿Key,SourceString
+Intro.Skip,按下空格键跳过
 Game.Title,几何战争
 Game.Subtitle,在方格纸上画迷宫，守住核心，叫上朋友。
 Menu.Single,单人游戏
@@ -212,8 +213,7 @@ Key.Pick,选技能
 Team.Bot,AI 队友 {Index}
 Combat.Team,队友
 Board.Title,任务板
-Board.Subtitle,守线 · 在方格纸上画墙造迷宫，再亲自下场战斗。
-Board.Chapter,第 1 章 · 第一本笔记本
+Board.Subtitle,守线 · 站在盒子边的平台上：画方块、建炮塔、挂梯子，一起守住核心。
 Level.1-1,第一页
 Level.1-2,两道门
 Level.1-3,长走廊
@@ -245,11 +245,10 @@ Defense.Enemies,剩余敌人 {Count}
 Defense.StartWave,提前开波
 Defense.HostStarts,由房主开波
 Defense.Ink,墨水
-Defense.BuildHint,按住右键在方格纸上拖动画墙（每格 10 墨水），在墙上拖动则擦掉。敌人会走通往核心的最短通路。
-Defense.TurretHint,把方块及以上的多边形投到空地上，它会钉成炮台。E 招募三角形，F 把末尾的三角形并入前一个。
+Defense.BuildHint,在盒子里按住右键拖动画方块（每格 10 墨水），在方块上拖动则擦掉。敌人会走通往核心的最短通路。
 Defense.WaveBanner,第 {Wave} 波来袭！
 Defense.ClearBanner,波次完成 · 贴纸 +{Count}
-Defense.Respawn,{Seconds} 秒后在核心旁复活
+Defense.Respawn,{Seconds} 秒后在平台上复活
 Defense.Denied.1,墨水不够
 Defense.Denied.2,这一笔会封死通路——敌人必须始终有路可走
 Defense.Denied.3,那里有人站着
@@ -268,12 +267,12 @@ Result.Next,下一页
 Result.CoreLost,核心被攻破了。
 Result.Held,守住了全部波次。
 Prank.Title,整活强度
-Prank.0,关闭
-Prank.1,友好
-Prank.2,混乱
-Prank.0.Note,谁都不能被抓起或投掷，友军子弹也不会推人。
-Prank.1.Note,只有打开“可被投掷”的人才能被抓起和投掷；友军子弹轻推。
-Prank.2.Note,任何人随时都能被抓起和投掷；友军子弹大力推人。
+Prank.0,胖血牛
+Prank.1,子弹弹弹乐
+Prank.2,玻璃大炮
+Prank.0.Note,双倍生命，稍慢一点
+Prank.1.Note,子弹都在墙上弹两次
+Prank.2.Note,伤害与受伤都 ×1.5
 Throwable.On,允许队友投掷我：开
 Throwable.Off,允许队友投掷我：关
 Throwable.Tag,可投掷
@@ -323,6 +322,9 @@ Hub.Title,{Name} 的大厅
 Hub.Kind.0,离线 · 只有你
 Hub.Kind.1,Steam 房间 · 仅好友
 Hub.Kind.2,直连房间（测试）
+Hub.KindShort.0,离线
+Hub.KindShort.1,好友房
+Hub.KindShort.2,直连
 Hub.Seats,{Count} / 8 人
 Hub.Invite,邀请好友
 Hub.Here,在场（{Count}/8）
@@ -337,19 +339,9 @@ Hub.Back,回大厅
 Hub.InviteUnavailable,邀请需要 Steam 房间，这个大厅现在不是。
 Hub.DeployHostOnly,只有房主能出击。
 Board.Mode.0,守线
-Board.Mode.1,远征（即将开放）
-Board.Mode.2,派对轮盘（即将开放）
-Board.ModeSoon,这个模式会在后续版本开放。
+Board.Mode.1,远征
+Board.Mode.2,派对轮盘
 Board.BotsFriends,房间里有朋友时不带 AI 队友。
-Coming.Stamp,即将开张
-Coming.Stickers,你的贴纸：{Count} 张
-Coming.1,这里会挂上每个人已达成和未达成的成就。现在墙上先记下了房间里的人。
-Coming.2,用贴纸解锁武器和墙型，再买单局用的道具，每局最多带 2 个。
-Coming.3,升级生命、伤害、墨水上限、投掷力、移速和拾取范围，每项 5 级。进别人的房间时，按房间难度封顶。
-Coming.4,换外观、挑选派对称号。只是好看，不影响战斗。
-Npc.2,五边形店主：“货还在路上，先把贴纸攒着！”
-Npc.3,三角研究员：“公式还没算完，升级马上就来。”
-Npc.4,方块裁缝：“帽子在做了，每种形状都配得上一顶好帽子。”
 Door.0,Steam 没有连接，现在只有你能进这个大厅。打开 Steam 后点下面的按钮，大厅会重新以房间打开，好友就能进来了。
 Door.1,这个大厅是 Steam 房间：你的 Steam 好友可以加入，最多 8 人。用 Steam 浮窗发邀请。
 Door.2,这是测试用的直连房间；邀请需要 Steam 房间。
@@ -372,21 +364,18 @@ Training.Replay,重玩新手引导
 Training.ReplayAlone,只有你一个人在大厅时才能重玩引导。
 Tutorial.Title,新手引导
 Tutorial.Step,第 {Step} / {Count} 步
-Tutorial.0.Title,移动
+Tutorial.0.Title,在平台上走
 Tutorial.1.Title,射击
-Tutorial.2.Title,招募
-Tutorial.3.Title,合成
-Tutorial.4.Title,钉炮台
-Tutorial.5.Title,画墙
-Tutorial.6.Title,守线
-Tutorial.0,用 WASD 走进闪烁的圆圈里。
-Tutorial.1,用鼠标瞄准，按住左键：打碎两个纸靶。
-Tutorial.2,走近三角形按 E，把两个招进你的尾巴。
-Tutorial.3,按 F：尾巴末端的三角形并入前一个，变成方块。边数就是等级。
-Tutorial.4,按住 Q 蓄力、松开，把方块扔到空白纸上：它会钉成炮台。
-Tutorial.TurretRetry,方块砸到靶子会碎成三角形：再招募、再合成就行。
-Tutorial.5,按住右键，沿着闪烁的格子拖动：画三格墙，敌人就得绕路。
-Tutorial.6,按 Enter 开波，守住核心：炮台会和你一起开火。
+Tutorial.2.Title,画方块
+Tutorial.3.Title,建炮塔
+Tutorial.4.Title,挂梯子
+Tutorial.5.Title,守线
+Tutorial.0,你站在盒子边缘的平台上。用 WASD 沿着平台走进闪烁的圆圈。
+Tutorial.1,用鼠标瞄准盒子里，按住左键：打碎两个纸靶。
+Tutorial.2,按住右键，沿着闪烁的格子拖动：画三格方块，敌人就得绕路。
+Tutorial.3,点一下闪烁的空地：周围会弹出建造圆环。选弩炮塔（40 墨水），它会越过方块攻击范围内的敌人。
+Tutorial.4,右键点闪烁的平台格子：一架梯子挂到盒壁上（30 墨水）。朝梯子走就能爬下去，再走一次就爬回来。
+Tutorial.5,按 Enter 开波，守住核心：炮塔会和你一起开火。
 Tutorial.StepDone,完成！
 Tutorial.Skip,跳过引导
 Tutorial.Finished,引导完成
@@ -401,3 +390,667 @@ Network.HostLeft,房主离开了，你回到了自己的大厅。
 Network.JoiningFriend,正在加入好友的大厅…
 Network.InviteFailed,邀请打不开了，房间可能已经关闭。
 Key.Use,招募 / 使用
+Defense.TowerHint,点空地弹出建造圆环：弩炮塔（{Tower} 墨水）、迫击炮、电塔或铁丝网；点炮塔可以升级或拆除。右键点平台边缘挂梯子（{Ladder} 墨水）。开波后不能再建造。
+Defense.TeamHint,按 Q 把愿意的队友扔进盒子当诱饵。倒下的队友会在平台上留下轮廓：站到旁边按 E，花 {Ink} 墨水把队友救回来。
+Defense.ReviveHint,队友站到你的轮廓旁，花 {Ink} 墨水就能立刻把你救回来。
+Hub.Respawn,{Seconds} 秒后复活
+Defense.Denied.4,那里是梯子的落脚处
+Defense.Denied.5,炮塔要建在空地上，不能建在方块上
+Defense.Denied.6,下面没有空地——梯子需要落脚的地方
+Key.Revive,救回 {Name} · {Ink} 墨水
+Key.ClimbUp,朝梯子走就能爬上去
+Key.ClimbDown,朝梯子走就能爬下去
+Key.DrawBox,方块 · 梯子
+Key.Tower,炮塔
+Key.GrabRevive,抓起 / 救援
+Box.Ladder,梯子 · {Ink} 墨水
+Box.LadderErase,擦掉梯子（退还墨水）
+Box.Tower,炮塔 · {Ink} 墨水
+Box.TowerGrow,升到 {Sides} 边 · {Ink} 墨水
+Training.Tower,在这里合成三角形；在盒子里：点空地弹出建造圆环
+Tutorial.LadderNote,注意：只要平台上有人，经过梯子附近的跑者也会爬上来。
+Attr.Step,每级 +{Percent}%
+Meta.Buy,购买 · {Price}
+Meta.FromAchievement,成就：{Name}
+Meta.InUse,使用中
+Meta.Use,使用
+Meta.Wear,穿戴
+Meta.Wearing,穿戴中
+Research.Full,已满级
+Research.Note,背包扩容：远征背包默认 10 格（含 5 格快捷栏），每级多 1 格。
+Research.Total,合计 +{Percent}%
+Research.Up,研究 · {Price}
+Shop.Bring,带上
+Shop.Empty,空
+Shop.ItemSlot,道具
+Shop.ItemsNote,最多带两件道具，任务开始时消耗。
+Shop.Loadout,你的配置
+Shop.PenSlot,笔
+Shop.Stock,库存：{Count}
+Shop.WeaponSlot,武器
+Tier.HostOnly,只有房主可以选择难度档。
+Tier.Summary,{Tier} 档：贴纸 ×{Reward}，敌人血量 ×{Health}，敌人伤害 ×{Damage}
+Tier.Title,难度
+Title.Award,任务结算颁奖获得
+Toast.Title,成就达成
+Wall.Reward,+{Count} 贴纸
+Wardrobe.Hats,帽子
+Wardrobe.Titles,称号
+Ach.0,第一笔
+Ach.0.Note,画一面墙。
+Ach.1,墙匠学徒
+Ach.1.Note,累计画 300 面墙。
+Ach.2,第一页
+Ach.2.Note,通关 1-1。
+Ach.3,第一本笔记
+Ach.3.Note,通关第 1 章所有关卡。
+Ach.4,满分
+Ach.4.Note,在一关拿到三颗星。
+Ach.5,九颗星
+Ach.5.Note,拿满第 1 章所有星星。
+Ach.6,再难一点
+Ach.6.Note,在 2 档或更高难度通关一页。
+Ach.7,硬骨头
+Ach.7.Note,在 3 档或更高难度通关一页。
+Ach.8,老兵
+Ach.8.Note,在 5 档难度通关一页。
+Ach.9,起飞
+Ach.9.Note,被队友扔出去一次。
+Ach.10,人体炮弹
+Ach.10.Note,被扔出去 25 次。
+Ach.11,投手
+Ach.11.Note,扔出队友 25 次。
+Ach.12,诱饵
+Ach.12.Note,作为诱饵拖住 10 个敌人。
+Ach.13,职业诱饵
+Ach.13.Note,作为诱饵拖住 200 个敌人。
+Ach.14,正中靶心
+Ach.14.Note,用投掷命中训练靶心。
+Ach.15,神投手
+Ach.15.Note,命中靶心 25 次。
+Ach.16,好队友
+Ach.16.Note,给队友倒 300 墨水。
+Ach.17,初次研究
+Ach.17.Note,购买一级研究。
+Ach.18,专精
+Ach.18.Note,把一项属性升到 5 级。
+Ach.19,博士
+Ach.19.Note,把所有属性升到 5 级。
+Ach.20,军火库
+Ach.20.Note,拥有所有武器。
+Ach.21,文具全套
+Ach.21.Note,拥有所有笔。
+Ach.22,帽子收藏家
+Ach.22.Note,拥有四顶帽子。
+Ach.23,贴纸大亨
+Ach.23.Note,累计获得 5000 贴纸。
+Ach.24,千人斩
+Ach.24.Note,击败 1000 个敌人。
+Ach.25,MVP
+Ach.25.Note,获得 MVP 奖。
+Ach.26,背锅侠
+Ach.26.Note,获得背锅侠奖。
+Ach.27,派对
+Ach.27.Note,和四名或更多玩家一起完成任务。
+Ach.28,满员
+Ach.28.Note,和八名玩家一起完成任务。
+Ach.29,独狼
+Ach.29.Note,不带 AI 队友独自通关一页。
+Ach.30,毫发无伤
+Ach.30.Note,第 1 章最后一页通关时核心未受伤。
+Ach.31,有备而来
+Ach.31.Note,带两件道具进入任务。
+Attr.0,生命
+Attr.1,伤害
+Attr.2,墨水
+Attr.3,投掷力
+Attr.4,速度
+Attr.5,拾取范围
+Hat.0,不戴帽子
+Hat.1,纸帽子
+Hat.2,毛线帽
+Hat.3,鸭舌帽
+Hat.4,礼帽
+Hat.5,天线
+Hat.6,铅笔
+Hat.7,王冠
+Item.0,墨水瓶
+Item.0.Note,本次任务墨水容量 +40%。
+Item.1,胶带
+Item.1.Note,核心生命 +150。
+Item.2,炮塔套件
+Item.2.Note,你在盒子里的第一座炮塔不花墨水。
+Item.3,创可贴
+Item.3.Note,第一次倒下：2 秒后在原地以一半生命爬起来。
+Item.4,墨水磁铁
+Item.4.Note,击杀多得四分之一墨水，地上的墨水能从三倍远处吸过来。
+Item.5,复写纸
+Item.5.Note,方块少花四分之一墨水。
+Pen.0,钢笔
+Pen.0.Note,画普通墙（每格 10 墨水）。
+Pen.0.Wall,普通墙
+Pen.1,马克笔
+Pen.1.Note,画厚墙：每次啃咬只损失一半（每格 16 墨水）。
+Pen.1.Wall,厚墙
+Pen.2,荧光笔
+Pen.2.Note,画光滑的墙，子弹会被弹回去，最多两次（每格 13 墨水）。
+Pen.2.Wall,弹射墙
+Shop.Tab.0,武器
+Shop.Tab.1,笔
+Shop.Tab.2,道具
+Tier.1.How,一开始就开放
+Tier.2.How,累计 6 颗星开放
+Tier.3.How,各章累计 12 颗星开放
+Tier.4.How,在 3 档通关 3-3 开放
+Tier.5.How,在 4 档通关 3-3 开放
+Title.0,无称号
+Title.1,MVP
+Title.2,最佳诱饵
+Title.3,人体炮弹
+Title.4,墙艺大师
+Title.5,背锅侠
+Title.6,神投手
+Title.7,博士
+Title.8,页边守护者
+Title.9,贴纸大亨
+Title.10,墨水老兵
+Weapon.0.Note,人人都有：稳定、准确。
+Weapon.1.Note,射速快、射程远。
+Weapon.2.Note,近距离六发霰弹。
+Weapon.3.Note,重弹，可穿透一个敌人。
+Weapon.4.Note,轻弹如雨。
+Weapon.5.Note,按住蓄力、松开抛射，炮弹越过墙落地爆炸——敌我不分。
+Level.2-1,断开的平台
+Level.2-2,三座孤岛
+Level.2-3,瞭望台
+Level.3-1,翻墙而入
+Level.3-2,四个钩爪
+Level.3-3,最后一页
+Board.ChapterTab,第 {Index} 章
+Defense.RimHint,平台被岩石截断了：各段之间只能经过盒子相连。两边各挂一架梯子才能过去，或者让队伍分头把守。
+Defense.RaidHint,袭击者会顺着平台外沿的珊瑚色梯子爬上来：先追打平台上的人，再跳进盒子里。
+Board.Roll,摇号出击
+Mode.1.Title,远征
+Mode.1.Note,画在纸上的地牢：四个大关，分别 3、4、5、6 层，房间由走廊相连。战斗房会锁门，商店收随身贴纸袋里的贴纸，每个大关的尽头都有首领。只有活着走出去的人才能带走贴纸。
+Mode.1.Facts,共 18 层 · 5 格快捷栏：1-5 切换，G 丢弃，Tab 整理 · 倒下会掉落全部物品，队友可用墨水把你画回来 · 团灭一无所获
+Mode.2.Title,派对轮盘
+Mode.2.Note,点出击，任务板替你摇号：你已开放的任意一页，再加上一个派对变奏。
+Mode.2.Facts,随机一页已开放关卡 · 一个变奏：混乱整活、人手一把火箭筒或双倍墨水 · 奖励比单独打关卡少
+Twist.1,混乱整活
+Twist.2,火箭派对
+Twist.3,墨水雨
+Twist.Tag,派对变奏：{Name}
+Board.HowItPlays,玩法
+Build.0,弩炮塔
+Build.1,迫击炮
+Build.2,电塔
+Build.3,铁丝网
+Build.Cost,{Ink} 墨水
+Box.Build,{Name} · {Ink} 墨水
+Key.Dodge,闪避
+Ring.Upgrade,升级
+Ring.Remove,拆除
+Ring.Refund,返还 {Ink} 墨水
+Ring.Sides,升到 {Sides} 边
+Ring.Level,升到 {Level} 级
+Ring.WireLeft,剩 {Left}%
+Ring.Denied.1,墨水不够
+Ring.Denied.2,会堵死通路
+Ring.Denied.3,有人站着
+Ring.Denied.4,梯子落脚处
+Ring.Denied.7,已满级
+Box.Click,建造
+Box.ClickTower,升级 · 拆除
+Key.FireBuild,射击 · 建造
+Menu.Steam,Steam：{Name}
+Menu.SteamOff,Steam 未连接 · 只能单人游玩
+Door.FriendRooms,正在开房间的好友
+Door.NoFriendRooms,现在没有 Steam 好友开着房间。好友打开游戏后，大厅就会出现在这里。
+Door.Join,加入
+Network.FindingFriend,正在查找好友的房间…
+Network.FriendRoomGone,那个房间已关闭或无法加入。
+Board.BotsExpedition,远征只限真人玩家：不带 AI 队友。
+Team.Seat,玩家 {Index}
+Key.Drop,丢弃
+Key.Kit,整理
+Key.Take,拾取 / 购买 / 打开
+Key.Slots,切换格位
+Weapon.Fists,空手
+Expedition.Pair,双持{Name}
+Gear.0,2B 橡皮擦
+Gear.0.Note,点击：擦掉面前的敌人；首领被擦掉一件工具（没有工具的掉一半血）
+Gear.1,复活纸笔
+Gear.1.Note,点击：用墨水把倒下的队友画回来
+Gear.2,便利贴护符
+Gear.2.Note,点击：下一次重击由它替你挡下
+Gear.3,浓缩墨水囊
+Gear.3.Note,点击：全队墨水 +60，并推开敌人
+Gear.4,修正液喷罐
+Gear.4.Note,点击：喷出白色区域，治疗队友并抹平危险
+Gear.5,千纸鹤诱饵
+Gear.5.Note,点击：放出诱饵，吸引敌人 6 秒
+Gear.6,红墨大印章
+Gear.6.Note,点击：被盖章的敌人 10 秒内受伤 +35%
+Gear.7,双面胶陷阱
+Gear.7.Note,点击：铺一条粘胶线，粘住敌人 3.5 秒
+Gear.8,速干冷风筒
+Gear.8.Note,点击：吹散弹幕，把敌人吹到墙上
+Gear.9,回收剪刀
+Gear.9.Note,点击：把地上多余的枪或外观剪成贴纸
+Gear.10,急诊创可贴
+Gear.10.Note,点击：3 秒内回复一半生命
+Gear.11,金粉撒星罐
+Gear.11.Note,点击：被撒上金粉的敌人挨打时会掉贴纸
+Gear.12,自动复写蓝纸
+Gear.12.Note,每第 5 发射出一发半伤复写弹
+Gear.13,吸铁石回形针链
+Gear.13.Note,远处的贴纸和墨水会自动飞向你
+Gear.14,透明胶带卷
+Gear.14.Note,点击：给自己或残血队友套上 60 点护盾
+Gear.15,塑料直尺盾
+Gear.15.Note,拿在手上：反弹正面的子弹
+Gear.16,无限弹簧笔芯
+Gear.16.Note,弹匣 +35%，换弹快 20%
+Gear.17,便携卷笔刀
+Gear.17.Note,点击：部署一个 12 秒的小炮台
+Gear.18,高容量墨水瓶
+Gear.18.Note,墨水上限 180；每次击杀额外 +4 墨水
+Gear.19,防爆牛皮纸内胆
+Gear.19.Note,受到伤害 -18%；进入新房间后 4 秒免疫
+Gear.20,加厚美工衬垫
+Gear.20.Note,射击的击退 +45%
+Gear.21,高光荧光记号笔
+Gear.21.Note,命中会标记敌人：全队对其暴击伤害更高
+Gear.22,幸运贴纸收集册
+Gear.22.Note,拾取的贴纸活着带出时 +25%
+Gear.23,不死鸟折纸符
+Gear.23.Note,每大关一次：不会倒下，以 30% 生命站起
+Gear.24,替身草稿人
+Gear.24.Note,单人：倒下时替你站起来一次
+GearUse.0,点击使用（一次性）
+GearUse.1,携带即生效
+GearUse.2,点击使用 · 冷却 {Seconds} 秒
+GearUse.3,拿在手上生效
+GearUse.4,遗物：放在任意格都生效
+GearUse.Revive,点击：打开应急复活草稿纸
+GearUse.Fists,只能推一推
+Hat.8,纸折船
+Look.1.1,3D 红蓝眼镜
+Look.1.2,单边眼罩
+Look.1.3,涂黑墨镜
+Look.2.1,千纸鹤纸翼
+Look.2.2,红领巾飘带
+Look.2.3,线圈本弹簧翅
+Look.3.1,小橡皮吊坠
+Look.3.2,回形针链
+Look.3.3,迷你圆规挂饰
+Look.4.1,彩虹水彩脚印
+Look.4.2,铅笔沙沙拖痕
+Look.4.3,毛笔墨竹步韵
+Wear.0,头饰
+Wear.1,面具 / 眼镜
+Wear.2,披风 / 纸翼
+Wear.3,挂件
+Wear.4,足迹
+Wear.5,头衔
+Biome.0,铅笔草稿
+Biome.1,水彩晕染
+Biome.2,钢笔墨线
+Biome.3,圆珠笔复写
+Biome.4,毛笔水墨
+Trait.0,铅笔
+Trait.0.Note,草稿改写：可自动回复的 25% 石墨护盾；每层一次，致命伤只剩 1 点生命。
+Trait.1,水性笔
+Trait.1.Note,水彩濡染：每秒回复 1.5% 生命；拖尾会减速并打湿敌人。
+Trait.2,钢笔
+Trait.2.Note,硬锋刺破：暴击率 +20%，子弹多穿透 1 个；受治疗 -15%。
+Trait.3,圆珠笔
+Trait.3.Note,蓝墨复写：攻速与换弹 +15%；每 8 发追加一发追踪复写弹。
+Trait.4,毛笔
+Trait.4.Note,墨山镇岳：击退抗性 40%，每 4 秒震出一次墨浪，全队墨水获取 +15%。
+Boss.0,自动化制图台
+Boss.1,虹彩晕染妖灵
+Boss.2,铁血总编
+Boss.3,复写齿轮督军
+Boss.4,墨渊宗师
+Room.0,起点
+Room.1,战斗房
+Room.2,传送门房
+Room.3,首领房
+Room.4,商店
+Room.5,宝箱房
+Room.6,事件房
+Event.0,天平回收
+Event.1,许愿井
+Event.2,笔尖重铸
+Event.3,整蛊投票
+Event.4,锁链宝箱
+Event.5,贴纸转盘
+Event.6,笔架
+Event.7,纸怪擂台
+Event.8,复印机
+Event.9,急诊室
+Event.10,盲盒机
+Event.11,拓印台
+Event.12,折纸撤离门
+Service.0,全员治疗
+Service.1,以血换墨
+Service.2,转一次
+Service.3,大转一次
+Service.4,许个愿
+Service.5,复印道具
+Service.6,拓出一把
+Service.7,称重回收
+Service.8,开始擂台
+Service.9,抽一个
+Expedition.Pick,拾取{Name}
+Expedition.PickPair,拾取{Name}：左右手双持！
+Expedition.PickStack,拾取{Name}（叠放）
+Expedition.Full,放不下{Name}：背包满了（按 Tab 整理，或按 G 丢下手中物品）
+Expedition.WearLook,穿戴{Name}
+Expedition.SwapLook,同类外观已穿戴：把{Worn}换成{Name}（或留给队友）
+Expedition.Buy,购买{Name} · {Price} 贴纸（先扣远征币）
+Expedition.Machine,{Name} · {Price} 贴纸
+Expedition.MachineFree,{Name} · 免费
+Expedition.OpenChest,打开宝箱
+Expedition.ExitHold,按住 E：带着 {Count} 张贴纸提前撤离
+Expedition.ChainHold,在圈内按住 E 解开锁链
+Expedition.Arming,{Seconds} 秒后关门
+Expedition.Wave,第 {Wave} / {Waves} 波
+Expedition.PortalOpen,传送门已开启
+Expedition.Cleared,已清空
+Expedition.Pouch,随身贴纸 · 活着出去才算数
+Expedition.Tag.Out,通关撤离
+Expedition.Tag.Early,提前撤离
+Expedition.Tag.Ghost,灵魂
+Expedition.Tag.Lost,未能撤离
+Expedition.LookOf,{Owner}的{Name}
+Expedition.FinalDoor,终局撤离门
+Expedition.EarlyDoor,提前撤离门 · 长按 E
+Expedition.Portal,传送门
+Expedition.PortalCount,传送门：{In} / {Count} 人已进入
+Expedition.PortalLeaves,{Seconds} 秒后出发
+Expedition.GhostTag,{Name} · 灵魂
+Expedition.Denied.20,快捷栏和背包都满了
+Expedition.Denied.21,贴纸和远征币不够
+Expedition.Denied.22,墨水不够
+Expedition.Denied.23,没有可用的东西
+Expedition.Denied.24,画的形状没有闭合
+Expedition.Denied.25,已经用过了
+Expedition.Denied.26,现在不行
+Expedition.Floor,第 {Stage}-{Floor} 层 · {Pen}
+Expedition.FloorBoss,首领层 {Stage}-{Floor} · {Pen}
+Expedition.DoorsShut,门关上了！
+Expedition.WaveCall,第 {Wave} 波！
+Expedition.RoomClear,房间已清空 · 全员回复 20% 生命
+Expedition.PortalBanner,传送门开启了
+Expedition.WayOut,撤离门开启了
+Expedition.OutTitle,带着 {Count} 张贴纸撤离成功
+Expedition.OutNote,已安全入账。看看队友能不能也走出来。
+Expedition.OutLast,其他人都已撤离或倒下：本局结束。
+Expedition.GhostTitle,你倒下了
+Expedition.GhostNote,装备散落在倒下的地方。队友能用墨水把你画回来；否则到下一层，你会带着一半生命回来。
+Expedition.GhostAlone,已经没有人站着了。
+Kit.Title,随身背包
+Kit.Note,把队友需要的东西丢给他们。按 Tab 或 Esc 关闭。
+Kit.Pouch,随身贴纸袋
+Kit.PouchNote,尚未入账：可以在商店花掉、丢给队友，或活着带出去。
+Kit.Trait,复活笔画：{Name}
+Kit.Drop25,丢出 25 张
+Kit.DropAll,全部丢出
+Kit.Looks,穿戴外观
+Kit.DropLook,丢下
+Kit.Hotbar,快捷栏
+Kit.GunNote,手枪只占一只手：另一只手再拿一把就能双持。
+Revive.Hint.Slot,{Name} 倒下了：按 {Slot} 拿起复活纸笔，再点击画回来
+Revive.NoGhost,没有需要复活的队友
+Revive.Sent,图稿已提交
+Revive.Danger,附近有 {Count} 个敌人！
+Revive.Title,应急复活草稿纸
+Revive.Note,画一个闭合图形。画得越大，复活的人越大越耐打，也越费墨水。
+Revive.Empty,按住左键画一个圈
+Revive.Who,复活谁
+Revive.Pen,笔画
+Revive.Open,笔迹未封闭，请重新描闭！（不耗材料）
+Revive.Area,面积 {Percent}% · 耗墨 {Ink}（现有 {Have}）
+Revive.Body,体型 ×{Size} · 生命 ×{Health} · 移速 ×{Speed}
+Revive.Small,太小了，装不下一个人
+Revive.NoInk,需要 {Ink} 墨水，你只有 {Have}
+Revive.Bonus.1,规整圆形：移速 +5%
+Revive.Bonus.2,规整三角形：攻击 +8%
+Revive.Bonus.3,规整矩形：减伤 +10%
+Revive.Hint,在草稿纸上画一个闭合图形
+Revive.Submit,确认复活
+Revive.Redraw,重画
+Revive.Cancel,取消 · Esc
+Expedition.Result.Final,成功撤离
+Expedition.Result.Early,提前撤离
+Expedition.Result.Lost,全部遗失
+Expedition.Banked,入账 {Count} 张贴纸
+Expedition.LostAll,贴纸袋留在了地牢里：一无所获
+Expedition.Reached,到达第 {Stage}-{Floor} 层 · 通过 {Floors} 层
+Expedition.Tally,击败 {Kills} 个敌人 · {Elites} 个精英 · 开启 {Chests} 个宝箱 · 赢下 {Fights} 场战斗
+Foe.0,涂鸦线球怪
+Foe.1,虚线幽灵三角
+Foe.2,木屑飞镖手
+Foe.3,草稿方块盾卫
+Foe.4,折断小铅笔头
+Foe.5,水滴史莱姆
+Foe.6,双色混流刺客
+Foe.7,颜料喷壶怪
+Foe.8,冒泡电泳球
+Foe.9,吸水海绵方块
+Foe.10,钢笔铱尖刺客
+Foe.11,墨囊自爆虫
+Foe.12,排线铁甲蟹
+Foe.13,墨水瓶射手
+Foe.14,裁纸飞轮刀
+Foe.15,蓝黑滚珠射手
+Foe.16,红笔纠察官
+Foe.17,复写双子星
+Foe.18,弹珠滚轮坦克
+Foe.19,算盘连珠炮手
+Foe.20,墨迹游魂
+Foe.21,宣纸伞妖
+Foe.22,篆刻印章石墩
+Foe.23,飞白墨柱炮
+Foe.24,枯笔风车侍
+Foe.25,自动铅笔重炮王
+Foe.26,橡皮屑巨人
+Foe.27,虹吸调色盘主
+Foe.28,湿笔游龙鳗
+Foe.29,双头蘸水剑圣
+Foe.30,钢铁墨瓶督查
+Foe.31,四色按动炮台兽
+Foe.32,双面复写镜魔
+Foe.33,狂草舞墨太岁
+Foe.34,御用双印大判官
+Foe.35,偷贴纸的折纸小偷
+Foe.36,被污染的废稿聚合体
+Foe.37,自动化制图台
+Foe.38,虹彩晕染妖灵
+Foe.39,铁血总编
+Foe.40,复写齿轮督军
+Foe.41,墨渊宗师
+Foe.42,红色水彩灵
+Foe.43,黄色水彩灵
+Foe.44,蓝色水彩灵
+Foe.45,书法兵
+Foe.46,书法盾
+Boss.Dragon,狂草真龙
+Part.37.0,削笔加特林
+Part.37.1,黄金圆规
+Part.39.0,镀金左轮
+Part.39.1,裁纸长刀
+Part.40.0,四色转轮加特林
+Part.40.1,复写反射盾
+Part.41.0,黄铜镇纸印
+BossPhase.Dragon,宗师化身狂草真龙！
+BossPhase.Split,三原色分流！
+BossPhase.Merge,水彩重新汇聚
+Service.10,重铸笔尖
+Service.11,投票箱
+Service.12,借用画笔
+Service.VoteFor,投给：{Name}
+Service.BorrowPen,借用：{Name}
+Expedition.PrankChip,本层整蛊：{Name}
+Expedition.PrankBanner,整蛊生效：{Name}！
+Expedition.Ballot,按 E 投票 · 剩余 {Seconds} 秒
+Nib.0,铅笔笔头：命中有几率让敌人僵住半秒。
+Nib.1,水性笔头：命中减速并浸湿敌人。
+Nib.2,钢笔笔头：子弹多穿透一个敌人。
+Nib.3,圆珠笔头：每第 4 发射出一发复写弹。
+Nib.4,毛笔笔头：子弹伤害 +10% 并带击退。
+Afflict.Bleeding,流血
+Afflict.Circled,红圈：受伤 +20%
+Afflict.Sealed,封印：不能用道具
+Afflict.Smeared,墨污遮眼
+Afflict.Dragged,减速
+Afflict.Fogged,粉尘掩护
+Afflict.Streak,朱砂暴击
+Afflict.DryBrush,飞白 +15% 伤害
+Wall.Page.0,关卡与房间 · {Count}/32
+Wall.Page.1,远征 · {Count}/32
+Ach.32,初入地牢
+Ach.32.Note,在远征中通过一层。
+Ach.33,拆掉制图台
+Ach.33.Note,击败铅笔群系首领自动化制图台。
+Ach.34,活着通关
+Ach.34.Note,从最终首领后的撤离门走出去。
+Ach.35,见好就收
+Ach.35.Note,带着至少 500 张贴纸从提前撤离门离开。
+Ach.36,满载而归
+Ach.36.Note,单局带出至少 1000 张贴纸。
+Ach.37,五笔皆服
+Ach.37.Note,击败全部五个群系的首领。
+Ach.38,屠龙者
+Ach.38.Note,击败化身狂草真龙的墨渊宗师。
+Ach.39,擦掉武器
+Ach.39.Note,用橡皮擦擦掉首领的一件工具。
+Ach.40,徒手总编
+Ach.40.Note,把铁血总编的左轮和长刀都擦掉。
+Ach.41,一擦半血
+Ach.41.Note,一擦擦掉技能型首领一半生命。
+Ach.42,擦得干净
+Ach.42.Note,用橡皮擦擦掉 10 个敌人。
+Ach.43,画回来
+Ach.43.Note,用纸笔画回一位倒下的队友。
+Ach.44,一笔小圈
+Ach.44.Note,用不到纸面十分之一的图形救回队友。
+Ach.45,几何课满分
+Ach.45.Note,在复活绘图中拿到圆形、三角形和矩形三种加成。
+Ach.46,借笔生花
+Ach.46.Note,用笔架借来的笔救回队友。
+Ach.47,左右开弓
+Ach.47.Note,左右手各拿一把手枪。
+Ach.48,订书机二刀流
+Ach.48.Note,左右手各拿一把订书机手枪。
+Ach.49,全套行头
+Ach.49.Note,同时穿戴全部六类外观。
+Ach.50,精英猎手
+Ach.50.Note,击败 25 个精英怪。
+Ach.51,抓住小偷
+Ach.51.Note,在贴纸小偷逃走前抓住它。
+Ach.52,三十秒擂台
+Ach.52.Note,在 30 秒内清空擂台。
+Ach.53,解开锁链
+Ach.53.Note,按住打开一只锁链宝箱。
+Ach.54,复印成功
+Ach.54.Note,在复印机上成功复印一块橡皮擦。
+Ach.55,豪赌一把
+Ach.55.Note,转一次 60 贴纸的大转盘。
+Ach.56,两次重铸
+Ach.56.Note,一局内重铸两次笔尖。
+Ach.57,少数服从多数
+Ach.57.Note,四人以上参与并完成一次整蛊投票。
+Ach.58,慷慨解囊
+Ach.58.Note,丢出 200 张被队友捡走的贴纸。
+Ach.59,零伤亡首领战
+Ach.59.Note,无人倒下地击败一位首领。
+Ach.60,四人同行
+Ach.60.Note,在四人以上的队伍中从最终撤离门走出。
+Ach.61,高难通关
+Ach.61.Note,在难度 3 或更高时从最终撤离门走出。
+Ach.62,贴纸大亨
+Ach.62.Note,累计从远征中带出 10000 张贴纸。
+Ach.63,功亏一篑
+Ach.63.Note,团灭时丢掉至少 300 张贴纸。
+Quality.0,无品质
+Quality.1,绿色
+Quality.2,蓝色
+Quality.3,紫色
+Quality.4,橙色
+Quality.5,红色
+Gun.0,订书机手枪
+Gun.0.Note,射得更快、弹匣 14 发，订书钉能穿透 1 个敌人；尖刺弹：命中有 25% 几率让敌人流血（每秒 1 点，持续 10 秒）。
+Gun.1,图钉霰弹枪
+Gun.1.Note,每发 8 枚图钉，每枚都有机会把敌人钉住 0.4 秒（首领除外）；尖刺弹：命中有 25% 几率让敌人流血（每秒 1 点，持续 10 秒）。
+Gun.2,冰蓝墨水步枪
+Gun.2.Note,命中会减速并浸湿敌人（湿了更慢）。
+Gun.3,橡皮筋机枪
+Gun.3.Note,子弹会在墙上反弹 2 次。
+Gun.4,荧光闪电狙击枪
+Gun.4.Note,命中后电弧跳向附近 3 个敌人，各造成 45% 伤害。
+Gun.5,朱砂吸墨步枪
+Gun.5.Note,造成伤害的 10% 转为护盾，护盾最多为生命上限的 20%。
+Gun.6,火漆封缄火箭筒
+Gun.6.Note,爆炸范围更大，被炸到的敌人会燃烧 3 秒。
+Gun.7,七彩蜡笔机枪
+Gun.7.Note,子弹轮流变色：红色灼烧、蓝色减速、黄色跳电、绿色穿透。
+Expedition.OpenChestQ,打开{Quality}宝箱
+Expedition.ChestTag,{Quality}宝箱
+Expedition.Trade,出售换远征币
+Service.13,收购商
+Expedition.Denied.27,附近没有收购商
+Revive.Hint.Bag,{Name} 倒下了：复活纸笔在背包里，按 Tab 把它挪到快捷栏
+Kit.BagNote,1、2 号格是双手，只放枪：长枪占两格，手枪各占一格，两把即双持。3–5 号格放道具，放这里才生效；背包只存放。
+Kit.TabBag,背包
+Kit.TabLooks,外观
+Kit.Coins,远征币
+Kit.CoinNote,远征币只在本局有效：买东西先扣远征币（10 枚抵 1 张贴纸），倒下会散落，带不出地牢。
+Kit.Coins100,丢出 100 枚
+Kit.CoinsAll,全部丢出
+Kit.Locked,研究台扩容
+Kit.Bag,背包 · {Open} / {Count} 格
+Kit.MoveHint,再点一格就移过去；点原来那格取消。
+Kit.PickHint,点一格选中它。
+Kit.Picked,选中的
+Kit.InHand,手上的
+Kit.EmptySlot,空格子。
+Kit.QualityTag,{Quality}品质
+Kit.NoQuality,无品质 · 军械库武器
+Kit.BagIdle,放在背包里不生效：挪到 3–5 号格。
+Kit.Fetch,收购价：{Coins} 远征币
+Kit.DropSlot,丢到地上
+Trade.Title,收购商
+Trade.Note,选中一件武器或道具卖给他，换成远征币（不会换成贴纸）。买东西时先扣远征币，10 枚抵 1 张贴纸。走开就会关闭。
+Trade.Sell,卖出 · {Coins} 币
+Research.Whole,研究永久属于你：任何房间都全额生效，多人时每人按自己的研究算。
+Research.BagTotal,背包 {Count} 格
+Attr.6,背包扩容
+Attr.StepSlot,每级 +1 格
+Kit.LongNote,长枪要用两只手（占 1、2 号格）。
+Kit.BagGun,挪到 1、2 号格才能拿在手上。
+Kit.Hands,1–2 · 双手（只放枪）
+Kit.Belt,3–5 · 道具（放这里才生效）
+Kit.LeftHand,左手
+Kit.RightHand,右手
+Expedition.PickBag,拾取{Name}（放进背包）
+Expedition.PairOf,双持：{Left} + {Right}
+Expedition.Denied.28,1、2 号格是双手，只能放枪
+Expedition.Denied.29,3–5 号格只放道具，枪放在 1、2 号格或背包
+Expedition.Denied.30,背包没有空位放另一把手枪
+Key.Mend,墨水回血
+Mend.Self,墨水疗伤 · 1 墨 = 1 血
+Revive.Prompt,把{Name}画回来
+Revive.PromptNoKit,把{Name}画回来 · 没有复活纸笔，墨水×2
+Revive.NoteNoKit,没有复活纸笔：照样能画回来，墨水消耗×2。画一个闭合图形，越大越耐打，也越费墨水。
+Mend.Area,墨水疗伤 · 圈内 {Count} 人均分
+Spectate.Watching,正在观战：{Name}
+Spectate.Switch,左键 / 右键 切换队友
+Attr.7,冲刺冷却
+Attr.8,冲刺速度
+Attr.StepCut,每级 -{Percent}%
+Research.TotalCut,合计 -{Percent}%
+Revive.Hint.NoKit,{Name} 倒下了：走到轮廓旁按 E 就能画回来（墨水×2）
+Mend.Mate,墨水疗伤 · 给 {Name} 回血 · 1 墨 = 1 血

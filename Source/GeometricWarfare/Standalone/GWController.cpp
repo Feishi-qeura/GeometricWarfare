@@ -1,5 +1,6 @@
 #include "GWController.h"
 #include "Components/InputComponent.h"
+#include "Engine/GameViewportClient.h"
 #include "Framework/Application/SlateApplication.h"
 #include "GWGameInstance.h"
 #include "GWGameMode.h"
@@ -8,6 +9,7 @@
 #include "GWPlayerState.h"
 #include "GWSettings.h"
 #include "GWWorld.h"
+#include "InputKeyEventArgs.h"
 void AGWController::BeginPlay()
 {
     Super::BeginPlay();
@@ -66,6 +68,8 @@ void AGWController::SetupInputComponent()
     InputComponent->BindKey(EKeys::RightMouseButton, IE_Pressed, this, &AGWController::PaintPressed);
     InputComponent->BindKey(EKeys::RightMouseButton, IE_Released, this, &AGWController::PaintReleased);
     InputComponent->BindKey(EKeys::F, IE_Pressed, this, &AGWController::Merge);
+    InputComponent->BindKey(EKeys::LeftShift, IE_Pressed, this, &AGWController::Dodge);
+    InputComponent->BindKey(EKeys::RightShift, IE_Pressed, this, &AGWController::Dodge);
     InputComponent->BindKey(EKeys::Enter, IE_Pressed, this, &AGWController::CallWave);
     InputComponent->BindKey(EKeys::E, IE_Pressed, this, &AGWController::Recruit);
     InputComponent->BindKey(EKeys::Q, IE_Pressed, this, &AGWController::Launch);
@@ -73,18 +77,60 @@ void AGWController::SetupInputComponent()
     InputComponent->BindKey(EKeys::Escape, IE_Pressed, this, &AGWController::Pause);
     InputComponent->BindKey(EKeys::MouseScrollUp, IE_Pressed, this, &AGWController::ZoomIn);
     InputComponent->BindKey(EKeys::MouseScrollDown, IE_Pressed, this, &AGWController::ZoomOut);
-    // 1/2/3 pick the matching upgrade card while Evolution is paused for a level-up.
-    const FKey Picks[] = {EKeys::One, EKeys::Two, EKeys::Three, EKeys::NumPadOne, EKeys::NumPadTwo, EKeys::NumPadThree};
+    InputComponent->BindKey(EKeys::G, IE_Pressed, this, &AGWController::DropHeld);
+    InputComponent->BindKey(EKeys::Tab, IE_Pressed, this, &AGWController::KitPanel);
+    // 1-5 belong to the expedition's hotbar alone (design v2.1 4.1: 按键职责清理). Upgrade cards are picked with the mouse,
+    // towers in the build ring a click opens on the floor.
+    const FKey Picks[] = {EKeys::One, EKeys::Two, EKeys::Three, EKeys::Four, EKeys::Five,
+                          EKeys::NumPadOne, EKeys::NumPadTwo, EKeys::NumPadThree, EKeys::NumPadFour, EKeys::NumPadFive};
     for (int32 I = 0; I < static_cast<int32>(UE_ARRAY_COUNT(Picks)); ++I)
     {
         FInputKeyBinding Binding(FInputChord(Picks[I]), IE_Pressed);
-        Binding.KeyDelegate.GetDelegateForManualSet().BindWeakLambda(this, [this, Index = I % 3]()
-        {
-            if (auto* H = Cast<AGWHUD>(GetHUD()))
-                H->ChooseUpgrade(Index);
-        });
+        Binding.KeyDelegate.GetDelegateForManualSet().BindWeakLambda(this, [this, Index = I % 5]() { HotbarKey(Index); });
         InputComponent->KeyBindings.Add(Binding);
     }
+}
+void AGWController::HotbarKey(int32 Slot)
+{
+    const auto* S = GetWorld()->GetGameState<AGWGameState>();
+    if (!S || !S->Expedition() || !GameplayInputAllowed())
+        return;
+    // Keys 1 and 2 both take up the guns (the two hands, 2026-11-17); an empty item slot has nothing to take up.
+    const auto* P = GetPlayerState<AGWPlayerState>();
+    const FGWUnitView* U = P ? S->FindUnit(P->UnitId) : nullptr;
+    if (Slot < gwgame::HandSlots)
+        Slot = 0;
+    else if (U && U->Hotbar[FMath::Clamp(Slot, 0, 4)].Kind == 0)
+        return;
+    AskedSlot = Slot;
+    AskedAt = GetWorld()->GetTimeSeconds();
+    PickSlot(Slot);
+}
+void AGWController::CycleSlot(int32 Step)
+{
+    const auto* S = GetWorld()->GetGameState<AGWGameState>();
+    const auto* P = GetPlayerState<AGWPlayerState>();
+    const FGWUnitView* U = S && P ? S->FindUnit(P->UnitId) : nullptr;
+    if (!U || !GameplayInputAllowed())
+        return;
+    // The wheel runs over the hands (one stop) and the item slots that hold something (design 4.1).
+    const int32 From = AskedSlot >= 0 && GetWorld()->GetTimeSeconds() - AskedAt < .5 ? AskedSlot : U->Selected;
+    const int32 Current = From < gwgame::HandSlots ? 0 : From;
+    for (int32 K = 1; K <= 5; ++K)
+    {
+        const int32 Slot = ((Current + Step * K) % 5 + 5) % 5;
+        if (Slot == 0 || (Slot >= gwgame::HandSlots && U->Hotbar[Slot].Kind != 0))
+        {
+            HotbarKey(Slot);
+            return;
+        }
+    }
+}
+void AGWController::KitPanel()
+{
+    const auto* S = GetWorld()->GetGameState<AGWGameState>();
+    if (auto* H = Cast<AGWHUD>(GetHUD()); H && S && S->Expedition() && !S->Finished)
+        H->ToggleKit();
 }
 bool AGWController::GameplayInputAllowed() const
 {
@@ -103,15 +149,34 @@ bool AGWController::PredictedPosition(int32 UnitId, FVector& Position) const
     Position = FVector(Prediction.position.x, Prediction.position.y, 0);
     return true;
 }
+bool AGWController::InputKey(const FInputKeyEventArgs& Params)
+{
+    if (auto* H = Cast<AGWHUD>(GetHUD()); H && H->IntroPlaying())
+    {
+        if (Params.Key == EKeys::SpaceBar && Params.Event == IE_Pressed)
+            H->SkipIntro();
+        return true;
+    }
+    return Super::InputKey(Params);
+}
+
 void AGWController::PlayerTick(float Delta)
 {
     Super::PlayerTick(Delta);
+    // In play the HUD draws its own cursor (a hammer while building, a reticle in a fight); menus keep the arrow.
+    if (const auto* H = Cast<AGWHUD>(GetHUD()))
+    {
+        CurrentMouseCursor = (H->IntroPlaying() || H->CustomCursor()) ? EMouseCursor::None : EMouseCursor::Default;
+        if (IsLocalController())
+            UpdateMouse(H->CustomCursor() && !H->IntroPlaying());
+    }
     auto* S = GetWorld()->GetGameState<AGWGameState>();
     auto* P = GetPlayerState<AGWPlayerState>();
     if (HasAuthority() && FPlatformTime::Seconds() - LastInput > .3 && P && S && S->Simulation)
         S->Simulation->setInput(P->UnitId, {});
     if (!IsLocalController())
         return;
+    UpdateSpectate();
     if (LocalCharging && !GameplayInputAllowed())
         CancelLaunch();
     if (LocalCharging && S && P)
@@ -124,6 +189,24 @@ void AGWController::PlayerTick(float Delta)
     }
     if (!IsInputKeyDown(EKeys::LeftMouseButton))
         UIConsumedMouse = false;
+    // The rocket's charge meter starts when the trigger goes down with the launcher in hand.
+    {
+        const auto* Me = S && P ? S->FindUnit(P->UnitId) : nullptr;
+        // It charges only once the launcher is loaded and its last shell's interval has passed (as the host counts), so
+        // the aiming preview's landing spot is where the shell will come down.
+        const double Now = GetWorld()->GetTimeSeconds();
+        const bool Ready = Me && Me->Ammo > 0 && Me->Reload <= 0 && Now >= RocketReadyAt;
+        const bool Held = IsInputKeyDown(EKeys::LeftMouseButton) && !UIConsumedMouse && Me && Me->Alive && Me->Weapon == gwgame::RocketWeapon &&
+                          !Me->Climbing && GameplayInputAllowed();
+        if (!Held)
+        {
+            if (RocketStarted >= 0 && Me)
+                RocketReadyAt = Now + gwgame::gunStats(gwgame::RocketWeapon, S->Expedition() ? Me->Hotbar[0].Variant : -1).interval;
+            RocketStarted = -1;
+        }
+        else if (RocketStarted < 0 && Ready)
+            RocketStarted = Now;
+    }
     HoverCell = HoverMate = -1;
     if (S && S->InMatch && S->Defense())
     {
@@ -160,7 +243,13 @@ void AGWController::PlayerTick(float Delta)
         InputTime = 0;
         return;
     }
-    Pinned = U->State == static_cast<uint8>(gwgame::UnitState::Launched) || U->Carried || U->Bait > 0;
+    Pinned = U->State == static_cast<uint8>(gwgame::UnitState::Launched) || U->Carried || U->Bait > 0 || U->Climbing;
+    // Up on the box's platform the player walks on platform cells only; the host says which level they are on.
+    if (Prediction.deck != U->Deck)
+    {
+        Prediction.deck = U->Deck;
+        Prediction.valid = false;
+    }
     if (S->UpgradePaused)
     {
         Prediction.reset({U->Position.X, U->Position.Y}, U->AckSequence, {U->Impulse.X, U->Impulse.Y});
@@ -186,6 +275,9 @@ void AGWController::PlayerTick(float Delta)
     LastAuthorityPosition = Authority;
     LastAuthorityImpulse = U->Impulse;
     PredictionWallVersion = S->WallVersion;
+    // The dodge as this player's research has it (the host counts the same ranks).
+    Prediction.dashKick = gwgame::DashImpulse * gwgame::attributeScale(gwgame::Attribute::DashSpeed, U->KickRank);
+    Prediction.dashRest = gwgame::DashCooldownSeconds * gwgame::attributeScale(gwgame::Attribute::DashCooldown, U->DashRank);
     gwgame::Input Input;
     double Angle = FMath::DegreesToRadians(U->Angle);
     Input.aim = {std::cos(Angle), std::sin(Angle)};
@@ -196,17 +288,22 @@ void AGWController::PlayerTick(float Delta)
     {
         Input.move = {static_cast<double>(IsInputKeyDown(EKeys::D)) - IsInputKeyDown(EKeys::A),
                       static_cast<double>(IsInputKeyDown(EKeys::S)) - IsInputKeyDown(EKeys::W)};
-        FVector Ray, Direction;
-        if (DeprojectMousePositionToWorld(Ray, Direction) && FMath::Abs(Direction.Z) > .0001)
-        {
-            FVector Hit = Ray + Direction * (-Ray.Z / Direction.Z);
+        FVector Hit;
+        if (CursorWorld(Hit))
             Input.aim = {Hit.X - Prediction.position.x, Hit.Y - Prediction.position.y};
-        }
         Input.fire = IsInputKeyDown(EKeys::LeftMouseButton) && !UIConsumedMouse;
+        // E held: the expedition's exit doors and chained chests are held open.
+        Input.use = IsInputKeyDown(EKeys::E);
+        // R held: ink poured into wounds, shared by every hurt player in the circle round this one (2026-11-17).
+        Input.mend = IsInputKeyDown(EKeys::R);
         MouseAim = FVector2D(Input.aim.x, Input.aim.y).GetSafeNormal();
     }
+    if (MendOverride)
+        Input.mend = true;
     InputTime = FMath::Min(InputTime + Delta, .1f);
     bool Moved = false;
+    // A Shift press rides on the next command only.
+    Input.dodge = DodgeQueued && GameplayInputAllowed();
     while (InputTime + 1e-7f >= 1.f / 60)
     {
         InputTime -= 1.f / 60;
@@ -214,6 +311,8 @@ void AGWController::PlayerTick(float Delta)
         if (!Input.sequence)
             Input.sequence = ++SequenceCounter;
         Prediction.predict(Input, WorldView->Geometry, Speed, U->Radius);
+        Input.dodge = false;
+        DodgeQueued = false;
         Moved = true;
     }
     if (Moved)
@@ -226,6 +325,9 @@ void AGWController::PlayerTick(float Delta)
             Command.Move = {In.move.x, In.move.y};
             Command.Aim = {In.aim.x, In.aim.y};
             Command.Fire = In.fire;
+            Command.Dodge = In.dodge;
+            Command.Use = In.use;
+            Command.Mend = In.mend;
             Commands.Add(Command);
         }
         ServerInput(Commands);
@@ -233,14 +335,109 @@ void AGWController::PlayerTick(float Delta)
     if (Pinned)
         Prediction.reset({Authority.X, Authority.Y}, U->AckSequence, Push);
 }
+bool AGWController::CursorWorld(FVector& Hit) const
+{
+    FVector Ray, Direction;
+    if (!DeprojectMousePositionToWorld(Ray, Direction) || FMath::Abs(Direction.Z) < .0001)
+        return false;
+    // The platform's top first: where the cursor is over it, it hides the floor of the box behind it.
+    const auto* S = GetWorld()->GetGameState<AGWGameState>();
+    if (S && S->Defense() && S->GridWidth > 0 && S->CellSize > 0)
+    {
+        const float Top = static_cast<float>(gwgame::DeckHeight);
+        const FVector High = Ray + Direction * ((Top - Ray.Z) / Direction.Z);
+        const int32 X = FMath::FloorToInt(High.X / S->CellSize), Y = FMath::FloorToInt(High.Y / S->CellSize);
+        const int32 Cell = Y * S->GridWidth + X;
+        if (X >= 0 && Y >= 0 && X < S->GridWidth && Y < S->GridHeight && S->Cells.IsValidIndex(Cell) && (S->Cells[Cell] & EGWCell::Deck))
+        {
+            Hit = High;
+            return true;
+        }
+    }
+    Hit = Ray + Direction * (-Ray.Z / Direction.Z);
+    return true;
+}
+float AGWController::RocketProgress() const
+{
+    if (RocketOverride >= 0)
+        return FMath::Min(RocketOverride, 1.f);
+    if (RocketStarted < 0)
+        return -1;
+    return FMath::Clamp(static_cast<float>((GetWorld()->GetTimeSeconds() - RocketStarted) / gwgame::RocketChargeSeconds), 0.f, 1.f);
+}
+bool AGWController::MendHeld() const
+{
+    return MendOverride || (GameplayInputAllowed() && IsInputKeyDown(EKeys::R));
+}
+// Spectating (2026-11-17 playtest: a fallen player could not look at anyone else): while the local player is down the
+// camera follows a teammate still standing, and the left and right buttons step through them (players; with none left,
+// any ally). The world reads SpectateId for its focus, the HUD for the name.
+TArray<int32> AGWController::SpectateChoices() const
+{
+    TArray<int32> Ids;
+    const auto* S = GetWorld()->GetGameState<AGWGameState>();
+    const auto* P = GetPlayerState<AGWPlayerState>();
+    const FGWUnitView* Me = S && P ? S->FindUnit(P->UnitId) : nullptr;
+    if (!S || !Me || Me->Alive || !S->InMatch || S->Finished)
+        return Ids;
+    for (const auto& U : S->Units)
+        if (U.Alive && U.Human && U.Id != Me->Id && U.Team == Me->Team && !U.Extracted)
+            Ids.Add(U.Id);
+    if (Ids.IsEmpty())
+        for (const auto& U : S->Units)
+            if (U.Alive && U.Id != Me->Id && U.Team == Me->Team && U.Kind != 2 && !U.Extracted)
+                Ids.Add(U.Id);
+    Ids.Sort();
+    return Ids;
+}
+void AGWController::UpdateSpectate()
+{
+    const TArray<int32> Ids = SpectateChoices();
+    SpectateCount = Ids.Num();
+    if (Ids.IsEmpty())
+        SpectateId = -1;
+    else if (!Ids.Contains(SpectateId))
+        SpectateId = Ids[0];
+}
+void AGWController::StepSpectate(int32 Step)
+{
+    const TArray<int32> Ids = SpectateChoices();
+    if (Ids.Num() < 2)
+        return;
+    const int32 At = FMath::Max(0, Ids.IndexOfByKey(SpectateId));
+    SpectateId = Ids[(At + Step % Ids.Num() + Ids.Num()) % Ids.Num()];
+}
+// The mouse (2026-11-17 playtest: windowed, Esc's notebook let the arrow out of the window but a click out there went
+// nowhere): in play the arrow stays inside the window; with the notebook, a panel, a sheet or the results up it is free,
+// and the window holds the mouse only while a button is down on it, so a click outside reaches whatever is there.
+void AGWController::UpdateMouse(bool Play)
+{
+    UGameViewportClient* View = GetWorld() ? GetWorld()->GetGameViewport() : nullptr;
+    if (!View || !FSlateApplication::IsInitialized())
+        return;
+    const bool Active = FSlateApplication::Get().IsActive();
+    // Applied again when the window comes back to the front (the system drops the lock with the focus).
+    if (Active && (MouseMode != static_cast<int8>(Play) || !MouseActive))
+    {
+        MouseMode = static_cast<int8>(Play);
+        FInputModeGameAndUI Mode;
+        Mode.SetHideCursorDuringCapture(false);
+        Mode.SetLockMouseToViewportBehavior(Play ? EMouseLockMode::LockAlways : EMouseLockMode::DoNotLock);
+        SetInputMode(Mode);
+    }
+    MouseActive = Active;
+    // Activating the window grabs the mouse too; out of play it is let go as soon as no button is down.
+    if (!Play && View->Viewport && View->Viewport->HasMouseCapture() && !IsInputKeyDown(EKeys::LeftMouseButton) &&
+        !IsInputKeyDown(EKeys::RightMouseButton) && !IsInputKeyDown(EKeys::MiddleMouseButton))
+        FSlateApplication::Get().ReleaseAllPointerCapture();
+}
 int32 AGWController::MateUnderCursor() const
 {
     const auto* S = GetWorld()->GetGameState<AGWGameState>();
     const auto* P = GetPlayerState<AGWPlayerState>();
-    FVector Ray, Direction;
-    if (!S || !P || !DeprojectMousePositionToWorld(Ray, Direction) || FMath::Abs(Direction.Z) < .0001)
+    FVector Hit;
+    if (!S || !P || !CursorWorld(Hit))
         return -1;
-    const FVector Hit = Ray + Direction * (-Ray.Z / Direction.Z);
     const FGWUnitView* Self = S->FindUnit(P->UnitId);
     int32 Best = -1;
     double Nearest = 1e18;
@@ -275,6 +472,34 @@ void AGWController::DriveAutopilot(const AGWGameState* S, const FGWUnitView& U, 
     {
         const double Angle = gwgame::random01(AutopilotSeed) * 2 * PI, Reach = 350 + gwgame::random01(AutopilotSeed) * 900;
         AutopilotGoal = Home + gwgame::Vec2{std::cos(Angle), std::sin(Angle)} * Reach;
+        // Up on the box's platform: walk along it, a few cells either way.
+        if (U.Deck && WorldView)
+        {
+            const gwgame::Maze& M = WorldView->Geometry;
+            const int32 From = M.cell(Here);
+            int32 To = From;
+            const int32 Steps = 2 + static_cast<int32>(gwgame::random01(AutopilotSeed) * 5);
+            const bool Clockwise = gwgame::random01(AutopilotSeed) < .5;
+            for (int32 I = 0; I < Steps && M.isDeck(To); ++I)
+            {
+                // Round the ring: the next platform cell that is not the one just left.
+                const int32 X = To % M.width, Y = To / M.width;
+                int32 Best = -1;
+                for (const auto& D : {std::pair<int32, int32>{1, 0}, {0, 1}, {-1, 0}, {0, -1}})
+                {
+                    const int32 NX = X + (Clockwise ? D.first : -D.first), NY = Y + (Clockwise ? D.second : -D.second);
+                    if (NX >= 0 && NY >= 0 && NX < M.width && NY < M.height && M.isDeck(NY * M.width + NX) && NY * M.width + NX != From)
+                    {
+                        Best = NY * M.width + NX;
+                        break;
+                    }
+                }
+                if (Best < 0)
+                    break;
+                To = Best;
+            }
+            AutopilotGoal = M.center(To);
+        }
         AutopilotTurn = Now + 1.5 + gwgame::random01(AutopilotSeed) * 2;
     }
     In.move = (AutopilotGoal - Here).normalized();
@@ -329,6 +554,9 @@ void AGWController::ServerInput_Implementation(const TArray<FGWInputCommand>& Co
         In.move = {Command.Move.X, Command.Move.Y};
         In.aim = {Command.Aim.X, Command.Aim.Y};
         In.fire = Command.Fire;
+        In.dodge = Command.Dodge;
+        In.use = Command.Use;
+        In.mend = Command.Mend;
         Accepted = S->Simulation->setInput(P->UnitId, In) || Accepted;
     }
     if (Accepted)
@@ -410,14 +638,64 @@ void AGWController::ServerAction_Implementation(uint8 Action, int32 Value)
     }
     else if (Action == 21)
         G->AbandonRun(this);
+    // The expedition: a hotbar slot, dropping what is in hand, and the kit panel's drops (stickers, a look).
+    else if (Action == 25 && S->Simulation)
+        S->Simulation->selectSlot(P->UnitId, Value);
+    else if (Action == 26 && S->Simulation)
+        S->Simulation->dropSlot(P->UnitId);
+    else if (Action == 27 && S->Simulation)
+    {
+        if (Value == 0 || Value == 1)
+            S->Simulation->dropStickers(P->UnitId, Value == 0 ? 25 : 0);
+        else if (Value == 10 || Value == 11)
+            S->Simulation->dropCoins(P->UnitId, Value == 10 ? 100 : 0);
+        else
+            S->Simulation->dropLook(P->UnitId, Value - 2);
+    }
+    // The bag sheet (2026-11-16): a slot moved onto another, a slot dropped whole, a slot sold to the shop's buyer.
+    else if (Action == 28 && S->Simulation)
+        S->Simulation->moveSlot(P->UnitId, Value & 255, (Value >> 8) & 255);
+    else if (Action == 29 && S->Simulation)
+        S->Simulation->dropKitSlot(P->UnitId, Value);
+    else if (Action == 30 && S->Simulation)
+        S->Simulation->sellSlot(P->UnitId, Value);
     // Phase 4: the host's difficulty tier on the board.
     else if (Action == 22)
     {
         if (!G->SetTier(this, Value))
             ClientNotice(TEXT("Tier.HostOnly"));
     }
-    if (S->Simulation && (Action == 5 || Action == 7 || Action == 11 || Action == 12))
+    // The box: a tower on the block in this cell, or one more side on the tower already there.
+    else if (Action == 23 && S->Simulation)
+    {
+        if (const auto* U = S->Simulation->find(P->UnitId); U && U->human && U->owner == P->Identity)
+            S->Simulation->buildTower(U->id, Value & 0xFFFF, (Value >> 16) & 7);
+    }
+    if (S->Simulation && (Action == 5 || Action == 7 || Action == 11 || Action == 12 || Action == 23 || (Action >= 25 && Action <= 27)))
         S->Publish();
+    S->ForceNetUpdate();
+}
+void AGWController::ServerRevive_Implementation(int32 Target, const TArray<uint32>& Points, uint8 Pen)
+{
+    // A drawing is a handful of strokes a minute at most; anything far beyond that is dropped.
+    const double Now = FPlatformTime::Seconds();
+    if (Now - LastRevive < .4 || Points.Num() < 3 || Points.Num() > gwgame::ReviveMaxPoints)
+        return;
+    LastRevive = Now;
+    auto* P = GetPlayerState<AGWPlayerState>();
+    auto* S = GetWorld()->GetGameState<AGWGameState>();
+    if (!P || !S || !S->InMatch || !S->Simulation || S->Finished)
+        return;
+    const auto* U = S->Simulation->find(P->UnitId);
+    if (!U || !U->human || U->owner != P->Identity)
+        return;
+    // The sheet's unit square, in 1/65535ths: the host measures the drawing itself (design 5.2: 闭合判定 and 鞋带公式).
+    std::vector<gwgame::Vec2> Drawing;
+    Drawing.reserve(Points.Num());
+    for (uint32 Packed : Points)
+        Drawing.push_back({(Packed >> 16) / 65535.0, (Packed & 0xFFFF) / 65535.0});
+    S->Simulation->reviveDrawn(U->id, Target, Drawing, Pen);
+    S->Publish();
     S->ForceNetUpdate();
 }
 void AGWController::ServerPaint_Implementation(int32 Cell, bool Erase)
@@ -437,7 +715,11 @@ void AGWController::ServerPaint_Implementation(int32 Cell, bool Erase)
     if (!U || !U->human || U->owner != P->Identity)
         return;
     const size_t Before = S->Simulation->effects.size();
-    const bool Done = Erase ? S->Simulation->eraseWall(U->id, Cell) : S->Simulation->paintWall(U->id, Cell);
+    // On the box's platform the pen draws a ladder down the wall (or rubs one out); everywhere else a wall.
+    const bool Ladder = S->Simulation->maze.isDeck(Cell);
+    const bool Done = Ladder ? (Erase ? S->Simulation->eraseLadder(U->id, Cell) : S->Simulation->buildLadder(U->id, Cell))
+                             : Erase ? S->Simulation->eraseWall(U->id, Cell)
+                                     : S->Simulation->paintWall(U->id, Cell);
     if (Done || S->Simulation->effects.size() != Before)
     {
         S->Publish();
@@ -465,11 +747,9 @@ bool AGWController::CursorCell(int32& Cell) const
 {
     Cell = -1;
     const auto* S = GetWorld()->GetGameState<AGWGameState>();
-    FVector Ray, Direction;
-    if (!S || S->GridWidth <= 0 || S->CellSize <= 0 || !DeprojectMousePositionToWorld(Ray, Direction) ||
-        FMath::Abs(Direction.Z) < .0001)
+    FVector Hit;
+    if (!S || S->GridWidth <= 0 || S->CellSize <= 0 || !CursorWorld(Hit))
         return false;
-    const FVector Hit = Ray + Direction * (-Ray.Z / Direction.Z);
     const int32 X = FMath::FloorToInt(Hit.X / S->CellSize), Y = FMath::FloorToInt(Hit.Y / S->CellSize);
     if (X < 0 || Y < 0 || X >= S->GridWidth || Y >= S->GridHeight)
         return false;
@@ -478,10 +758,23 @@ bool AGWController::CursorCell(int32& Cell) const
 }
 void AGWController::PaintPressed()
 {
+    // Down and watching a teammate: the right button steps back to the one before.
+    if (SpectateId >= 0)
+    {
+        if (const auto* H = Cast<AGWHUD>(GetHUD()); H && !H->OverlayOpen() && !H->SettingsOpen())
+            StepSpectate(-1);
+        return;
+    }
     auto* S = GetWorld()->GetGameState<AGWGameState>();
     int32 Cell = -1;
     if (!S || !S->Defense() || !GameplayInputAllowed())
         return;
+    // The right button first folds an open build ring away (and draws nothing).
+    if (auto* H = Cast<AGWHUD>(GetHUD()); H && RingCell >= 0)
+    {
+        H->CloseRing();
+        return;
+    }
     // Pressing on a teammate pours ink to them instead of drawing.
     if (const int32 Mate = MateUnderCursor(); Mate >= 0)
     {
@@ -491,6 +784,15 @@ void AGWController::PaintPressed()
     }
     if (!CursorCell(Cell) || !S->Cells.IsValidIndex(Cell))
         return;
+    // On the platform one click draws a ladder down the box wall, or rubs out the one there (no stroke).
+    if (S->Cells[Cell] & EGWCell::Deck)
+    {
+        bool Hanging = false;
+        for (const auto& L : S->Ladders)
+            Hanging |= L.Deck == Cell;
+        ServerPaint(Cell, Hanging);
+        return;
+    }
     // Pressing on a sound drawn wall starts an eraser stroke; on paper or a damaged wall, a pen stroke.
     const bool Wall = (S->Cells[Cell] & EGWCell::Wall) != 0;
     PaintErase = Wall && (!WorldView || WorldView->Geometry.integrity(Cell) > .95);
@@ -529,14 +831,32 @@ void AGWController::PaintTo(int32 Cell)
             X += DX;
             Y += DY;
         }
+        // A stroke never spills onto the platform (ladders take a click of their own).
+        if (S->Cells.IsValidIndex(Y * W + X) && (S->Cells[Y * W + X] & EGWCell::Deck))
+            continue;
         ServerPaint(Y * W + X, PaintErase);
     }
     LastPaintCell = Cell;
 }
 void AGWController::Merge()
 {
+    if (!GameplayInputAllowed())
+        return;
+    const auto* S = GetWorld()->GetGameState<AGWGameState>();
+    if (S && S->InMatch && S->Defense())
+    {
+        // The build ring on the cell under the cursor (F again on the same cell closes it).
+        int32 Cell = -1;
+        if (auto* H = Cast<AGWHUD>(GetHUD()); H && CursorCell(Cell))
+            H->ToggleRing(Cell);
+        return;
+    }
+    ServerAction(11, 0);
+}
+void AGWController::Dodge()
+{
     if (GameplayInputAllowed())
-        ServerAction(11, 0);
+        DodgeQueued = true;
 }
 void AGWController::CallWave()
 {
@@ -554,7 +874,14 @@ void AGWController::Click()
     if (GetMousePosition(X, Y))
         if (auto* H = Cast<AGWHUD>(GetHUD()))
             if (H->Click(X, Y))
+            {
                 UIConsumedMouse = true;
+                return;
+            }
+    // Down and watching a teammate: the left button steps on to the next one.
+    if (SpectateId >= 0)
+        if (const auto* H = Cast<AGWHUD>(GetHUD()); H && !H->OverlayOpen() && !H->SettingsOpen())
+            StepSpectate(1);
 }
 void AGWController::Recruit()
 {
@@ -596,12 +923,9 @@ FVector2D AGWController::ReadMouseAim() const
         return MouseAim;
     FVector Position = U->Position;
     PredictedPosition(U->Id, Position);
-    FVector Ray, Direction;
-    if (DeprojectMousePositionToWorld(Ray, Direction) && FMath::Abs(Direction.Z) > .0001)
-    {
-        FVector Hit = Ray + Direction * (-Ray.Z / Direction.Z);
+    FVector Hit;
+    if (CursorWorld(Hit))
         return FVector2D(Hit.X - Position.X, Hit.Y - Position.Y).GetSafeNormal();
-    }
     return MouseAim;
 }
 void AGWController::ReleaseLaunch()
@@ -652,11 +976,16 @@ void AGWController::Pause()
 }
 void AGWController::ZoomIn()
 {
+    // On the expedition the wheel runs over the hotbar (design 4.1) instead of zooming.
+    if (const auto* G = GetWorld()->GetGameState<AGWGameState>(); G && G->Expedition() && !G->Finished)
+        return CycleSlot(-1);
     if (auto* S = UGWUserSettings::Get())
         S->CameraDistance = FMath::Max(900.f, S->CameraDistance - 100);
 }
 void AGWController::ZoomOut()
 {
+    if (const auto* G = GetWorld()->GetGameState<AGWGameState>(); G && G->Expedition() && !G->Finished)
+        return CycleSlot(1);
     if (auto* S = UGWUserSettings::Get())
         S->CameraDistance = FMath::Min(2600.f, S->CameraDistance + 100);
 }

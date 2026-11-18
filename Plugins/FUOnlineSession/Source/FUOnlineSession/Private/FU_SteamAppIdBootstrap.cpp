@@ -3,6 +3,7 @@
 #include "FUOnlineSessionModule.h"
 
 #include "HAL/PlatformProcess.h"
+#include "HAL/PlatformMisc.h"
 #include "Misc/ConfigCacheIni.h"
 #include "Misc/Guid.h"
 #include "OnlineSubsystem.h"
@@ -174,6 +175,20 @@ void FFU_SteamAppIdBootstrap::Initialize(const int32 RequestedDevelopmentAppId)
 		GEngineIni);
 	Inputs.EffectiveAppId = bReadEffectiveAppId ? EffectiveAppId : 0;
 	Ticket.Status = Evaluate(Inputs);
+	// Steam's non-library shortcuts supply their own AppID/GameID. SteamAPI_InitEx uses those
+	// even when SteamShared writes steam_appid.txt, producing ConnectToGlobalUser failed.
+	// Correct only this packaged development process, before SteamSockets initializes the API.
+#if !WITH_EDITOR
+	if (Ticket.Status == EFU_SteamBootstrapStatus::Ready && !IsRunningCommandlet() && !IsRunningDedicatedServer())
+	{
+		PreviousSteamAppId = FPlatformMisc::GetEnvironmentVariable(TEXT("SteamAppId"));
+		PreviousSteamGameId = FPlatformMisc::GetEnvironmentVariable(TEXT("SteamGameId"));
+		DevelopmentEnvironmentAppId = FString::FromInt(EffectiveAppId);
+		FPlatformMisc::SetEnvironmentVar(TEXT("SteamAppId"), *DevelopmentEnvironmentAppId);
+		FPlatformMisc::SetEnvironmentVar(TEXT("SteamGameId"), *DevelopmentEnvironmentAppId);
+		UE_LOG(LogFUOnlineSession, Log, TEXT("Steam development process identity set to AppID %d before API initialization"), EffectiveAppId);
+	}
+#endif
 	LogBootstrapStatus(Ticket.Status, RequestedDevelopmentAppId);
 #endif
 }
@@ -181,6 +196,15 @@ void FFU_SteamAppIdBootstrap::Initialize(const int32 RequestedDevelopmentAppId)
 void FFU_SteamAppIdBootstrap::Shutdown()
 {
 	using namespace FUOnlineSessionSteamBootstrap;
+	if (!DevelopmentEnvironmentAppId.IsEmpty())
+	{
+		// Restore only values we still own; never overwrite another module's later change.
+		if (FPlatformMisc::GetEnvironmentVariable(TEXT("SteamAppId")) == DevelopmentEnvironmentAppId)
+			FPlatformMisc::SetEnvironmentVar(TEXT("SteamAppId"), *PreviousSteamAppId);
+		if (FPlatformMisc::GetEnvironmentVariable(TEXT("SteamGameId")) == DevelopmentEnvironmentAppId)
+			FPlatformMisc::SetEnvironmentVar(TEXT("SteamGameId"), *PreviousSteamGameId);
+		DevelopmentEnvironmentAppId.Empty();
+	}
 
 	if (!Ticket.bOwnsAddedLayer)
 	{

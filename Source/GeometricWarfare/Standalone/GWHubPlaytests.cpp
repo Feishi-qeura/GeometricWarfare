@@ -135,11 +135,16 @@ public:
             return Wait(.4);
         case 4:
         {
+            // Along the platform to the blinking ring.
             const TutorialPage& T = tutorialPage();
+            Test->TestTrue(TEXT("The player starts up on the platform"), Me && Me->deck);
             if (Me)
+            {
+                Me->deck = true;
                 Me->position = Cell(T.moveX, T.moveY);
+            }
             B->advance(.1);
-            // One paper target broken, the other wounded: the card counts 1 / 2.
+            // One paper target down in the box broken, the other wounded: the card counts 1 / 2.
             int32 Targets = 0;
             for (auto& U : B->units)
             {
@@ -151,12 +156,11 @@ public:
                         B->damageUnit(P->UnitId, U.id, 40);
                 }
                 else
+                {
                     B->damageUnit(P->UnitId, U.id, 60);
-            }
-            if (Me)
-            {
-                Me->position = Cell(6, 2);
-                Me->aim = {-1, 0};
+                    if (Me)
+                        Me->aim = (U.position - Me->position).normalized();
+                }
             }
             B->advance(.1);
             S->Publish();
@@ -164,6 +168,8 @@ public:
         }
         case 5:
             Test->TestEqual(TEXT("Walking into the ring moved on to shooting"), static_cast<int32>(S->TutorialStep), static_cast<int32>(TutorialStep::Shoot));
+            // Shooting comes with the reticle: no hammer, no build preview, no drawing yet (2026-11-16).
+            Test->TestFalse(TEXT("No build tools while the tutorial teaches shooting"), S->Building());
             CaptureHub(TEXT("tutorial-shoot-zh"), Shots);
             return Wait(.4);
         case 6:
@@ -175,54 +181,45 @@ public:
             S->Publish();
             return Wait(1.4);
         case 7:
-            Test->TestEqual(TEXT("Two broken targets moved on to recruiting"), static_cast<int32>(S->TutorialStep), static_cast<int32>(TutorialStep::Recruit));
-            CaptureHub(TEXT("tutorial-recruit-zh"), Shots);
+            Test->TestEqual(TEXT("Two broken targets moved on to drawing"), static_cast<int32>(S->TutorialStep), static_cast<int32>(TutorialStep::Draw));
+            Test->TestTrue(TEXT("The drawing step hands over the build tools"), S->Building());
+            CaptureHub(TEXT("tutorial-draw-zh"), Shots);
             return Wait(.4);
         case 8:
         {
-            int32 Offered = 0;
-            for (auto& U : B->units)
-                if (U.alive && U.kind == UnitKind::Companion && U.followerOf < 0 && Me)
-                    U.position = Me->position + Vec2{55. + 35 * Offered++, 25};
-            B->recruit(P->UnitId);
-            B->recruit(P->UnitId);
-            B->advance(.05);
-            B->merge(P->UnitId);
+            int32 Drawn = 0;
+            for (const int32 Wall : B->tutorialWall())
+                Drawn += B->paintWall(P->UnitId, Wall);
+            Test->TestEqual(TEXT("The three suggested cells can be drawn from the platform"), Drawn, 3);
             B->advance(.1);
             S->Publish();
             return Wait(1.2);
         }
         case 9:
-            Test->TestEqual(TEXT("Recruiting and merging reached the turret step"), static_cast<int32>(S->TutorialStep), static_cast<int32>(TutorialStep::Turret));
-            CaptureHub(TEXT("tutorial-turret-zh"), Shots);
+            Test->TestEqual(TEXT("Drawing reached the tower step"), static_cast<int32>(S->TutorialStep), static_cast<int32>(TutorialStep::Tower));
+            CaptureHub(TEXT("tutorial-tower-zh"), Shots);
             return Wait(.4);
         case 10:
-            if (Me)
-            {
-                Me->position = Cell(7, 2);
-                Me->aim = {0, 1};
-            }
-            B->launch(P->UnitId);
-            for (int32 I = 0; I < 240 && B->tutorialStep() == TutorialStep::Turret; ++I)
-                B->advance(1. / 60);
+            Test->TestTrue(TEXT("A tower stands on the suggested floor"),
+                           B->buildTower(P->UnitId, tutorialPage().tower.second * B->maze.width + tutorialPage().tower.first));
+            B->advance(.1);
             S->Publish();
-            return Wait(1.6);
+            return Wait(1.4);
         case 11:
-            Test->TestEqual(TEXT("A pinned turret reached the drawing step"), static_cast<int32>(S->TutorialStep), static_cast<int32>(TutorialStep::Draw));
-            CaptureHub(TEXT("tutorial-draw-zh"), Shots);
+            Test->TestEqual(TEXT("A tower reached the ladder step"), static_cast<int32>(S->TutorialStep), static_cast<int32>(TutorialStep::Ladder));
+            CaptureHub(TEXT("tutorial-ladder-zh"), Shots);
             return Wait(.4);
         case 12:
         {
-            int32 Drawn = 0;
-            for (const int32 Wall : B->tutorialWall())
-                Drawn += B->paintWall(P->UnitId, Wall);
-            Test->TestEqual(TEXT("The three suggested cells can be drawn"), Drawn, 3);
+            const TutorialPage& T = tutorialPage();
+            Test->TestTrue(TEXT("A ladder hangs from the suggested platform cell"),
+                           B->buildLadder(P->UnitId, T.ladder.second * B->maze.width + T.ladder.first));
             B->advance(.1);
             S->Publish();
             return Wait(1.4);
         }
         case 13:
-            Test->TestEqual(TEXT("Drawing reached the last step"), static_cast<int32>(S->TutorialStep), static_cast<int32>(TutorialStep::Defend));
+            Test->TestEqual(TEXT("The ladder reached the last step"), static_cast<int32>(S->TutorialStep), static_cast<int32>(TutorialStep::Defend));
             CaptureHub(TEXT("tutorial-defend-zh"), Shots);
             return Wait(.4);
         case 14:
@@ -308,6 +305,10 @@ public:
                 Me->position = B->hub.bullseye + Vec2{300, -40};
                 Me->aim = {-1, 0};
             }
+            // The corner's own supply drops spare triangles over time; clear the ones within reach so E takes ours.
+            for (auto& U : B->units)
+                if (Me && U.kind == UnitKind::Companion && U.followerOf < 0 && !U.turret && !U.dummy && (U.position - Me->position).length() < 500)
+                    U.alive = false;
             Unit Tri;
             Tri.id = 9700;
             Tri.kind = UnitKind::Companion;
@@ -362,7 +363,36 @@ public:
             return Wait(1.2);
         case 39:
             Test->TestTrue(TEXT("The result card returns to the hub"), S->Hub());
-            Test->TestEqual(TEXT("Captured every hub scene"), Shots, 19);
+            // The research desk and the wardrobe open their own sheets, and the board turns to chapter 2.
+            GI->GrantStickers(400);
+            H->OpenPanel(AGWHUD::EPanel::Research);
+            return Wait(.8);
+        case 40:
+            CaptureHub(TEXT("hub-research-zh"), Shots);
+            return Wait(.4);
+        case 41:
+            H->OpenPanel(AGWHUD::EPanel::Wardrobe);
+            return Wait(.8);
+        case 42:
+            CaptureHub(TEXT("hub-wardrobe-zh"), Shots);
+            return Wait(.4);
+        case 43:
+            H->OpenPanel(AGWHUD::EPanel::Board);
+            H->ShowChapter(1);
+            return Wait(.8);
+        case 44:
+            CaptureHub(TEXT("hub-chapters-zh"), Shots);
+            return Wait(.4);
+        case 45:
+            H->ShowMode(1);
+            return Wait(.6);
+        case 46:
+            CaptureHub(TEXT("hub-expedition-board-zh"), Shots);
+            return Wait(.4);
+        case 47:
+            H->ShowMode(0);
+            H->OpenPanel(AGWHUD::EPanel::None);
+            Test->TestEqual(TEXT("Captured every hub scene"), Shots, 23);
             Finish(GI);
             GI->LeaveRoom(false);
             return Wait(2);

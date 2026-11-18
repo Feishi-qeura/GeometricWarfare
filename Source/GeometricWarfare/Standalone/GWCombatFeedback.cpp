@@ -28,7 +28,7 @@ void AGWHUD::DrawCombatFeedback(AGWGameState* S)
         double* Birth = DamageBirth.Find(N.Id);
         if (!Birth)
             Birth = &DamageBirth.Add(N.Id, Now - (.9f - N.Remaining));
-        const float Age = Now - *Birth, Fade = FMath::Clamp((.9f - Age) / .25f, 0.f, 1.f);
+        const float Age = Now - *Birth, Fading = FMath::Clamp((.9f - Age) / .25f, 0.f, 1.f);
         FVector2D P;
         if (Age > .9f || !PlayerOwner->ProjectWorldLocationToScreen(N.Position + FVector(0, 0, 50), P) || P.X < -80 ||
             P.Y < -80 || P.X > Width + 80 || P.Y > Height + 80)
@@ -38,7 +38,7 @@ void AGWHUD::DrawCombatFeedback(AGWGameState* S)
         const bool Big = N.Amount >= 100;
         const float Pop = 1 + .35f * FMath::Clamp(1 - Age / .12f, 0.f, 1.f), Size = (Big ? 26 : 18) * Scale * Pop;
         const FLinearColor Color =
-            (N.Victim < 0 ? Marigold : U && N.Team == U->Team ? Danger : Hex(0xF07A1A)).CopyWithNewOpacity(Fade);
+            (N.Victim < 0 ? Marigold : U && N.Team == U->Team ? Danger : Hex(0xF07A1A)).CopyWithNewOpacity(Fading);
         if (Big)
         {
             const FVector2D Mid = P + FVector2D(0, Size * .62f);
@@ -48,13 +48,13 @@ void AGWHUD::DrawCombatFeedback(AGWGameState* S)
                 const float A = (I % 16) * PI / 8 + static_cast<float>(N.Id % 64);
                 Burst.Add(Mid + FVector2D(FMath::Cos(A) * 1.35f, FMath::Sin(A)) * Size * (I % 2 ? .55f : .95f));
             }
-            Fill(Burst, Spark.CopyWithNewOpacity(.9f * Fade));
+            Fill(Burst, Spark.CopyWithNewOpacity(.9f * Fading));
             for (int32 I = 1; I < 17; ++I)
-                Line(Burst[I], Burst[I + 1], Ink.CopyWithNewOpacity(Fade), 1.4f);
+                Line(Burst[I], Burst[I + 1], Ink.CopyWithNewOpacity(Fading), 1.4f);
         }
-        Label(Number, P.X + 2 * Scale, P.Y + 3 * Scale, Size, Ink.CopyWithNewOpacity(Fade * .7f), true, 0, EFace::Heavy);
+        Label(Number, P.X + 2 * Scale, P.Y + 3 * Scale, Size, Ink.CopyWithNewOpacity(Fading * .7f), true, 0, EFace::Heavy);
         for (const FVector2D& O : {FVector2D(-2, 0), FVector2D(2, 0), FVector2D(0, -2), FVector2D(0, 2)})
-            Label(Number, P.X + O.X * Scale, P.Y + O.Y * Scale, Size, Paper.CopyWithNewOpacity(Fade), true, 0, EFace::Heavy);
+            Label(Number, P.X + O.X * Scale, P.Y + O.Y * Scale, Size, Paper.CopyWithNewOpacity(Fading), true, 0, EFace::Heavy);
         Label(Number, P.X, P.Y, Size, Color, true, 0, EFace::Heavy);
     }
     for (auto It = DamageBirth.CreateIterator(); It; ++It)

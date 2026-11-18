@@ -1,4 +1,5 @@
 ﻿Key,SourceString
+Intro.Skip,Leertaste zum Überspringen
 Game.Title,GEOMETRIC WARFARE
 Game.Subtitle,Zeichne das Labyrinth. Halte die Linie. Bring Freunde mit.
 Menu.Single,Einzelspieler
@@ -212,8 +213,7 @@ Key.Pick,Fähigkeit wählen
 Team.Bot,KI {Index}
 Combat.Team,Team
 Board.Title,Missionsbrett
-Board.Subtitle,Liniendefensive · zeichne Wände zu einem Labyrinth und kämpfe selbst mit.
-Board.Chapter,Kapitel 1 · Das erste Heft
+Board.Subtitle,"Linienverteidigung · Von der Plattform rund um die Kiste: Blöcke zeichnen, Türme bauen, Leitern einhängen – und gemeinsam den Kern halten."
 Level.1-1,Erste Seite
 Level.1-2,Zwei Türen
 Level.1-3,Langer Flur
@@ -245,11 +245,10 @@ Defense.Enemies,{Count} Gegner übrig
 Defense.StartWave,Welle starten
 Defense.HostStarts,Der Host startet die Welle
 Defense.Ink,Tinte
-Defense.BuildHint,"Rechts ziehen zeichnet Wände (10 Tinte pro Feld), über einer Wand löscht es sie. Gegner nehmen den kürzesten offenen Weg zum Kern."
-Defense.TurretHint,"Wirf ein Quadrat oder größer auf freies Papier, dann wird es ein Geschütz. E sammelt Dreiecke, F verschmilzt das letzte nach vorn."
+Defense.BuildHint,"Ziehe mit der rechten Maustaste in der Kiste, um Blöcke zu zeichnen (10 Tinte pro Feld); über einen Block ziehen radiert ihn. Gegner nehmen den kürzesten offenen Weg zum Kern."
 Defense.WaveBanner,Welle {Wave}!
 Defense.ClearBanner,Welle geschafft · +{Count} Sticker
-Defense.Respawn,In {Seconds} s zurück am Kern
+Defense.Respawn,In {Seconds} s zurück auf der Plattform
 Defense.Denied.1,Nicht genug Tinte
 Defense.Denied.2,Dieser Strich würde den Kern abriegeln — Gegner brauchen immer einen Weg
 Defense.Denied.3,Dort steht jemand
@@ -268,12 +267,12 @@ Result.Next,Nächste Seite
 Result.CoreLost,Der Kern ist gefallen.
 Result.Held,Alle Wellen gehalten.
 Prank.Title,Unfug-Stufe
-Prank.0,Aus
-Prank.1,Freundlich
-Prank.2,Chaos
-Prank.0.Note,"Niemand kann gepackt oder geworfen werden, und Eigenbeschuss schubst nie."
-Prank.1.Note,"Nur wer es erlaubt, kann gepackt und geworfen werden; Eigenbeschuss schubst leicht."
-Prank.2.Note,Jeder kann jederzeit gepackt und geworfen werden; Eigenbeschuss schubst kräftig.
+Prank.0,Pummelig
+Prank.1,Abprallschüsse
+Prank.2,Glaskanonen
+Prank.0.Note,"Doppelte Gesundheit, etwas langsamer"
+Prank.1.Note,Jeder Schuss prallt zweimal ab
+Prank.2.Note,"Treffer in beide Richtungen ×1,5"
 Throwable.On,Mitspieler dürfen mich werfen: an
 Throwable.Off,Mitspieler dürfen mich werfen: aus
 Throwable.Tag,werfbar
@@ -323,6 +322,9 @@ Hub.Title,Lobby von {Name}
 Hub.Kind.0,Offline · nur du
 Hub.Kind.1,Steam-Raum · nur Freunde
 Hub.Kind.2,Direktraum (Test)
+Hub.KindShort.0,Offline
+Hub.KindShort.1,Freunde
+Hub.KindShort.2,Direkt
 Hub.Seats,{Count} / 8 Spieler
 Hub.Invite,Freunde einladen
 Hub.Here,Im Raum ({Count}/8)
@@ -337,19 +339,9 @@ Hub.Back,Zurück zur Lobby
 Hub.InviteUnavailable,Einladungen brauchen einen Steam-Raum – diese Lobby ist gerade keiner.
 Hub.DeployHostOnly,Nur der Host kann starten.
 Board.Mode.0,Linienverteidigung
-Board.Mode.1,Expedition (bald)
-Board.Mode.2,Partyrunde (bald)
-Board.ModeSoon,Dieser Modus kommt mit einem späteren Update.
+Board.Mode.1,Expedition
+Board.Mode.2,Party-Playlist
 Board.BotsFriends,Mit Freunden im Raum kommen keine KI-Mitspieler mit.
-Coming.Stamp,Bald geöffnet
-Coming.Stickers,Deine Sticker: {Count}
-Coming.1,"Hier hängen bald die Erfolge aller – erreichte und noch fehlende. Vorerst kennt die Wand nur, wer im Raum ist."
-Coming.2,Mit Stickern schaltest du Waffen und Wandtypen frei und kaufst Gegenstände für einen Einsatz (höchstens zwei).
-Coming.3,"Steigere Leben, Schaden, Tintenvorrat, Wurfkraft, Tempo und Sammelradius um je fünf Stufen. In fremden Räumen begrenzt der Schwierigkeitsgrad deine Stufen."
-Coming.4,Outfit wechseln und einen Partytitel wählen. Nur Optik – am Kampf ändert das nichts.
-Npc.2,Fünfeck am Ladentisch: „Die Kisten sind noch unterwegs. Spar deine Sticker!“
-Npc.3,"Dreieck am Forschungstisch: „Erst die Formeln, dann die Upgrades. Komm bald wieder.“"
-Npc.4,Quadrat an der Garderobe: „Hüte sind in Arbeit. Jede Form verdient einen guten Hut.“
 Door.0,"Steam ist nicht verbunden, deshalb bist nur du in dieser Lobby. Starte Steam und drück unten auf den Knopf: Die Lobby öffnet sich neu als Raum, dem deine Freunde beitreten können."
 Door.1,"Diese Lobby ist ein Steam-Raum: Deine Steam-Freunde können beitreten, bis zu acht Leute. Einladungen verschickst du über das Steam-Overlay."
 Door.2,Das ist ein Direktraum zum Testen; Einladungen brauchen einen Steam-Raum.
@@ -372,21 +364,18 @@ Training.Replay,Tutorial wiederholen
 Training.ReplayAlone,"Das Tutorial lässt sich wiederholen, solange du allein in der Lobby bist."
 Tutorial.Title,Tutorial
 Tutorial.Step,Schritt {Step} von {Count}
-Tutorial.0.Title,Laufen
+Tutorial.0.Title,Über die Plattform
 Tutorial.1.Title,Schießen
-Tutorial.2.Title,Anwerben
-Tutorial.3.Title,Verschmelzen
-Tutorial.4.Title,Geschütz setzen
-Tutorial.5.Title,Wände zeichnen
-Tutorial.6.Title,Linie halten
-Tutorial.0,Lauf mit WASD in den blinkenden Ring.
-Tutorial.1,Mit der Maus zielen und links halten: Zerschieß beide Papierziele.
-Tutorial.2,Geh zu einem Dreieck und drück E. Hol zwei in deinen Schwanz.
-Tutorial.3,Drück F: Das letzte Dreieck verschmilzt mit dem davor zu einem Quadrat. Die Seitenzahl ist die Stufe.
-Tutorial.4,"Halt Q zum Aufladen und lass los, um das Quadrat auf leeres Papier zu werfen: Es setzt sich als Geschütz fest."
-Tutorial.TurretRetry,"Ein Quadrat, das ein Ziel trifft, zerspringt in Dreiecke: wieder anwerben und verschmelzen."
-Tutorial.5,Halt die rechte Taste und zieh über die blinkenden Felder: Drei Felder Wand zwingen die Gegner zum Umweg.
-Tutorial.6,Drück Enter für die Welle und halte den Kern: Dein Geschütz feuert mit.
+Tutorial.2.Title,Blöcke zeichnen
+Tutorial.3.Title,Turm bauen
+Tutorial.4.Title,Leiter einhängen
+Tutorial.5.Title,Die Linie halten
+Tutorial.0,Du stehst auf der Plattform rund um die Kiste. Geh mit WASD an ihr entlang in den blinkenden Ring.
+Tutorial.1,Ziel mit der Maus in die Kiste und halte die linke Taste: Zerstöre beide Papierziele.
+Tutorial.2,Halte die rechte Taste und zieh über die blinkenden Felder: Drei Blöcke zwingen die Gegner zum Umweg.
+Tutorial.3,Klick auf den blinkenden freien Boden: Ein Bauring öffnet sich darum. Wähl den Bolzenturm (40 Tinte): Er schießt über deine Blöcke auf Gegner in Reichweite.
+Tutorial.4,"Rechtsklick auf das blinkende Plattformfeld: Eine Leiter hängt an der Kistenwand (30 Tinte). Lauf hinein, um hinunterzuklettern, und nochmal, um zurückzukommen."
+Tutorial.5,Drück Enter für die Welle und halte den Kern: Dein Turm feuert mit.
 Tutorial.StepDone,Geschafft!
 Tutorial.Skip,Tutorial überspringen
 Tutorial.Finished,Bereit
@@ -401,3 +390,667 @@ Network.HostLeft,"Der Host ist weg, du bist zurück in deiner eigenen Lobby."
 Network.JoiningFriend,Beitritt zur Lobby läuft…
 Network.InviteFailed,Die Einladung ließ sich nicht öffnen – der Raum ist vielleicht schon zu.
 Key.Use,Anwerben / benutzen
+Defense.TowerHint,"Klick auf freien Boden öffnet den Bauring: Bolzenturm ({Tower} Tinte), Mörser, Teslaspule oder Stacheldraht; Klick auf einen Turm verstärkt oder entfernt ihn. Rechtsklick auf die Plattformkante für eine Leiter ({Ladder} Tinte). Mit der Welle endet das Bauen."
+Defense.TeamHint,Q wirft einen bereiten Mitspieler als Köder in die Kiste. Gefallene warten als Umriss auf der Plattform: daneben E drücken holt sie zurück ({Ink} Tinte).
+Defense.ReviveHint,Ein Mitspieler an deinem Umriss kann dich jetzt für {Ink} Tinte zurückholen.
+Hub.Respawn,In {Seconds} s wieder auf den Beinen
+Defense.Denied.4,Dort steht der Fuß einer Leiter
+Defense.Denied.5,"Türme stehen auf freiem Boden, nicht auf Blöcken"
+Defense.Denied.6,Unten kein freier Boden – eine Leiter braucht Stand
+Key.Revive,{Name} zurückholen · {Ink} Tinte
+Key.ClimbUp,In die Leiter laufen zum Hochklettern
+Key.ClimbDown,In die Leiter laufen zum Runterklettern
+Key.DrawBox,Blöcke · Leitern
+Key.Tower,Turm
+Key.GrabRevive,Packen / zurückholen
+Box.Ladder,Leiter · {Ink} Tinte
+Box.LadderErase,Leiter wegradieren (Tinte zurück)
+Box.Tower,Turm · {Ink} Tinte
+Box.TowerGrow,Auf {Sides} Seiten · {Ink} Tinte
+Training.Tower,Hier Dreiecke verschmelzen; in der Kiste: freien Boden anklicken zum Bauen
+Tutorial.LadderNote,"Vorsicht: Steht jemand hier oben, klettern vorbeikommende Läufer auch an der Leiter hoch."
+Attr.Step,+{Percent}% je Stufe
+Meta.Buy,Kaufen · {Price}
+Meta.FromAchievement,Erfolg: {Name}
+Meta.InUse,In Benutzung
+Meta.Use,Benutzen
+Meta.Wear,Tragen
+Meta.Wearing,Getragen
+Research.Full,Maximal
+Research.Note,"Rucksack: Die Expeditionstasche hat 10 Plätze (die 5 der Leiste inklusive), je Rang einen mehr."
+Research.Total,Gesamt +{Percent}%
+Research.Up,Forschen · {Price}
+Shop.Bring,Mitnehmen
+Shop.Empty,Leer
+Shop.ItemSlot,Gegenstand
+Shop.ItemsNote,Höchstens zwei Gegenstände; sie werden beim Missionsstart verbraucht.
+Shop.Loadout,Deine Ausrüstung
+Shop.PenSlot,Stift
+Shop.Stock,Vorrat: {Count}
+Shop.WeaponSlot,Waffe
+Tier.HostOnly,Nur der Gastgeber wählt die Schwierigkeitsstufe.
+Tier.Summary,"Stufe {Tier}: Sticker ×{Reward}, Gegner-LP ×{Health}, Gegnertreffer ×{Damage}"
+Tier.Title,Schwierigkeit
+Title.Award,Als Titel am Missionsende gewonnen
+Toast.Title,Erfolg freigeschaltet
+Wall.Reward,+{Count} Sticker
+Wardrobe.Hats,Hüte
+Wardrobe.Titles,Titel
+Ach.0,Erster Strich
+Ach.0.Note,Zeichne eine Wand.
+Ach.1,Mauerlehrling
+Ach.1.Note,Zeichne 300 Wände.
+Ach.2,Erste Seite
+Ach.2.Note,Schaffe Seite 1-1.
+Ach.3,Erstes Heft
+Ach.3.Note,Schaffe alle Seiten von Kapitel 1.
+Ach.4,Volle Punktzahl
+Ach.4.Note,Hol alle drei Sterne auf einer Seite.
+Ach.5,Neun Sterne
+Ach.5.Note,Hol jeden Stern von Kapitel 1.
+Ach.6,Etwas härter
+Ach.6.Note,Schaffe eine Seite auf Stufe 2 oder höher.
+Ach.7,Harter Brocken
+Ach.7.Note,Schaffe eine Seite auf Stufe 3 oder höher.
+Ach.8,Veteran
+Ach.8.Note,Schaffe eine Seite auf Stufe 5.
+Ach.9,Abheben
+Ach.9.Note,Lass dich von einem Mitspieler werfen.
+Ach.10,Menschliche Kanonenkugel
+Ach.10.Note,Lass dich 25-mal werfen.
+Ach.11,Werfer
+Ach.11.Note,Wirf Mitspieler 25-mal.
+Ach.12,Köder
+Ach.12.Note,Halte als Köder 10 Gegner fest.
+Ach.13,Profiköder
+Ach.13.Note,Halte als Köder 200 Gegner fest.
+Ach.14,Volltreffer
+Ach.14.Note,Triff mit einem Wurf das Trainingsziel in der Mitte.
+Ach.15,Meisterschütze
+Ach.15.Note,Lande 25 Volltreffer.
+Ach.16,Guter Kumpel
+Ach.16.Note,Gieß Mitspielern 300 Tinte ein.
+Ach.17,Erste Forschung
+Ach.17.Note,Kauf einen Forschungsrang.
+Ach.18,Spezialist
+Ach.18.Note,Bring ein Attribut auf Rang 5.
+Ach.19,Doktortitel
+Ach.19.Note,Bring jedes Attribut auf Rang 5.
+Ach.20,Waffenkammer
+Ach.20.Note,Besitze jede Waffe.
+Ach.21,Schreibwaren
+Ach.21.Note,Besitze jeden Stift.
+Ach.22,Hutsammler
+Ach.22.Note,Besitze vier Hüte.
+Ach.23,Sticker-Tycoon
+Ach.23.Note,Verdiene insgesamt 5000 Sticker.
+Ach.24,Tausend
+Ach.24.Note,Besiege 1000 Gegner.
+Ach.25,MVP
+Ach.25.Note,Gewinne die MVP-Auszeichnung.
+Ach.26,Sündenbock
+Ach.26.Note,Gewinne die Sündenbock-Auszeichnung.
+Ach.27,Party
+Ach.27.Note,Spiel eine Mission mit vier oder mehr Spielern.
+Ach.28,Volles Haus
+Ach.28.Note,Spiel eine Mission mit acht Spielern.
+Ach.29,Einzelgänger
+Ach.29.Note,"Schaffe eine Seite allein, ohne KI-Mitspieler."
+Ach.30,Unberührt
+Ach.30.Note,"Schaffe die letzte Seite von Kapitel 1, ohne dass der Kern Schaden nimmt."
+Ach.31,Gut versorgt
+Ach.31.Note,Nimm zwei Gegenstände mit in eine Mission.
+Attr.0,Leben
+Attr.1,Schaden
+Attr.2,Tinte
+Attr.3,Wurfkraft
+Attr.4,Tempo
+Attr.5,Reichweite
+Hat.0,Ohne Hut
+Hat.1,Papierhut
+Hat.2,Mütze
+Hat.3,Kappe
+Hat.4,Zylinder
+Hat.5,Antenne
+Hat.6,Bleistift
+Hat.7,Krone
+Item.0,Tintenfass
+Item.0.Note,Tintenkapazität +40 % für eine Mission.
+Item.1,Klebeband
+Item.1.Note,Der Kern bekommt +150 Leben.
+Item.2,Turmbausatz
+Item.2.Note,Dein erster Turm in der Kiste kostet keine Tinte.
+Item.3,Pflaster
+Item.3.Note,Dein erster Sturz: nach 2 s an Ort und Stelle mit halber Gesundheit wieder auf.
+Item.4,Tintenmagnet
+Item.4.Note,"Abschüsse bringen ein Viertel mehr Tinte, herumliegende Tinte wird aus dreifacher Entfernung aufgesammelt."
+Item.5,Kohlepapier
+Item.5.Note,Blöcke kosten ein Viertel weniger Tinte.
+Pen.0,Füller
+Pen.0.Note,Zeichnet einfache Wände (10 Tinte pro Feld).
+Pen.0.Wall,Einfache Wand
+Pen.1,Marker
+Pen.1.Note,Zeichnet dicke Wände: Jeder Biss nimmt nur halb so viel (16 Tinte pro Feld).
+Pen.1.Wall,Dicke Wand
+Pen.2,Textmarker
+Pen.2.Note,"Zeichnet glänzende Wände, die Schüsse bis zu zweimal abprallen lassen (13 Tinte pro Feld)."
+Pen.2.Wall,Abprallwand
+Shop.Tab.0,Waffen
+Shop.Tab.1,Stifte
+Shop.Tab.2,Gegenstände
+Tier.1.How,Von Anfang an offen
+Tier.2.How,Öffnet mit sechs Sternen
+Tier.3.How,Öffnet mit zwölf Sternen aus allen Kapiteln
+Tier.4.How,"Öffnet, wenn Seite 3-3 auf Stufe 3 geschafft ist"
+Tier.5.How,"Öffnet, wenn Seite 3-3 auf Stufe 4 geschafft ist"
+Title.0,Kein Titel
+Title.1,MVP
+Title.2,Bester Köder
+Title.3,Menschliche Kanonenkugel
+Title.4,Mauerkünstler
+Title.5,Sündenbock
+Title.6,Meisterschütze
+Title.7,Doktor
+Title.8,Randhüter
+Title.9,Sticker-Tycoon
+Title.10,Tintenveteran
+Weapon.0.Note,Hat jeder von Anfang an: ruhig und genau.
+Weapon.1.Note,Schnelle Schüsse mit großer Reichweite.
+Weapon.2.Note,Sechs Schrotkugeln auf kurze Distanz.
+Weapon.3.Note,"Schwere Schüsse, die einen Gegner durchschlagen."
+Weapon.4.Note,Ein Hagel leichter Kugeln.
+Weapon.5.Note,"Halten zum Aufladen, loslassen zum Lobben über Wände: Die Granate trifft Freund und Feind."
+Level.2-1,Gebrochener Rand
+Level.2-2,Drei Inseln
+Level.2-3,Ausgucke
+Level.3-1,Über den Rand
+Level.3-2,Vier Haken
+Level.3-3,Letzte Seite
+Board.ChapterTab,Kapitel {Index}
+Defense.RimHint,"Die Plattform ist von Fels unterbrochen: Ihre Stücke verbindet nur die Kiste. Häng auf beiden Seiten eine Leiter ein, oder teilt euch auf."
+Defense.RaidHint,"Plünderer klettern über die korallroten Leitern am Außenrand herein: Sie jagen, wer oben steht, und springen dann in die Kiste."
+Board.Roll,Würfeln & los
+Mode.1.Title,Expedition
+Mode.1.Note,"Ein auf Papier gezeichnetes Verlies: vier Stufen mit 3, 4, 5 und 6 Etagen, Räume durch Gänge verbunden. Kämpfe schließen die Türen, Läden nehmen die Sticker aus deinem Beutel, und am Ende jeder Stufe wartet ein Boss. Nur wer lebend hinausgeht, behält seinen Beutel."
+Mode.1.Facts,"18 Etagen · fünf Plätze: 1-5, G wirft ab, Tab fürs Gepäck · wer fällt, verliert alles, Mitspieler zeichnen dich mit Tinte zurück · ein Wipe behält nichts"
+Mode.2.Title,Party-Playlist
+Mode.2.Note,"Los geht’s, und die Tafel würfelt die Mission für euch aus: jede geöffnete Seite, dazu ein Party-Dreh."
+Mode.2.Facts,"Eine zufällige offene Seite · ein Dreh: Chaos-Streiche, Raketenwerfer für alle oder doppelte Tinte · weniger Lohn als die Seiten"
+Twist.1,Chaos-Streiche
+Twist.2,Raketenparty
+Twist.3,Tintenregen
+Twist.Tag,Party-Dreh: {Name}
+Board.HowItPlays,So läuft’s
+Build.0,Bolzenturm
+Build.1,Mörser
+Build.2,Teslaspule
+Build.3,Stacheldraht
+Build.Cost,{Ink} Tinte
+Box.Build,{Name} · {Ink} Tinte
+Key.Dodge,Ausweichen
+Ring.Upgrade,Ausbauen
+Ring.Remove,Wegradieren
+Ring.Refund,+{Ink} Tinte zurück
+Ring.Sides,Auf {Sides} Seiten
+Ring.Level,Auf Stufe {Level}
+Ring.WireLeft,{Left}% übrig
+Ring.Denied.1,Zu wenig Tinte
+Ring.Denied.2,Sperrt den Weg
+Ring.Denied.3,Da steht wer
+Ring.Denied.4,Leiterfuß
+Ring.Denied.7,Voll ausgebaut
+Box.Click,Bauen
+Box.ClickTower,Ausbauen · Wegradieren
+Key.FireBuild,Feuern · Bauen
+Menu.Steam,Steam: {Name}
+Menu.SteamOff,Steam offline · du spielst allein
+Door.FriendRooms,Freunde in einem Raum
+Door.NoFriendRooms,"Gerade ist keiner deiner Steam-Freunde in einem Raum. Sobald jemand das Spiel öffnet, erscheint die Lobby hier."
+Door.Join,Beitreten
+Network.FindingFriend,Raum wird gesucht…
+Network.FriendRoomGone,Dieser Raum ist zu oder nicht mehr beitretbar.
+Board.BotsExpedition,Die Expedition ist nur für Menschen: keine KI-Mitspieler.
+Team.Seat,Spieler {Index}
+Key.Drop,Abwerfen
+Key.Kit,Gepäck
+Key.Take,Nehmen / kaufen / öffnen
+Key.Slots,Plätze
+Weapon.Fists,Bloße Hände
+Expedition.Pair,Doppel-{Name}
+Gear.0,2B-Radiergummi
+Gear.0.Note,Klick: radiert den Gegner vorn aus; ein Boss verliert ein Werkzeug oder die Hälfte
+Gear.1,Papier & Stift
+Gear.1.Note,Klick: einen gefallenen Mitspieler mit Tinte zurückzeichnen
+Gear.2,Haftnotiz
+Gear.2.Note,Klick: der nächste schwere Treffer zerreißt sie statt dich
+Gear.3,Tintenkapsel
+Gear.3.Note,"Klick: +60 Tinte für alle, stößt Gegner zurück"
+Gear.4,Korrekturflüssigkeit
+Gear.4.Note,Klick: eine weiße Fläche heilt Freunde und löscht Gefahren
+Gear.5,Papierkranich
+Gear.5.Note,Klick: ein Köder lockt Gegner 6 s lang an
+Gear.6,Roter Stempel
+Gear.6.Note,Klick: gestempelte Gegner nehmen 10 s lang 35 % mehr
+Gear.7,Klebebandfalle
+Gear.7.Note,"Klick: ein Klebestreifen hält Gegner 3,5 s fest"
+Gear.8,Föhn
+Gear.8.Note,"Klick: pustet Geschosse weg, drückt Gegner an die Wand"
+Gear.9,Recyclingschere
+Gear.9.Note,Klick: zerschneidet eine übrige Waffe oder einen Look zu Stickern
+Gear.10,Pflasterdose
+Gear.10.Note,Klick: heilt in 3 s die Hälfte deiner Gesundheit
+Gear.11,Goldstaub
+Gear.11.Note,Klick: Treffer auf vergoldete Gegner lösen Sticker
+Gear.12,Kohlepapier
+Gear.12.Note,Jeder 5. Schuss feuert eine Kopie mit halber Kraft
+Gear.13,Magnetklammern
+Gear.13.Note,Sticker und Tinte fliegen von weit her zu dir
+Gear.14,Klebebandrolle
+Gear.14.Note,Klick: ein 60er-Schild für dich oder einen Verletzten
+Gear.15,Plastiklineal
+Gear.15.Note,In der Hand: wirft Geschosse von vorn zurück
+Gear.16,Federmine
+Gear.16.Note,"Magazine +35 %, 20 % schneller nachladen"
+Gear.17,Anspitzer
+Gear.17.Note,Klick: ein kleiner Geschützturm für 12 s
+Gear.18,Großes Tintenfass
+Gear.18.Note,Tinte fasst 180; jeder Kill bringt +4 Tinte
+Gear.19,Kraftpapierfutter
+Gear.19.Note,18 % weniger Schaden; 4 s sicher in einem neuen Raum
+Gear.20,Schneidematte
+Gear.20.Note,Deine Schüsse stoßen Gegner 45 % stärker
+Gear.21,Neonmarker
+Gear.21.Note,Treffer markieren Gegner: alle treffen sie kritischer
+Gear.22,Stickeralbum
+Gear.22.Note,"+25 % auf Sticker, die du aufhebst und rausbringst"
+Gear.23,Phönix-Talisman
+Gear.23.Note,Einmal pro Stufe: statt zu fallen stehst du mit 30 % wieder auf
+Gear.24,Papier-Double
+Gear.24.Note,"Solo: stellt dich einmal wieder auf, wenn du fällst"
+GearUse.0,Klick zum Benutzen (einmalig)
+GearUse.1,"Wirkt, solange du es trägst"
+GearUse.2,Klick zum Benutzen · nach {Seconds} s wieder bereit
+GearUse.3,Wirkt in der Hand
+GearUse.4,Relikt: wirkt aus jedem Platz
+GearUse.Revive,Klick: das Notfallblatt öffnen
+GearUse.Fists,"ein Schubs, mehr nicht"
+Hat.8,Papierschiff
+Look.1.1,3D-Brille
+Look.1.2,Augenklappe
+Look.1.3,Gekritzelte Sonnenbrille
+Look.2.1,Kranichflügel
+Look.2.2,Roter Schal
+Look.2.3,Spiralflügel
+Look.3.1,Radiergummi-Anhänger
+Look.3.2,Büroklammerkette
+Look.3.3,Mini-Zirkel
+Look.4.1,Regenbogenspuren
+Look.4.2,Bleistiftkratzer
+Look.4.3,Bambusschritte
+Wear.0,Hut
+Wear.1,Maske
+Wear.2,Umhang
+Wear.3,Anhänger
+Wear.4,Spur
+Wear.5,Titel
+Biome.0,Bleistiftskizze
+Biome.1,Aquarell
+Biome.2,Füllertinte
+Biome.3,Kugelschreiber
+Biome.4,Pinsel & Tusche
+Trait.0,Bleistift
+Trait.0.Note,Entwurf: ein nachwachsender Graphitschild von 25 %; einmal pro Etage lässt ein tödlicher Treffer 1 LP übrig.
+Trait.1,Aquarellstift
+Trait.1.Note,"Lasur: heilt 1,5 % pro Sekunde; die Spur bremst und nässt Gegner."
+Trait.2,Füller
+Trait.2.Note,"Spitze Feder: 20 % mehr Kritische, Schüsse durchdringen einen mehr; 15 % weniger Heilung."
+Trait.3,Kugelschreiber
+Trait.3.Note,Durchschlag: 15 % schneller schießen und nachladen; jeder 8. Schuss schickt eine Suchkopie.
+Trait.4,Pinsel
+Trait.4.Note,"Tuscheberg: 40 % weniger Rückstoß, alle 4 s eine Tuschewelle, und das Team bekommt 15 % mehr Tinte."
+Boss.0,Die Zeichenmaschine
+Boss.1,Der Regenbogengeist
+Boss.2,Der eiserne Chefredakteur
+Boss.3,Der Zahnrad-Kriegsherr
+Boss.4,Der Tuschemeister
+Room.0,Start
+Room.1,Kampfraum
+Room.2,Portalraum
+Room.3,Bossraum
+Room.4,Laden
+Room.5,Schatzkammer
+Room.6,Ereignisraum
+Event.0,Die Waage
+Event.1,Wunschbrunnen
+Event.2,Federschmiede
+Event.3,Streich-Abstimmung
+Event.4,Angekettete Truhe
+Event.5,Stickerrad
+Event.6,Stiftständer
+Event.7,Papierarena
+Event.8,Kopierer
+Event.9,Ambulanz
+Event.10,Überraschungsbox
+Event.11,Abreibtisch
+Event.12,Früher Ausgang
+Service.0,Alle heilen
+Service.1,Gesundheit gegen Tinte
+Service.2,Drehen
+Service.3,Großer Dreh
+Service.4,Wünschen
+Service.5,Gegenstand kopieren
+Service.6,Zwilling abreiben
+Service.7,Wiegen & verkaufen
+Service.8,Arena starten
+Service.9,Blind ziehen
+Expedition.Pick,{Name} aufheben
+Expedition.PickPair,{Name} aufheben: in jeder Hand eine!
+Expedition.PickStack,{Name} aufheben (stapelt)
+Expedition.Full,"Kein Platz für {Name}: Tasche voll (Tab sortiert, G lässt fallen)"
+Expedition.WearLook,{Name} anziehen
+Expedition.SwapLook,{Worn} gegen {Name} tauschen (oder für Freunde liegen lassen)
+Expedition.Buy,{Name} kaufen · {Price} Sticker (Münzen zuerst)
+Expedition.Machine,{Name} · {Price} Sticker
+Expedition.MachineFree,{Name} · gratis
+Expedition.OpenChest,Truhe öffnen
+Expedition.ExitHold,E halten: jetzt mit {Count} Stickern gehen
+Expedition.ChainHold,"E im Ring halten, um die Ketten zu lösen"
+Expedition.Arming,Türen schließen in {Seconds}
+Expedition.Wave,Welle {Wave} / {Waves}
+Expedition.PortalOpen,Portal offen
+Expedition.Cleared,Geräumt
+Expedition.Pouch,"im Beutel · zählt nur, wenn du rauskommst"
+Expedition.Tag.Out,Draußen
+Expedition.Tag.Early,Früh raus
+Expedition.Tag.Ghost,Geist
+Expedition.Tag.Lost,Verloren
+Expedition.LookOf,{Name} von {Owner}
+Expedition.FinalDoor,Der Ausgang
+Expedition.EarlyDoor,Früher Ausgang · E halten
+Expedition.Portal,Portal
+Expedition.PortalCount,Portal: {In} / {Count} drin
+Expedition.PortalLeaves,geht in {Seconds} los
+Expedition.GhostTag,{Name} · Geist
+Expedition.Denied.20,Leiste und Tasche sind voll
+Expedition.Denied.21,Nicht genug Sticker und Münzen
+Expedition.Denied.22,Nicht genug Tinte
+Expedition.Denied.23,"Nichts, womit das ginge"
+Expedition.Denied.24,Die Zeichnung ist nicht geschlossen
+Expedition.Denied.25,Schon benutzt
+Expedition.Denied.26,Nicht jetzt
+Expedition.Floor,Etage {Stage}-{Floor} · {Pen}
+Expedition.FloorBoss,Boss-Etage {Stage}-{Floor} · {Pen}
+Expedition.DoorsShut,Türen zu!
+Expedition.WaveCall,Welle {Wave}!
+Expedition.RoomClear,Raum geräumt · alle heilen 20 %
+Expedition.PortalBanner,Das Portal ist offen
+Expedition.WayOut,Der Ausgang ist offen
+Expedition.OutTitle,Draußen mit {Count} Stickern
+Expedition.OutNote,"Sicher verbucht. Schau zu, ob die anderen es hinaus schaffen."
+Expedition.OutLast,Alle anderen sind draußen oder gefallen: der Lauf endet.
+Expedition.GhostTitle,Du bist gefallen
+Expedition.GhostNote,"Deine Ausrüstung liegt, wo du gefallen bist. Ein Mitspieler kann dich mit Tinte zurückzeichnen, sonst kommst du im nächsten Stock mit halbem Leben zurück."
+Expedition.GhostAlone,Niemand steht mehr.
+Kit.Title,Gepäck & Tasche
+Kit.Note,"Wirf ab, was ein Mitspieler braucht. Tab oder Esc schließt."
+Kit.Pouch,Stickerbeutel
+Kit.PouchNote,"Noch nicht verbucht: im Laden ausgeben, für Freunde fallen lassen oder lebend hinausbringen."
+Kit.Trait,Gezeichnet mit: {Name}
+Kit.Drop25,25 abwerfen
+Kit.DropAll,Alle abwerfen
+Kit.Looks,Getragene Looks
+Kit.DropLook,Ablegen
+Kit.Hotbar,Schnellleiste
+Kit.GunNote,Eine Pistole braucht eine Hand: eine zweite in der anderen feuert mit.
+Revive.Hint.Slot,"{Name} ist gefallen: {Slot} drücken, dann klicken und zurückzeichnen"
+Revive.NoGhost,Niemand zum Zurückzeichnen
+Revive.Sent,Zeichnung gesendet
+Revive.Danger,{Count} Gegner in der Nähe!
+Revive.Title,Notfallblatt
+Revive.Note,"Zeichne eine geschlossene Form. Je größer sie ist, desto größer und zäher steht er auf, und desto mehr Tinte kostet es."
+Revive.Empty,Linke Taste halten und eine Schleife zeichnen
+Revive.Who,Wen
+Revive.Pen,Stift
+Revive.Open,Nicht geschlossen: noch einmal zeichnen (nichts verbraucht)
+Revive.Area,Fläche {Percent} % · {Ink} Tinte (du hast {Have})
+Revive.Body,Größe ×{Size} · Gesundheit ×{Health} · Tempo ×{Speed}
+Revive.Small,Zu klein für irgendwen
+Revive.NoInk,"Braucht {Ink} Tinte, du hast {Have}"
+Revive.Bonus.1,Ein Kreis: +5 % Tempo
+Revive.Bonus.2,Ein Dreieck: +8 % Schaden
+Revive.Bonus.3,Ein Rechteck: +10 % Rüstung
+Revive.Hint,Zeichne eine geschlossene Schleife aufs Blatt
+Revive.Submit,Zurückholen
+Revive.Redraw,Neu zeichnen
+Revive.Cancel,Abbrechen · Esc
+Expedition.Result.Final,ENTKOMMEN
+Expedition.Result.Early,FRÜH RAUS
+Expedition.Result.Lost,VERLOREN
+Expedition.Banked,{Count} Sticker verbucht
+Expedition.LostAll,Der Beutel blieb zurück: nichts verbucht
+Expedition.Reached,Bis Etage {Stage}-{Floor} · {Floors} Etagen geschafft
+Expedition.Tally,{Kills} Gegner · {Elites} Eliten · {Chests} Truhen · {Fights} Kämpfe gewonnen
+Foe.0,Kritzelknäuel
+Foe.1,Strichelgespenst
+Foe.2,Spanschleuderer
+Foe.3,Entwurfsschild
+Foe.4,Bleistiftstummel
+Foe.5,Tropfenschleim
+Foe.6,Zweifarbenstürmer
+Foe.7,Farbsprüher
+Foe.8,Blasenblitzer
+Foe.9,Saugschwamm
+Foe.10,Federlanzer
+Foe.11,Tintenkäfer
+Foe.12,Schraffurkrabbe
+Foe.13,Tintenfass-Schütze
+Foe.14,Papiersäge
+Foe.15,Kugelschütze
+Foe.16,Rotstift
+Foe.17,Durchschlagzwilling
+Foe.18,Rollpanzer
+Foe.19,Abakusschütze
+Foe.20,Tuschgeist
+Foe.21,Papierschirm
+Foe.22,Siegelstein
+Foe.23,Pinselsäule
+Foe.24,Trockenpinsel-Windrad
+Foe.25,Minenkanonen-König
+Foe.26,Radiergummiriese
+Foe.27,Palettenfürst
+Foe.28,Nassstift-Aal
+Foe.29,Doppelfeder-Schwertmeister
+Foe.30,Eisentintenfass-Inspektor
+Foe.31,Vierfarb-Klicker
+Foe.32,Durchschlagspiegel
+Foe.33,Wildschrift-Bestie
+Foe.34,Doppelsiegel-Richter
+Foe.35,Stickerdieb
+Foe.36,Verdorbener Entwurf
+Foe.37,Die Zeichenmaschine
+Foe.38,Der Regenbogengeist
+Foe.39,Der eiserne Chefredakteur
+Foe.40,Der Zahnrad-Kriegsherr
+Foe.41,Der Tuschemeister
+Foe.42,Roter Geist
+Foe.43,Gelber Geist
+Foe.44,Blauer Geist
+Foe.45,Schriftsoldat
+Foe.46,Schriftschild
+Boss.Dragon,Der Wildschrift-Drache
+Part.37.0,Bleistift-Gatling
+Part.37.1,Goldzirkel
+Part.39.0,Goldrevolver
+Part.39.1,Papierklinge
+Part.40.0,Vierfarb-Gatling
+Part.40.1,Durchschlagschild
+Part.41.0,Messing-Briefbeschwerer
+BossPhase.Dragon,Der Meister wird zum Drachen!
+BossPhase.Split,Er zerfällt in drei Geister!
+BossPhase.Merge,Die Farben fließen wieder zusammen
+Service.10,Feder umschmieden
+Service.11,Wahlurne
+Service.12,Stift ausleihen
+Service.VoteFor,Stimme: {Name}
+Service.BorrowPen,Ausleihen: {Name}
+Expedition.PrankChip,Etagenstreich: {Name}
+Expedition.PrankBanner,Streich: {Name}!
+Expedition.Ballot,Mit E abstimmen · noch {Seconds} s
+Nib.0,Bleistiftfeder: Treffer lassen Gegner manchmal eine halbe Sekunde erstarren.
+Nib.1,Aquarellfeder: Treffer verlangsamen und durchnässen.
+Nib.2,Füllerfeder: Schüsse durchdringen einen Gegner mehr.
+Nib.3,Kulifeder: Jeder vierte Schuss feuert eine Durchschlagkopie.
+Nib.4,Pinselfeder: Schüsse treffen 10 % härter und stoßen zurück.
+Afflict.Bleeding,Blutet
+Afflict.Circled,Rot umkreist: +20 %
+Afflict.Sealed,Versiegelt: keine Items
+Afflict.Smeared,Tinte im Auge
+Afflict.Dragged,Verlangsamt
+Afflict.Fogged,Im Staub verborgen
+Afflict.Streak,Zinnober-Krits
+Afflict.DryBrush,Trockenpinsel +15 %
+Wall.Page.0,Seiten & Raum · {Count}/32
+Wall.Page.1,Expedition · {Count}/32
+Ach.32,Erste Etage
+Ach.32.Note,Schaffe eine Etage der Expedition.
+Ach.33,Zeichenmaschine besiegt
+Ach.33.Note,"Besiege die Zeichenmaschine, den Boss des Bleistiftskizzenbuchs."
+Ach.34,Ganz hinaus
+Ach.34.Note,Geh durch die Tür nach dem letzten Boss hinaus.
+Ach.35,"Aufhören, wenn's am schönsten ist"
+Ach.35.Note,Verlasse eine frühe Ausgangstür mit mindestens 500 Stickern.
+Ach.36,Schwerer Beutel
+Ach.36.Note,Bringe aus einem Lauf mindestens 1000 Sticker heim.
+Ach.37,Fünf Stifte gezähmt
+Ach.37.Note,Besiege den Boss jedes Stift-Bioms.
+Ach.38,Drachentöter
+Ach.38.Note,Besiege den Tuschemeister in Drachengestalt.
+Ach.39,Wegradiert
+Ach.39.Note,Radiere ein Werkzeug eines Bosses weg.
+Ach.40,Mit leeren Händen
+Ach.40.Note,Radiere beide Waffen des eisernen Chefredakteurs weg.
+Ach.41,Ein halber Boss
+Ach.41.Note,Radiere mit einem Wisch die Hälfte eines Fähigkeiten-Bosses weg.
+Ach.42,Saubere Seite
+Ach.42.Note,Radiere 10 Gegner weg.
+Ach.43,Zurückgezeichnet
+Ach.43.Note,Zeichne einen gefallenen Mitspieler mit Papier und Stift zurück.
+Ach.44,Nur ein Kritzel
+Ach.44.Note,Zeichne einen Mitspieler mit einer Form unter einem Zehntel des Blatts zurück.
+Ach.45,Geometriestunde
+Ach.45.Note,"Hol dir in Wiederbelebungszeichnungen Kreis-, Dreieck- und Rechteckbonus."
+Ach.46,Geliehener Glanz
+Ach.46.Note,Zeichne einen Mitspieler mit einem geliehenen Stift zurück.
+Ach.47,Links und rechts
+Ach.47.Note,Halte in jeder Hand eine Pistole.
+Ach.48,Klammersturm
+Ach.48.Note,Halte in jeder Hand eine Tacker-Pistole.
+Ach.49,Herausgeputzt
+Ach.49.Note,Trage in allen sechs Kategorien zugleich ein Aussehen.
+Ach.50,Elitejäger
+Ach.50.Note,Besiege 25 Eliten.
+Ach.51,Haltet den Dieb!
+Ach.51.Note,"Fang den Stickerdieb, bevor er entkommt."
+Ach.52,Dreißig in dreißig
+Ach.52.Note,Schaffe die Dreißig-Sekunden-Arena rechtzeitig.
+Ach.53,Entfesselt
+Ach.53.Note,Halte eine verkettete Truhe offen.
+Ach.54,Kopie erstellt
+Ach.54.Note,Kopiere am Kopierer einen Radiergummi.
+Ach.55,Großer Einsatz
+Ach.55.Note,Dreh das große Stickerrad.
+Ach.56,Doppelt geschmiedet
+Ach.56.Note,Schmiede in einem Lauf zwei Federn um.
+Ach.57,Demokratie
+Ach.57.Note,Bringe mit mindestens vier Stimmen eine Streich-Abstimmung zu Ende.
+Ach.58,Teilen macht Freude
+Ach.58.Note,"Lass 200 Sticker fallen, die deine Mitspieler aufheben."
+Ach.59,Ohne Verluste
+Ach.59.Note,"Besiege einen Boss, ohne dass jemand fällt."
+Ach.60,Zu viert hinaus
+Ach.60.Note,Geh in einem Lauf mit vier oder mehr durch die letzte Tür hinaus.
+Ach.61,Harte Ausgabe
+Ach.61.Note,Geh auf Stufe 3 oder höher durch die letzte Tür hinaus.
+Ach.62,Stickerbaron
+Ach.62.Note,Bringe aus Expeditionen insgesamt 10.000 Sticker heim.
+Ach.63,So knapp
+Ach.63.Note,Verliere bei einer Niederlage mindestens 300 Sticker.
+Quality.0,Ohne
+Quality.1,Grün
+Quality.2,Blau
+Quality.3,Lila
+Quality.4,Orange
+Quality.5,Rot
+Gun.0,Tacker-Pistole
+Gun.0.Note,"Schneller, 14 Schuss; Klammern durchschlagen einen Gegner, jeder vierte Treffer lässt ihn bluten (1 pro Sekunde, 10 s)."
+Gun.1,Reißzwecken-Flinte
+Gun.1.Note,"Acht Reißzwecken pro Schuss; jede kann einen Gegner 0,4 s festnageln (keine Bosse), jeder vierte Treffer lässt bluten (1 pro Sekunde, 10 s)."
+Gun.2,Eistinten-Gewehr
+Gun.2.Note,Treffer bremsen Gegner und durchnässen sie (nass sind sie noch langsamer).
+Gun.3,Gummiband-MG
+Gun.3.Note,Die Kugeln prallen zweimal von Wänden ab.
+Gun.4,Neonblitz-Präzisionsgewehr
+Gun.4.Note,Ein Treffer springt auf 3 Gegner in der Nähe über (je 45%).
+Gun.5,Löschpapier-Gewehr
+Gun.5.Note,"Ein Zehntel deines Schadens wird zum Schild, bis zu einem Fünftel deiner max. Gesundheit."
+Gun.6,Siegelwachs-Werfer
+Gun.6.Note,Eine größere Explosion; getroffene Gegner brennen 3 s.
+Gun.7,Regenbogen-Kreide-MG
+Gun.7.Note,"Die Kugeln wechseln sich ab: Rot brennt, Blau bremst, Gelb springt über, Grün durchschlägt."
+Expedition.OpenChestQ,Truhe öffnen ({Quality})
+Expedition.ChestTag,Truhe · {Quality}
+Expedition.Trade,Gegen Expeditionsmünzen verkaufen
+Service.13,Ankäufer
+Expedition.Denied.27,Kein Ankäufer in Reichweite
+Revive.Hint.Bag,{Name} ist gefallen: Papier & Stift sind in der Tasche; Tab legt sie in die Leiste
+Kit.BagNote,"Plätze 1–2 sind die Hände (Waffen: Langwaffen beide, Pistolen eine). Plätze 3–5 für Gegenstände, die nur dort wirken; die Tasche lagert."
+Kit.TabBag,Tasche
+Kit.TabLooks,Looks
+Kit.Coins,Expeditionsmünzen
+Kit.CoinNote,"Münzen gelten nur in diesem Lauf: Läden nehmen zuerst Münzen (10 = 1 Sticker); ein Sturz verstreut sie, und sie verlassen den Dungeon nie."
+Kit.Coins100,100 abwerfen
+Kit.CoinsAll,Alle abwerfen
+Kit.Locked,Forschung
+Kit.Bag,Tasche · {Open} von {Count} Plätzen
+Kit.MoveHint,"Ein anderes Feld anklicken, um es dorthin zu legen; nochmal anklicken zum Loslassen."
+Kit.PickHint,"Ein Feld anklicken, um es zu wählen."
+Kit.Picked,Gewählt
+Kit.InHand,In der Hand
+Kit.EmptySlot,Ein leerer Platz.
+Kit.QualityTag,Qualität: {Quality}
+Kit.NoQuality,Ohne Qualität · Arsenalwaffe
+Kit.BagIdle,In der Tasche wirkungslos: auf Platz 3–5 legen.
+Kit.Fetch,Ankäufer zahlt {Coins} Münzen
+Kit.DropSlot,Ablegen
+Trade.Title,Der Ankäufer
+Trade.Note,"Wähle eine Waffe oder einen Gegenstand und verkaufe sie gegen Expeditionsmünzen (nie Sticker). Läden nehmen zuerst Münzen, 10 pro Sticker. Weggehen schließt."
+Trade.Sell,Verkaufen · {Coins} Münzen
+Research.Whole,"Forschung gehört dir: Jeder Rang zählt in jedem Raum, jeder Spieler zählt seine eigene."
+Research.BagTotal,Tasche: {Count} Plätze
+Attr.6,Rucksack
+Attr.StepSlot,+1 Platz je Rang
+Kit.LongNote,Eine Langwaffe braucht beide Hände (Plätze 1 und 2).
+Kit.BagGun,"Auf Platz 1 oder 2 legen, um sie zu halten."
+Kit.Hands,1–2 · Hände (Waffen)
+Kit.Belt,3–5 · Gegenstände
+Kit.LeftHand,Links
+Kit.RightHand,Rechts
+Expedition.PickBag,{Name} aufheben (in die Tasche)
+Expedition.PairOf,Doppelt: {Left} + {Right}
+Expedition.Denied.28,Plätze 1 und 2 sind die Hände: nur Waffen
+Expedition.Denied.29,Plätze 3–5 nur für Gegenstände; Waffen in die Hände oder Tasche
+Expedition.Denied.30,Kein Taschenplatz für die zweite Pistole
+Key.Mend,Tinte heilt
+Mend.Self,Tinte heilt · 1 Tinte = 1 Leben
+Revive.Prompt,{Name} zurückzeichnen
+Revive.PromptNoKit,{Name} zurückzeichnen · ohne Papier & Stift Tinte ×2
+Revive.NoteNoKit,"Ohne Papier & Stift geht es trotzdem, für doppelte Tinte. Eine geschlossene Form; größer heißt zäher und teurer."
+Mend.Area,Tinte heilt · auf {Count} verteilt
+Spectate.Watching,Du siehst {Name} zu
+Spectate.Switch,Links-/Rechtsklick: Mitspieler wechseln
+Attr.7,Ausweich-Abklingzeit
+Attr.8,Ausweich-Tempo
+Attr.StepCut,-{Percent}% je Stufe
+Research.TotalCut,Gesamt -{Percent}%
+Revive.Hint.NoKit,{Name} ist gefallen: zum Umriss gehen und E drücken (Tinte ×2)
+Mend.Mate,{Name} mit Tinte heilen · 1 Tinte = 1 Leben

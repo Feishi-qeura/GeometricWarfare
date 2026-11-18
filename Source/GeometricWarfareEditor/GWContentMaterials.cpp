@@ -5,6 +5,7 @@
 #include "Materials/MaterialExpressionCameraVectorWS.h"
 #include "Materials/MaterialExpressionConstant3Vector.h"
 #include "Materials/MaterialExpressionCustom.h"
+#include "Materials/MaterialExpressionDynamicParameter.h"
 #include "Materials/MaterialExpressionParticleColor.h"
 #include "Materials/MaterialExpressionPerInstanceCustomData.h"
 #include "Materials/MaterialExpressionScalarParameter.h"
@@ -59,9 +60,41 @@ struct GWNoise
 };
 GWNoise g;
 float2 p = W.xy;
-float3 paper = float3(0.86, 0.80, 0.66);
+// Pen: -1 the plain graph paper; the expedition's five pens each have a paper of their own (design 3.3).
+int pen = (int)round(clamp(Pen, -1.0, 4.0));
+float3 paper = pen == 0 ? float3(0.79, 0.79, 0.77) : pen == 1 ? float3(0.92, 0.94, 0.93) : pen == 2 ? float3(0.88, 0.79, 0.58)
+             : pen == 3 ? float3(0.90, 0.92, 0.96) : pen == 4 ? float3(0.90, 0.85, 0.73) : float3(0.86, 0.80, 0.66);
 paper *= 0.95 + 0.07 * (g.noise(p * 0.0011) * 0.6 + g.noise(p * 0.004) * 0.4);
 paper *= 0.985 + 0.03 * g.noise(p * 0.09);
+if (pen == 0)
+{
+    // The sketchbook: a toothy grey sheet, graphite smudged about by the side of a hand.
+    paper *= 0.96 + 0.06 * g.noise(p * 0.06 + 2.1);
+    paper *= 1.0 - 0.16 * smoothstep(0.58, 0.9, g.noise(p * 0.0017 + 7.3));
+}
+else if (pen == 1)
+{
+    // Cold-pressed watercolour paper with soft blooms of cyan and magenta wash.
+    float a = smoothstep(0.58, 0.8, g.noise(p * 0.0009 + 3.1)), b = smoothstep(0.6, 0.82, g.noise(p * 0.0011 + 9.7));
+    paper = lerp(paper, float3(0.55, 0.82, 0.88), a * 0.45);
+    paper = lerp(paper, float3(0.92, 0.66, 0.80), b * 0.36);
+    paper *= 0.97 + 0.03 * g.noise(p * 0.03);
+}
+else if (pen == 2)
+{
+    // A yellowed manuscript: foxing spots and fine cross-hatched shade at the edges of its folds.
+    paper *= 1.0 - 0.12 * smoothstep(0.7, 0.95, g.noise(p * 0.0025 + 1.7));
+    float hx = abs(frac((p.x + p.y) / 36.0) - 0.5), hy = abs(frac((p.x - p.y) / 36.0) - 0.5);
+    float shade = smoothstep(0.55, 0.75, g.noise(p * 0.0008 + 4.2));
+    paper = lerp(paper, float3(0.15, 0.13, 0.25), shade * 0.22 * (1.0 - smoothstep(0.03, 0.08, min(hx, hy))));
+}
+else if (pen == 4)
+{
+    // Rice paper: long fibres and the odd bleed of ink.
+    float fibre = g.noise(float2(p.x * 0.004, p.y * 0.05)) * g.noise(float2(p.x * 0.05, p.y * 0.004));
+    paper *= 0.94 + 0.14 * fibre;
+    paper = lerp(paper, float3(0.30, 0.28, 0.27), smoothstep(0.74, 0.95, g.noise(p * 0.0013 + 5.5)) * 0.28);
+}
 float2 wob = float2(g.noise(p.yx * 0.0021), g.noise(p * 0.0021)) * 7.0;
 float2 q = (p + wob) / 200.0;
 float2 fw = max(fwidth(q), 1e-5);
@@ -73,9 +106,24 @@ float2 FW = max(fwidth(Q), 1e-6);
 float2 F = frac(Q);
 float2 DL = min(F, 1.0 - F);
 float2 LM = 1.0 - smoothstep(FW * 0.9, FW * 2.4, DL);
-float3 gridInk = float3(0.20, 0.36, 0.60);
-paper = lerp(paper, gridInk, max(lm.x, lm.y) * 0.20);
-paper = lerp(paper, gridInk, max(LM.x, LM.y) * 0.32);
+float3 gridInk = pen == 0 ? float3(0.34, 0.35, 0.40) : pen == 1 ? float3(0.30, 0.55, 0.62) : pen == 2 ? float3(0.20, 0.17, 0.32)
+               : pen == 3 ? float3(0.22, 0.42, 0.85) : pen == 4 ? float3(0.40, 0.30, 0.26) : float3(0.20, 0.36, 0.60);
+float minor = pen == 1 || pen == 4 ? 0.0 : pen == 2 || pen == 3 ? 0.06 : pen == 0 ? 0.16 : 0.20;
+float major = pen == 1 ? 0.12 : pen == 4 ? 0.07 : pen == 0 ? 0.26 : pen == 2 ? 0.14 : pen == 3 ? 0.10 : 0.32;
+paper = lerp(paper, gridInk, max(lm.x, lm.y) * minor);
+paper = lerp(paper, gridInk, max(LM.x, LM.y) * major);
+if (pen == 2 || pen == 3)
+{
+    // Ruled lines (the manuscript's brown-black, the exercise book's blue) and, in the exercise book, a red margin.
+    float rule = 1.0 - smoothstep(fw.y * 0.5, fw.y * 1.6, min(frac((p.y + wob.y) / (pen == 2 ? 110.0 : 140.0)), 1.0 - frac((p.y + wob.y) / (pen == 2 ? 110.0 : 140.0))) * (pen == 2 ? 110.0 : 140.0) / 200.0);
+    paper = lerp(paper, gridInk, rule * (pen == 2 ? 0.22 : 0.38));
+    if (pen == 3)
+    {
+        float period = max(GridMajor * 8.0, 1600.0), fx = max(fwidth(p.x), 0.5);
+        float m = abs(frac((p.x + wob.x) / period) - 0.08) * period;
+        paper = lerp(paper, float3(0.86, 0.24, 0.24), (1.0 - smoothstep(fx * 1.2, fx * 2.6, m)) * 0.55);
+    }
+}
 float2 inside = min(p, float2(MapSize, MapSizeY > 0.0 ? MapSizeY : MapSize) - p);
 float edge = min(inside.x, inside.y);
 paper *= 0.86 + 0.14 * smoothstep(0.0, 900.0, edge);
@@ -90,6 +138,15 @@ const TCHAR* SpriteColorCode = TEXT(R"(
 float3 fill = PC * (1.0 + Tex.b * 0.6);
 float3 ink = lerp(InkColor, PC * 0.25, 0.18);
 return lerp(fill, ink, saturate(Tex.g)) * Bright;
+)");
+
+// The pen sweep: Niagara's dynamic parameter draws an outline on round its centre (Reveal 0 -> 1) and rubs it
+// out the same way round (Keep 1 -> 0). UV is the sub image's own corner-to-corner coordinate.
+const TCHAR* SpriteAlphaCode = TEXT(R"(
+float2 l = frac(UV * Cells) - 0.5;
+float ang = frac(atan2(l.y, l.x) * 0.15915494 + 0.75);
+float shown = saturate((Reveal * 1.06 - ang) / 0.06) * saturate((ang - (1.0 - Keep) * 1.06 + 0.06) / 0.06);
+return saturate(TA * PA * shown);
 )");
 
 const TCHAR* MeshCode = TEXT(R"(
@@ -186,12 +243,14 @@ void Finish(UMaterial* Material, TMap<FName, UMaterialInterface*>& Out)
     GWContent::SaveAsset(Material);
     Out.Add(Material->GetFName(), Material);
 }
-UMaterialInstanceConstant* Instance(const FString& Name, UMaterialInterface* Parent, UTexture* Texture)
+UMaterialInstanceConstant* Instance(const FString& Name, UMaterialInterface* Parent, UTexture* Texture, float Cells = 1)
 {
     UPackage* Package = GWContent::NewAssetPackage(TEXT("/Game/Sketch/Materials/") + Name);
     auto* MIC = NewObject<UMaterialInstanceConstant>(Package, *Name, RF_Public | RF_Standalone | RF_Transactional);
     UMaterialEditingLibrary::SetMaterialInstanceParent(MIC, Parent);
     UMaterialEditingLibrary::SetMaterialInstanceTextureParameterValue(MIC, TEXT("Sketch"), Texture);
+    if (Cells != 1)
+        UMaterialEditingLibrary::SetMaterialInstanceScalarParameterValue(MIC, TEXT("Cells"), Cells);
     UMaterialEditingLibrary::UpdateMaterialInstance(MIC);
     MIC->PostEditChange();
     GWContent::SaveAsset(MIC);
@@ -246,11 +305,16 @@ void GWContent::BuildMaterials(const TMap<FName, UTexture2D*>& Textures, TMap<FN
         auto* Major = G.Add<UMaterialExpressionScalarParameter>();
         Major->ParameterName = TEXT("GridMajor");
         Major->DefaultValue = 1000;
+        // The expedition's pen biome (-1: the plain graph paper of every other page).
+        auto* PenParam = G.Add<UMaterialExpressionScalarParameter>();
+        PenParam->ParameterName = TEXT("Pen");
+        PenParam->DefaultValue = -1;
         auto* Shade = G.Custom(PaperCode, CMOT_Float3,
                                {{TEXT("W"), World, TEXT("")},
                                 {TEXT("MapSize"), Size, TEXT("")},
                                 {TEXT("MapSizeY"), SizeY, TEXT("")},
-                                {TEXT("GridMajor"), Major, TEXT("")}});
+                                {TEXT("GridMajor"), Major, TEXT("")},
+                                {TEXT("Pen"), PenParam, TEXT("")}});
         M->GetEditorOnlyData()->EmissiveColor.Connect(0, Shade);
         Finish(M, Out);
     }
@@ -276,8 +340,19 @@ void GWContent::BuildMaterials(const TMap<FName, UTexture2D*>& Textures, TMap<FN
                                 {TEXT("PC"), Particle, TEXT("")},
                                 {TEXT("InkColor"), Ink, TEXT("")},
                                 {TEXT("Bright"), Bright, TEXT("")}});
-        auto* Alpha = G.Custom(TEXT("return saturate(TA * PA);"), CMOT_Float1,
-                               {{TEXT("TA"), Tex, TEXT("A")}, {TEXT("PA"), Particle, TEXT("A")}});
+        auto* Sweep = G.Add<UMaterialExpressionDynamicParameter>(-900, 750);
+        Sweep->DefaultValue = FLinearColor(1, 1, 1, 1);
+        auto* UV = G.Add<UMaterialExpressionTextureCoordinate>(-900, 900);
+        auto* Cells = G.Add<UMaterialExpressionScalarParameter>(-900, 1000);
+        Cells->ParameterName = TEXT("Cells");
+        Cells->DefaultValue = 1;
+        auto* Alpha = G.Custom(SpriteAlphaCode, CMOT_Float1,
+                               {{TEXT("TA"), Tex, TEXT("A")},
+                                {TEXT("PA"), Particle, TEXT("A")},
+                                {TEXT("UV"), UV, TEXT("")},
+                                {TEXT("Cells"), Cells, TEXT("")},
+                                {TEXT("Reveal"), Sweep, TEXT("Param1")},
+                                {TEXT("Keep"), Sweep, TEXT("Param2")}});
         M->GetEditorOnlyData()->EmissiveColor.Connect(0, Color);
         M->GetEditorOnlyData()->Opacity.Connect(0, Alpha);
         Finish(M, Out);
@@ -350,10 +425,14 @@ void GWContent::BuildMaterials(const TMap<FName, UTexture2D*>& Textures, TMap<FN
         const FString Short = Texture.Key.ToString().RightChop(5); // T_GW_
         if (Short == TEXT("PaperGrain"))
             continue;
-        Out.Add(*(TEXT("MI_GW_FX_") + Short), Instance(TEXT("MI_GW_FX_") + Short, Sprite, Texture.Value));
+        // Sheets of 2x2 sub images: the pen sweep turns round each sub image's own centre.
+        const bool Sheet = Short == TEXT("Bolt") || Short == TEXT("Poly") || Short == TEXT("Chips");
+        Out.Add(*(TEXT("MI_GW_FX_") + Short), Instance(TEXT("MI_GW_FX_") + Short, Sprite, Texture.Value, Sheet ? 2.f : 1.f));
         if (Short == TEXT("Ring") || Short == TEXT("Loop") || Short == TEXT("Crack") || Short == TEXT("Dot") ||
             Short == TEXT("Glow") || Short == TEXT("Hex") || Short == TEXT("Star") || Short == TEXT("Diamond") ||
-            Short == TEXT("Square") || Short == TEXT("Hatch") || Short == TEXT("Plus") || Short == TEXT("Triangle"))
+            Short == TEXT("Square") || Short == TEXT("Hatch") || Short == TEXT("Plus") || Short == TEXT("Triangle") ||
+            Short == TEXT("Compass") || Short == TEXT("HexRing") || Short == TEXT("TriRing") || Short == TEXT("Scorch") ||
+            Short == TEXT("Splat"))
             Out.Add(*(TEXT("MI_GW_Decal_") + Short), Instance(TEXT("MI_GW_Decal_") + Short, Decal, Texture.Value));
     }
     UE_LOG(LogGWContent, Display, TEXT("MATERIALS=%d"), Out.Num());

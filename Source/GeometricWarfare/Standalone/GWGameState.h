@@ -15,6 +15,8 @@ public:
     static constexpr int32 EffectSlotCount = 256;
     static constexpr int32 DamageSlotCount = 128;
     static constexpr int32 InkSlotCount = 192;
+    // The expedition's floor loot: a slot per id, like the ink drops (gwgame::MaxGroundLoot lie on a floor at most).
+    static constexpr int32 LootSlotCount = 192;
     UPROPERTY(Replicated) bool InMatch = false;
     UPROPERTY(Replicated) bool Finished = false;
     UPROPERTY(Replicated) bool UpgradePaused = false;
@@ -29,6 +31,38 @@ public:
     UPROPERTY(Replicated) uint32 Seed = 1;
     UPROPERTY(Replicated) uint32 WallVersion = 0;
     UPROPERTY(Replicated) bool BossActive = false;
+    // The expedition (design v2.1): stage 1-4 (0 when this is no expedition), floor, floors cleared, the four stages'
+    // pens (3 bits each), the party the floor was scaled for, the room the party is in, the floor's rooms, loot,
+    // shelves, chests, exits and item zones, the portal, the boss, and the run's tallies for the result card.
+    // Twist: the party playlist's twist on this mission (0 none, 1 chaos, 2 rockets, 3 ink rain).
+    UPROPERTY(Replicated) uint8 ExpStage = 0;
+    UPROPERTY(Replicated) uint8 ExpFloor = 0;
+    UPROPERTY(Replicated) uint8 ExpFloorsCleared = 0;
+    UPROPERTY(Replicated) uint16 ExpBiomes = 0;
+    UPROPERTY(Replicated) uint8 ExpParty = 1;
+    UPROPERTY(Replicated) uint8 ExpCurrent = 0;
+    UPROPERTY(Replicated) TArray<FGWRoomNet> Rooms;
+    UPROPERTY(Replicated) TArray<FGWLootNet> LootSlots;
+    UPROPERTY(Replicated) TArray<FGWOfferNet> Offers;
+    UPROPERTY(Replicated) TArray<FGWChestNet> Chests;
+    UPROPERTY(Replicated) TArray<FGWExitNet> Exits;
+    UPROPERTY(Replicated) TArray<FGWZoneNet> Zones;
+    UPROPERTY(Replicated) FVector PortalAt = FVector::ZeroVector;
+    UPROPERTY(Replicated) bool PortalOpen = false;
+    UPROPERTY(Replicated) float PortalWait = 0;
+    UPROPERTY(Replicated) int32 ExpBoss = -1;
+    UPROPERTY(Replicated) int32 ExpKills = 0;
+    UPROPERTY(Replicated) int32 ExpElites = 0;
+    UPROPERTY(Replicated) int32 ExpChests = 0;
+    UPROPERTY(Replicated) int32 ExpFights = 0;
+    // The floor's prank from an EV04 ballot (gwgame::FloorPrank, -1 none) and the seconds the open ballot has left.
+    UPROPERTY(Replicated) int8 ExpPrank = -1;
+    UPROPERTY(Replicated) float ExpVoteClock = 0;
+    UPROPERTY(Replicated) uint8 Twist = 0;
+    // Barbed wire per cell of a defense page: 0 none, 1-15 how much is left (empty off a defense page).
+    UPROPERTY(Replicated) TArray<uint8> Wire;
+    // What rubbing out each cell's tower or wire would pay back now, in ink (the build ring's rub-out price).
+    UPROPERTY(Replicated) TArray<uint16> TowerWorth;
     UPROPERTY(Replicated) float BossHP = 0;
     // The room's trolling level (gwgame::PrankLevel), chosen by the host before deploying.
     UPROPERTY(Replicated) uint8 Prank = 1;
@@ -86,12 +120,25 @@ public:
     UPROPERTY(Replicated) int32 GridHeight = 0;
     UPROPERTY(Replicated) float CellSize = 400;
     UPROPERTY(Replicated) TArray<uint8> Cells;
+    // The box's ladders, in the simulation's order (a climber's ladder index points into it).
+    UPROPERTY(Replicated) TArray<FGWLadderNet> Ladders;
+    // What the box's builds and revives cost in ink (the host's rules), for the cursors and prompts.
+    UPROPERTY(Replicated) float TowerInk = 40;
+    UPROPERTY(Replicated) float MortarInk = 60;
+    UPROPERTY(Replicated) float TeslaInk = 55;
+    UPROPERTY(Replicated) float WireInk = 25;
+    UPROPERTY(Replicated) float TowerFiveInk = 50;
+    UPROPERTY(Replicated) float TowerSixInk = 70;
+    UPROPERTY(Replicated) float LadderInk = 30;
+    UPROPERTY(Replicated) float ReviveInk = 50;
+    UPROPERTY(Replicated) float ReviveReach = 190;
     // Decoded views, rebuilt from the wire arrays (units on arrival, the time-based ones every frame).
     TArray<FGWUnitView> Units;
     TArray<FGWProjectileView> Projectiles;
     TArray<FGWEffectView> Effects;
     TArray<FGWDamageNumberView> DamageNumbers;
     TArray<FGWInkDropView> InkDrops;
+    TArray<FGWLootView> Loot;
     TUniquePtr<gwgame::Battle> Simulation;
     // Copies the simulation into the wire arrays (authority only).
     void Publish();
@@ -102,19 +149,40 @@ public:
     // The simulation clock as this machine sees it: exact on the host, extrapolated briefly on clients.
     double Clock() const;
     const FGWUnitView* FindUnit(int32 Id) const;
+    bool Expedition() const
+    {
+        return Rules == static_cast<uint8>(gwgame::RuleSet::Expedition) && ExpStage > 0;
+    }
     bool Defense() const
     {
         return Rules == static_cast<uint8>(gwgame::RuleSet::Defense);
+    }
+    // Whether the build tools are in this player's hands now: a defense page's build phase, and in the tutorial only from
+    // its drawing step on (walking and shooting come first, with the reticle and no build preview).
+    bool Building() const
+    {
+        return Defense() && Phase == static_cast<uint8>(gwgame::DefensePhase::Build) &&
+               (!Tutorial || TutorialStep >= static_cast<uint8>(gwgame::TutorialStep::Draw));
     }
     bool Hub() const
     {
         return InMatch && Rules == static_cast<uint8>(gwgame::RuleSet::Hub);
     }
-    // Pages built from replicated cells (defense levels, the tutorial and the hub).
+    // Pages built from replicated cells (defense levels, the tutorial, the hub and the expedition's floors).
     bool GridPage() const
     {
-        return Rules == static_cast<uint8>(gwgame::RuleSet::Defense) || Rules == static_cast<uint8>(gwgame::RuleSet::Hub);
+        return Rules == static_cast<uint8>(gwgame::RuleSet::Defense) || Rules == static_cast<uint8>(gwgame::RuleSet::Hub) ||
+               Rules == static_cast<uint8>(gwgame::RuleSet::Expedition);
     }
+    // The expedition: the pen of a stage (1-4), and the room a world point stands in (-1 in a corridor).
+    gwgame::PenBiome Biome(int32 Stage = 0) const
+    {
+        const int32 S = FMath::Clamp(Stage > 0 ? Stage : static_cast<int32>(ExpStage), 1, 4);
+        return static_cast<gwgame::PenBiome>(FMath::Clamp((ExpBiomes >> ((S - 1) * 3)) & 7, 0, gwgame::BiomeCount - 1));
+    }
+    int32 RoomAt(FVector World) const;
+    // The gun, item or look lying nearest a point within Reach (what E would pick up there), for prompts.
+    const FGWLootView* LootNear(FVector World, float Reach) const;
     // Seconds left before the host's deploy takes everyone out of the hub (negative when none is running).
     float DeployIn() const
     {
@@ -129,6 +197,8 @@ private:
     UFUNCTION() void OnRep_Units();
     UFUNCTION() void OnRep_Elapsed();
     void DecodeUnits();
+    // The expedition's floor onto the wire (rooms, loot, shelves, chests, exits, zones, portal, tallies).
+    void PublishExpedition();
     double ElapsedArrival = 0;
     uint64 ViewFrame = 0;
     uint32 PublishedEffect = 0;

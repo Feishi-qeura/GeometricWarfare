@@ -43,6 +43,7 @@ struct FFU_SteamAppIdBootstrapTicket
 /**
  * 仅在当前进程内注入开发 Steam AppID 的启动器。
  *
+ * 开发游戏进程同时校正 Steam 快捷方式继承的 AppID 环境；编辑器和 Shipping 不修改环境。
  * 它从不落盘、从不调用 GConfig 写入接口；生命周期由 Runtime 模块持有并在卸载时精确撤层。
  */
 class FFU_SteamAppIdBootstrap final
@@ -64,4 +65,7 @@ public:
 
 private:
 	FFU_SteamAppIdBootstrapTicket Ticket;
+	FString PreviousSteamAppId;
+	FString PreviousSteamGameId;
+	FString DevelopmentEnvironmentAppId;
 };

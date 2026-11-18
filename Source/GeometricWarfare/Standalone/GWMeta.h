@@ -17,6 +17,7 @@ inline gwgame::Loadout ToLoadout(const FGWProfileDigest& D)
     L.title = D.Title;
     L.items = {{D.ItemA == 255 ? -1 : D.ItemA, D.ItemB == 255 ? -1 : D.ItemB}};
     L.achievements = D.Achievements;
+    L.weapons = D.Weapons;
     return L;
 }
 inline FGWProfileDigest ToDigest(const gwgame::Loadout& L)
@@ -30,6 +31,7 @@ inline FGWProfileDigest ToDigest(const gwgame::Loadout& L)
     D.ItemA = L.items[0] < 0 ? 255 : static_cast<uint8>(L.items[0]);
     D.ItemB = L.items[1] < 0 ? 255 : static_cast<uint8>(L.items[1]);
     D.Achievements = L.achievements;
+    D.Weapons = static_cast<uint8>(L.weapons & 0xFF);
     return D;
 }
 inline gwgame::Tally ToTally(const FGWProgressPacket& P)
@@ -49,6 +51,13 @@ inline gwgame::Tally ToTally(const FGWProgressPacket& P)
     T.players = P.Players;
     T.items = P.Items;
     T.awards = P.Awards;
+    T.feats = P.Feats;
+    T.erased = P.Erased;
+    T.elites = P.Elites;
+    T.given = P.Given;
+    T.banked = P.Banked;
+    T.bosses = P.Bosses;
+    T.shapes = P.Shapes;
     return T;
 }
 inline FString PageId(int32 Level)

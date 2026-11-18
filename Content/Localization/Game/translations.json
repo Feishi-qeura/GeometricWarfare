@@ -6,6 +6,12 @@
     "de"
   ],
   "strings": {
+    "Intro.Skip": [
+      "Press Space to skip",
+      "按下空格键跳过",
+      "スペースキーでスキップ",
+      "Leertaste zum Überspringen"
+    ],
     "Game.Title": [
       "GEOMETRIC WARFARE",
       "几何战争",
@@ -1285,16 +1291,10 @@
       "Missionsbrett"
     ],
     "Board.Subtitle": [
-      "Line defense · draw walls into a maze, then fight on the field yourself.",
-      "守线 · 在方格纸上画墙造迷宫，再亲自下场战斗。",
-      "ライン防衛 · 壁を描いて迷路を作り、自分も戦場で戦う。",
-      "Liniendefensive · zeichne Wände zu einem Labyrinth und kämpfe selbst mit."
-    ],
-    "Board.Chapter": [
-      "Chapter 1 · The first notebook",
-      "第 1 章 · 第一本笔记本",
-      "第1章 · 最初のノート",
-      "Kapitel 1 · Das erste Heft"
+      "Line defense · from the platform round the box: draw blocks, raise towers, hang ladders, and hold the core together.",
+      "守线 · 站在盒子边的平台上：画方块、建炮塔、挂梯子，一起守住核心。",
+      "守備 · 箱を囲む足場から：ブロックを描き、タワーを建て、はしごを掛けて、みんなでコアを守る。",
+      "Linienverteidigung · Von der Plattform rund um die Kiste: Blöcke zeichnen, Türme bauen, Leitern einhängen – und gemeinsam den Kern halten."
     ],
     "Level.1-1": [
       "First page",
@@ -1483,16 +1483,10 @@
       "Tinte"
     ],
     "Defense.BuildHint": [
-      "Right-drag on the paper to draw walls (10 ink a cell); right-drag a wall to erase it. Enemies take the shortest open road to the core.",
-      "按住右键在方格纸上拖动画墙（每格 10 墨水），在墙上拖动则擦掉。敌人会走通往核心的最短通路。",
-      "右ドラッグで紙に壁を描く（1マス10インク）。壁の上をドラッグすると消える。敵はコアへの最短ルートを通る。",
-      "Rechts ziehen zeichnet Wände (10 Tinte pro Feld), über einer Wand löscht es sie. Gegner nehmen den kürzesten offenen Weg zum Kern."
-    ],
-    "Defense.TurretHint": [
-      "Throw a square or bigger onto open paper to pin it as a turret. E recruits triangles, F merges the last one forward.",
-      "把方块及以上的多边形投到空地上，它会钉成炮台。E 招募三角形，F 把末尾的三角形并入前一个。",
-      "四角形以上を空き地に投げると砲台として固定される。Eで三角形を集め、Fで最後尾を前に合成。",
-      "Wirf ein Quadrat oder größer auf freies Papier, dann wird es ein Geschütz. E sammelt Dreiecke, F verschmilzt das letzte nach vorn."
+      "Right-drag in the box to draw blocks (10 ink a cell); right-drag a block to erase it. Enemies take the shortest open road to the core.",
+      "在盒子里按住右键拖动画方块（每格 10 墨水），在方块上拖动则擦掉。敌人会走通往核心的最短通路。",
+      "箱の中で右ドラッグしてブロックを描く（1マス10インク）。ブロックの上で右ドラッグすると消せる。敵はコアへの最短ルートを進む。",
+      "Ziehe mit der rechten Maustaste in der Kiste, um Blöcke zu zeichnen (10 Tinte pro Feld); über einen Block ziehen radiert ihn. Gegner nehmen den kürzesten offenen Weg zum Kern."
     ],
     "Defense.WaveBanner": [
       "Wave {Wave}!",
@@ -1507,10 +1501,10 @@
       "Welle geschafft · +{Count} Sticker"
     ],
     "Defense.Respawn": [
-      "Back beside the core in {Seconds} s",
-      "{Seconds} 秒后在核心旁复活",
-      "{Seconds} 秒後にコアの横で復活",
-      "In {Seconds} s zurück am Kern"
+      "Back on the platform in {Seconds} s",
+      "{Seconds} 秒后在平台上复活",
+      "{Seconds}秒後に足場で復活",
+      "In {Seconds} s zurück auf der Plattform"
     ],
     "Defense.Denied.1": [
       "Not enough ink",
@@ -1621,40 +1615,40 @@
       "Unfug-Stufe"
     ],
     "Prank.0": [
-      "Off",
-      "关闭",
-      "オフ",
-      "Aus"
+      "Chubby",
+      "胖血牛",
+      "ぽっちゃり",
+      "Pummelig"
     ],
     "Prank.1": [
-      "Friendly",
-      "友好",
-      "フレンドリー",
-      "Freundlich"
+      "Bouncy shots",
+      "子弹弹弹乐",
+      "跳弾パーティー",
+      "Abprallschüsse"
     ],
     "Prank.2": [
-      "Chaos",
-      "混乱",
-      "カオス",
-      "Chaos"
+      "Glass cannons",
+      "玻璃大炮",
+      "ガラスの大砲",
+      "Glaskanonen"
     ],
     "Prank.0.Note": [
-      "Nobody can be grabbed or thrown, and friendly fire never shoves.",
-      "谁都不能被抓起或投掷，友军子弹也不会推人。",
-      "誰もつかまれず、投げられない。味方の弾も押さない。",
-      "Niemand kann gepackt oder geworfen werden, und Eigenbeschuss schubst nie."
+      "Double health, a little slower",
+      "双倍生命，稍慢一点",
+      "体力2倍、少し遅い",
+      "Doppelte Gesundheit, etwas langsamer"
     ],
     "Prank.1.Note": [
-      "Only players who allow it can be grabbed and thrown; friendly fire shoves a little.",
-      "只有打开“可被投掷”的人才能被抓起和投掷；友军子弹轻推。",
-      "許可した人だけをつかんで投げられる。味方の弾は少し押す。",
-      "Nur wer es erlaubt, kann gepackt und geworfen werden; Eigenbeschuss schubst leicht."
+      "Every shot bounces off walls twice",
+      "子弹都在墙上弹两次",
+      "弾が壁で2回跳ねる",
+      "Jeder Schuss prallt zweimal ab"
     ],
     "Prank.2.Note": [
-      "Anyone can be grabbed and thrown at any time; friendly fire shoves hard.",
-      "任何人随时都能被抓起和投掷；友军子弹大力推人。",
-      "誰でもいつでもつかんで投げられる。味方の弾は強く押す。",
-      "Jeder kann jederzeit gepackt und geworfen werden; Eigenbeschuss schubst kräftig."
+      "Hit and be hit half as hard again",
+      "伤害与受伤都 ×1.5",
+      "与ダメ・被ダメ×1.5",
+      "Treffer in beide Richtungen ×1,5"
     ],
     "Throwable.On": [
       "Teammates may throw me: on",
@@ -1950,6 +1944,24 @@
       "直接接続ルーム（テスト）",
       "Direktraum (Test)"
     ],
+    "Hub.KindShort.0": [
+      "Offline",
+      "离线",
+      "オフライン",
+      "Offline"
+    ],
+    "Hub.KindShort.1": [
+      "Friends",
+      "好友房",
+      "フレンド",
+      "Freunde"
+    ],
+    "Hub.KindShort.2": [
+      "Direct",
+      "直连",
+      "直接接続",
+      "Direkt"
+    ],
     "Hub.Seats": [
       "{Count} / 8 players",
       "{Count} / 8 人",
@@ -2035,82 +2047,22 @@
       "Linienverteidigung"
     ],
     "Board.Mode.1": [
-      "Expedition (soon)",
-      "远征（即将开放）",
-      "遠征（近日公開）",
-      "Expedition (bald)"
+      "Expedition",
+      "远征",
+      "遠征",
+      "Expedition"
     ],
     "Board.Mode.2": [
-      "Party playlist (soon)",
-      "派对轮盘（即将开放）",
-      "パーティー（近日公開）",
-      "Partyrunde (bald)"
-    ],
-    "Board.ModeSoon": [
-      "This mode opens in a later update.",
-      "这个模式会在后续版本开放。",
-      "このモードは今後のアップデートで開放されます。",
-      "Dieser Modus kommt mit einem späteren Update."
+      "Party playlist",
+      "派对轮盘",
+      "パーティー・プレイリスト",
+      "Party-Playlist"
     ],
     "Board.BotsFriends": [
       "With friends in the room, no AI teammates come along.",
       "房间里有朋友时不带 AI 队友。",
       "フレンドがいるときはAIの仲間は同行しません。",
       "Mit Freunden im Raum kommen keine KI-Mitspieler mit."
-    ],
-    "Coming.Stamp": [
-      "Opening soon",
-      "即将开张",
-      "近日オープン",
-      "Bald geöffnet"
-    ],
-    "Coming.Stickers": [
-      "Your stickers: {Count}",
-      "你的贴纸：{Count} 张",
-      "ステッカー：{Count}枚",
-      "Deine Sticker: {Count}"
-    ],
-    "Coming.1": [
-      "Every player's achievements will hang here, the ones done and the ones still missing. For now the wall knows who is in the room.",
-      "这里会挂上每个人已达成和未达成的成就。现在墙上先记下了房间里的人。",
-      "ここに全員の達成済み・未達成の実績が並びます。今はルームにいる人だけが分かります。",
-      "Hier hängen bald die Erfolge aller – erreichte und noch fehlende. Vorerst kennt die Wand nur, wer im Raum ist."
-    ],
-    "Coming.2": [
-      "Spend stickers to unlock weapons and wall types, and buy items for a single run (two per run at most).",
-      "用贴纸解锁武器和墙型，再买单局用的道具，每局最多带 2 个。",
-      "ステッカーで武器と壁の種類を解放し、1回分のアイテムも買えます（1回につき2個まで）。",
-      "Mit Stickern schaltest du Waffen und Wandtypen frei und kaufst Gegenstände für einen Einsatz (höchstens zwei)."
-    ],
-    "Coming.3": [
-      "Raise health, damage, ink capacity, throw power, speed and pickup range, five ranks each. In someone else's room your ranks are capped by the room's difficulty.",
-      "升级生命、伤害、墨水上限、投掷力、移速和拾取范围，每项 5 级。进别人的房间时，按房间难度封顶。",
-      "体力・攻撃力・インク上限・投てき力・移動速度・回収範囲を各5段階で強化。他の人のルームでは難易度に合わせて上限がかかります。",
-      "Steigere Leben, Schaden, Tintenvorrat, Wurfkraft, Tempo und Sammelradius um je fünf Stufen. In fremden Räumen begrenzt der Schwierigkeitsgrad deine Stufen."
-    ],
-    "Coming.4": [
-      "Change your outfit and pick a party title. Looks only: nothing here changes a fight.",
-      "换外观、挑选派对称号。只是好看，不影响战斗。",
-      "見た目を変えて、パーティー称号を選ぶ。戦闘には影響しません。",
-      "Outfit wechseln und einen Partytitel wählen. Nur Optik – am Kampf ändert das nichts."
-    ],
-    "Npc.2": [
-      "Pentagon at the counter: “The crates are still on their way. Save up your stickers!”",
-      "五边形店主：“货还在路上，先把贴纸攒着！”",
-      "カウンターのペンタゴン：「荷物はまだ届いていないんだ。ステッカーを貯めておいて！」",
-      "Fünfeck am Ladentisch: „Die Kisten sind noch unterwegs. Spar deine Sticker!“"
-    ],
-    "Npc.3": [
-      "Triangle at the desk: “Formulas first, upgrades later. Come back soon.”",
-      "三角研究员：“公式还没算完，升级马上就来。”",
-      "デスクのトライアングル：「まだ計算中。強化はもうすぐ。」",
-      "Dreieck am Forschungstisch: „Erst die Formeln, dann die Upgrades. Komm bald wieder.“"
-    ],
-    "Npc.4": [
-      "Square at the wardrobe: “Hats are coming. Every shape deserves a good hat.”",
-      "方块裁缝：“帽子在做了，每种形状都配得上一顶好帽子。”",
-      "衣装棚のスクエア：「帽子を作っているところ。どの形にもいい帽子を。」",
-      "Quadrat an der Garderobe: „Hüte sind in Arbeit. Jede Form verdient einen guten Hut.“"
     ],
     "Door.0": [
       "Steam is not connected, so only you can be in this hub. Start Steam and press the button below: the hub reopens as a room your friends can join.",
@@ -2245,94 +2197,76 @@
       "Schritt {Step} von {Count}"
     ],
     "Tutorial.0.Title": [
-      "Walk",
-      "移动",
-      "移動",
-      "Laufen"
+      "Walk the platform",
+      "在平台上走",
+      "足場を歩く",
+      "Über die Plattform"
     ],
     "Tutorial.1.Title": [
       "Shoot",
       "射击",
-      "射撃",
+      "撃つ",
       "Schießen"
     ],
     "Tutorial.2.Title": [
-      "Recruit",
-      "招募",
-      "仲間にする",
-      "Anwerben"
+      "Draw blocks",
+      "画方块",
+      "ブロックを描く",
+      "Blöcke zeichnen"
     ],
     "Tutorial.3.Title": [
-      "Merge",
-      "合成",
-      "合体",
-      "Verschmelzen"
+      "Raise a tower",
+      "建炮塔",
+      "タワーを建てる",
+      "Turm bauen"
     ],
     "Tutorial.4.Title": [
-      "Pin a turret",
-      "钉炮台",
-      "砲台を置く",
-      "Geschütz setzen"
+      "Hang a ladder",
+      "挂梯子",
+      "はしごを掛ける",
+      "Leiter einhängen"
     ],
     "Tutorial.5.Title": [
-      "Draw walls",
-      "画墙",
-      "壁を描く",
-      "Wände zeichnen"
-    ],
-    "Tutorial.6.Title": [
       "Hold the line",
       "守线",
-      "ラインを守る",
-      "Linie halten"
+      "守り抜く",
+      "Die Linie halten"
     ],
     "Tutorial.0": [
-      "Walk with WASD into the blinking ring.",
-      "用 WASD 走进闪烁的圆圈里。",
-      "WASDで点滅するリングの中へ歩こう。",
-      "Lauf mit WASD in den blinkenden Ring."
+      "You start up on the platform round the box. Walk along it with WASD to the blinking ring.",
+      "你站在盒子边缘的平台上。用 WASD 沿着平台走进闪烁的圆圈。",
+      "あなたは箱を囲む足場の上にいる。WASDで足場を歩いて、点滅する輪に入ろう。",
+      "Du stehst auf der Plattform rund um die Kiste. Geh mit WASD an ihr entlang in den blinkenden Ring."
     ],
     "Tutorial.1": [
-      "Aim with the mouse and hold the left button: break both paper targets.",
-      "用鼠标瞄准，按住左键：打碎两个纸靶。",
-      "マウスで狙って左ボタンを長押し。紙の的を2つ壊そう。",
-      "Mit der Maus zielen und links halten: Zerschieß beide Papierziele."
+      "Aim down into the box with the mouse and hold the left button: break both paper targets.",
+      "用鼠标瞄准盒子里，按住左键：打碎两个纸靶。",
+      "マウスで箱の中を狙い、左ボタンを押し続けて紙の的を2つ壊そう。",
+      "Ziel mit der Maus in die Kiste und halte die linke Taste: Zerstöre beide Papierziele."
     ],
     "Tutorial.2": [
-      "Walk up to a triangle and press E. Recruit two into your tail.",
-      "走近三角形按 E，把两个招进你的尾巴。",
-      "三角形に近づいてE。2つをしっぽに加えよう。",
-      "Geh zu einem Dreieck und drück E. Hol zwei in deinen Schwanz."
+      "Hold the right button and drag across the blinking cells: three blocks make the enemies walk around.",
+      "按住右键，沿着闪烁的格子拖动：画三格方块，敌人就得绕路。",
+      "右ボタンを押したまま点滅するマスをなぞろう。3マスのブロックで敵は回り道をする。",
+      "Halte die rechte Taste und zieh über die blinkenden Felder: Drei Blöcke zwingen die Gegner zum Umweg."
     ],
     "Tutorial.3": [
-      "Press F: the last triangle in your tail merges into the one before it and makes a square. Sides are the tier.",
-      "按 F：尾巴末端的三角形并入前一个，变成方块。边数就是等级。",
-      "Fを押すと、最後尾の三角形が前の三角形と合体して四角形に。辺の数がランクです。",
-      "Drück F: Das letzte Dreieck verschmilzt mit dem davor zu einem Quadrat. Die Seitenzahl ist die Stufe."
+      "Click the blinking open floor: a ring of builds pops up round it. Pick the bolt tower (40 ink): it shoots enemies in reach, right over your blocks.",
+      "点一下闪烁的空地：周围会弹出建造圆环。选弩炮塔（40 墨水），它会越过方块攻击范围内的敌人。",
+      "点滅する空き地をクリックしよう。周りに建設リングが開く。ボルトタワー（40インク）を選ぶと、ブロック越しに射程内の敵を撃つ。",
+      "Klick auf den blinkenden freien Boden: Ein Bauring öffnet sich darum. Wähl den Bolzenturm (40 Tinte): Er schießt über deine Blöcke auf Gegner in Reichweite."
     ],
     "Tutorial.4": [
-      "Hold Q to charge and release to throw the square onto empty paper: it pins itself as a turret.",
-      "按住 Q 蓄力、松开，把方块扔到空白纸上：它会钉成炮台。",
-      "Qを長押ししてため、離して四角形を空いた紙へ投げよう。砲台として固定されます。",
-      "Halt Q zum Aufladen und lass los, um das Quadrat auf leeres Papier zu werfen: Es setzt sich als Geschütz fest."
-    ],
-    "Tutorial.TurretRetry": [
-      "A square that hits a target bursts into triangles: recruit them and merge again.",
-      "方块砸到靶子会碎成三角形：再招募、再合成就行。",
-      "的に当たった四角形は三角形に割れます。また仲間にして合体しよう。",
-      "Ein Quadrat, das ein Ziel trifft, zerspringt in Dreiecke: wieder anwerben und verschmelzen."
+      "Right-click the blinking platform cell: a ladder goes down the box wall (30 ink). Walk into it to climb down, and again to climb back up.",
+      "右键点闪烁的平台格子：一架梯子挂到盒壁上（30 墨水）。朝梯子走就能爬下去，再走一次就爬回来。",
+      "点滅する足場のマスを右クリック：箱の壁にはしごが掛かる（30インク）。はしごに向かって歩けば降りられ、もう一度で戻れる。",
+      "Rechtsklick auf das blinkende Plattformfeld: Eine Leiter hängt an der Kistenwand (30 Tinte). Lauf hinein, um hinunterzuklettern, und nochmal, um zurückzukommen."
     ],
     "Tutorial.5": [
-      "Hold the right button and drag across the blinking cells: three cells of wall make the enemies walk around.",
-      "按住右键，沿着闪烁的格子拖动：画三格墙，敌人就得绕路。",
-      "右ボタンを押したまま、点滅するマスをなぞろう。3マスの壁で敵が回り道します。",
-      "Halt die rechte Taste und zieh über die blinkenden Felder: Drei Felder Wand zwingen die Gegner zum Umweg."
-    ],
-    "Tutorial.6": [
-      "Press Enter for the wave and hold the core: your turret fires with you.",
-      "按 Enter 开波，守住核心：炮台会和你一起开火。",
-      "Enterでウェーブ開始。コアを守ろう。砲台も一緒に撃ちます。",
-      "Drück Enter für die Welle und halte den Kern: Dein Geschütz feuert mit."
+      "Press Enter for the wave and hold the core: your tower fires with you.",
+      "按 Enter 开波，守住核心：炮塔会和你一起开火。",
+      "Enterでウェーブ開始。コアを守ろう：タワーも一緒に撃ってくれる。",
+      "Drück Enter für die Welle und halte den Kern: Dein Turm feuert mit."
     ],
     "Tutorial.StepDone": [
       "Done!",
@@ -2417,6 +2351,3990 @@
       "招募 / 使用",
       "仲間にする／使う",
       "Anwerben / benutzen"
+    ],
+    "Defense.TowerHint": [
+      "Click open floor for the build ring: a bolt tower ({Tower} ink), a mortar, a tesla coil or barbed wire; click a tower to grow or rub it out. Right-click the platform's edge for a ladder ({Ladder} ink). Building stops when the wave starts.",
+      "点空地弹出建造圆环：弩炮塔（{Tower} 墨水）、迫击炮、电塔或铁丝网；点炮塔可以升级或拆除。右键点平台边缘挂梯子（{Ladder} 墨水）。开波后不能再建造。",
+      "空き地をクリックで建設リング：ボルトタワー（{Tower}インク）、迫撃砲、テスラコイル、有刺鉄線。タワーをクリックで強化か撤去。足場の縁を右クリックではしご（{Ladder}インク）。ウェーブが始まると建築できない。",
+      "Klick auf freien Boden öffnet den Bauring: Bolzenturm ({Tower} Tinte), Mörser, Teslaspule oder Stacheldraht; Klick auf einen Turm verstärkt oder entfernt ihn. Rechtsklick auf die Plattformkante für eine Leiter ({Ladder} Tinte). Mit der Welle endet das Bauen."
+    ],
+    "Defense.TeamHint": [
+      "Q throws a willing teammate down into the box as bait. A fallen teammate waits on the platform: stand by their outline and press E to bring them back ({Ink} ink).",
+      "按 Q 把愿意的队友扔进盒子当诱饵。倒下的队友会在平台上留下轮廓：站到旁边按 E，花 {Ink} 墨水把队友救回来。",
+      "Qで同意した仲間を箱の中へ投げ込んでおとりにする。倒れた仲間は足場に輪郭が残る：そばでEを押せば{Ink}インクで復活させられる。",
+      "Q wirft einen bereiten Mitspieler als Köder in die Kiste. Gefallene warten als Umriss auf der Plattform: daneben E drücken holt sie zurück ({Ink} Tinte)."
+    ],
+    "Defense.ReviveHint": [
+      "A teammate beside your outline can bring you back now for {Ink} ink.",
+      "队友站到你的轮廓旁，花 {Ink} 墨水就能立刻把你救回来。",
+      "仲間があなたの輪郭のそばで{Ink}インクを払えば、すぐに復活できる。",
+      "Ein Mitspieler an deinem Umriss kann dich jetzt für {Ink} Tinte zurückholen."
+    ],
+    "Hub.Respawn": [
+      "Back on your feet in {Seconds} s",
+      "{Seconds} 秒后复活",
+      "{Seconds}秒後に復活",
+      "In {Seconds} s wieder auf den Beinen"
+    ],
+    "Defense.Denied.4": [
+      "A ladder's foot stands there",
+      "那里是梯子的落脚处",
+      "そこにははしごの足がある",
+      "Dort steht der Fuß einer Leiter"
+    ],
+    "Defense.Denied.5": [
+      "Towers stand on open floor, not on blocks",
+      "炮塔要建在空地上，不能建在方块上",
+      "タワーはブロックの上ではなく空き地に建てる",
+      "Türme stehen auf freiem Boden, nicht auf Blöcken"
+    ],
+    "Defense.Denied.6": [
+      "No open floor below — a ladder needs somewhere to stand",
+      "下面没有空地——梯子需要落脚的地方",
+      "下に空いた床がない――はしごには足場が必要",
+      "Unten kein freier Boden – eine Leiter braucht Stand"
+    ],
+    "Key.Revive": [
+      "Revive {Name} · {Ink} ink",
+      "救回 {Name} · {Ink} 墨水",
+      "{Name}を復活 · {Ink}インク",
+      "{Name} zurückholen · {Ink} Tinte"
+    ],
+    "Key.ClimbUp": [
+      "Walk into the ladder to climb up",
+      "朝梯子走就能爬上去",
+      "はしごに向かって歩くと登る",
+      "In die Leiter laufen zum Hochklettern"
+    ],
+    "Key.ClimbDown": [
+      "Walk into the ladder to climb down",
+      "朝梯子走就能爬下去",
+      "はしごに向かって歩くと降りる",
+      "In die Leiter laufen zum Runterklettern"
+    ],
+    "Key.DrawBox": [
+      "Blocks · ladders",
+      "方块 · 梯子",
+      "ブロック · はしご",
+      "Blöcke · Leitern"
+    ],
+    "Key.Tower": [
+      "Tower",
+      "炮塔",
+      "タワー",
+      "Turm"
+    ],
+    "Key.GrabRevive": [
+      "Grab / revive",
+      "抓起 / 救援",
+      "つかむ / 復活",
+      "Packen / zurückholen"
+    ],
+    "Box.Ladder": [
+      "Ladder · {Ink} ink",
+      "梯子 · {Ink} 墨水",
+      "はしご · {Ink}インク",
+      "Leiter · {Ink} Tinte"
+    ],
+    "Box.LadderErase": [
+      "Rub out the ladder (ink back)",
+      "擦掉梯子（退还墨水）",
+      "はしごを消す（インク返却）",
+      "Leiter wegradieren (Tinte zurück)"
+    ],
+    "Box.Tower": [
+      "Tower · {Ink} ink",
+      "炮塔 · {Ink} 墨水",
+      "タワー · {Ink}インク",
+      "Turm · {Ink} Tinte"
+    ],
+    "Box.TowerGrow": [
+      "Grow to {Sides} sides · {Ink} ink",
+      "升到 {Sides} 边 · {Ink} 墨水",
+      "{Sides}角形に強化 · {Ink}インク",
+      "Auf {Sides} Seiten · {Ink} Tinte"
+    ],
+    "Training.Tower": [
+      "Merge triangles here; in the box: click open floor to build",
+      "在这里合成三角形；在盒子里：点空地弹出建造圆环",
+      "ここでは三角形を合体。箱では空き地をクリックして建設",
+      "Hier Dreiecke verschmelzen; in der Kiste: freien Boden anklicken zum Bauen"
+    ],
+    "Tutorial.LadderNote": [
+      "Careful: when someone stands up here, runners passing close to a ladder climb it too.",
+      "注意：只要平台上有人，经过梯子附近的跑者也会爬上来。",
+      "注意：足場に誰かいると、はしごの近くを通るランナーも登ってくる。",
+      "Vorsicht: Steht jemand hier oben, klettern vorbeikommende Läufer auch an der Leiter hoch."
+    ],
+    "Attr.Step": [
+      "+{Percent}% per rank",
+      "每级 +{Percent}%",
+      "1ランクごと +{Percent}%",
+      "+{Percent}% je Stufe"
+    ],
+    "Meta.Buy": [
+      "Buy · {Price}",
+      "购买 · {Price}",
+      "購入 · {Price}",
+      "Kaufen · {Price}"
+    ],
+    "Meta.FromAchievement": [
+      "Achievement: {Name}",
+      "成就：{Name}",
+      "実績：{Name}",
+      "Erfolg: {Name}"
+    ],
+    "Meta.InUse": [
+      "In use",
+      "使用中",
+      "使用中",
+      "In Benutzung"
+    ],
+    "Meta.Use": [
+      "Use",
+      "使用",
+      "使う",
+      "Benutzen"
+    ],
+    "Meta.Wear": [
+      "Wear",
+      "穿戴",
+      "着ける",
+      "Tragen"
+    ],
+    "Meta.Wearing": [
+      "Wearing",
+      "穿戴中",
+      "着用中",
+      "Getragen"
+    ],
+    "Research.Full": [
+      "Maxed",
+      "已满级",
+      "最大",
+      "Maximal"
+    ],
+    "Research.Note": [
+      "Backpack: the expedition bag holds 10 slots (the hotbar's 5 among them), one more per rank.",
+      "背包扩容：远征背包默认 10 格（含 5 格快捷栏），每级多 1 格。",
+      "バッグ拡張：遠征のバッグは10マス（ホットバー5マス込み）、ランクごとに1マス増える。",
+      "Rucksack: Die Expeditionstasche hat 10 Plätze (die 5 der Leiste inklusive), je Rang einen mehr."
+    ],
+    "Research.Total": [
+      "Total +{Percent}%",
+      "合计 +{Percent}%",
+      "合計 +{Percent}%",
+      "Gesamt +{Percent}%"
+    ],
+    "Research.Up": [
+      "Study · {Price}",
+      "研究 · {Price}",
+      "研究 · {Price}",
+      "Forschen · {Price}"
+    ],
+    "Shop.Bring": [
+      "Bring",
+      "带上",
+      "持っていく",
+      "Mitnehmen"
+    ],
+    "Shop.Empty": [
+      "Empty",
+      "空",
+      "空き",
+      "Leer"
+    ],
+    "Shop.ItemSlot": [
+      "Item",
+      "道具",
+      "アイテム",
+      "Gegenstand"
+    ],
+    "Shop.ItemsNote": [
+      "Two items at most; they are used up when a mission starts.",
+      "最多带两件道具，任务开始时消耗。",
+      "アイテムは2つまで。ミッション開始時に消費される。",
+      "Höchstens zwei Gegenstände; sie werden beim Missionsstart verbraucht."
+    ],
+    "Shop.Loadout": [
+      "Your loadout",
+      "你的配置",
+      "装備",
+      "Deine Ausrüstung"
+    ],
+    "Shop.PenSlot": [
+      "Pen",
+      "笔",
+      "ペン",
+      "Stift"
+    ],
+    "Shop.Stock": [
+      "In stock: {Count}",
+      "库存：{Count}",
+      "在庫：{Count}",
+      "Vorrat: {Count}"
+    ],
+    "Shop.WeaponSlot": [
+      "Weapon",
+      "武器",
+      "武器",
+      "Waffe"
+    ],
+    "Tier.HostOnly": [
+      "Only the host picks the difficulty tier.",
+      "只有房主可以选择难度档。",
+      "難易度はホストだけが選べる。",
+      "Nur der Gastgeber wählt die Schwierigkeitsstufe."
+    ],
+    "Tier.Summary": [
+      "Tier {Tier}: stickers ×{Reward}, enemy health ×{Health}, enemy hits ×{Damage}",
+      "{Tier} 档：贴纸 ×{Reward}，敌人血量 ×{Health}，敌人伤害 ×{Damage}",
+      "難易度{Tier}：ステッカー×{Reward}、敵HP×{Health}、敵の攻撃×{Damage}",
+      "Stufe {Tier}: Sticker ×{Reward}, Gegner-LP ×{Health}, Gegnertreffer ×{Damage}"
+    ],
+    "Tier.Title": [
+      "Difficulty",
+      "难度",
+      "難易度",
+      "Schwierigkeit"
+    ],
+    "Title.Award": [
+      "Won as an end-of-mission title",
+      "任务结算颁奖获得",
+      "ミッション終了時の表彰で獲得",
+      "Als Titel am Missionsende gewonnen"
+    ],
+    "Toast.Title": [
+      "Achievement unlocked",
+      "成就达成",
+      "実績解除",
+      "Erfolg freigeschaltet"
+    ],
+    "Wall.Reward": [
+      "+{Count} stickers",
+      "+{Count} 贴纸",
+      "ステッカー +{Count}",
+      "+{Count} Sticker"
+    ],
+    "Wardrobe.Hats": [
+      "Hats",
+      "帽子",
+      "帽子",
+      "Hüte"
+    ],
+    "Wardrobe.Titles": [
+      "Titles",
+      "称号",
+      "称号",
+      "Titel"
+    ],
+    "Ach.0": [
+      "First stroke",
+      "第一笔",
+      "最初の一筆",
+      "Erster Strich"
+    ],
+    "Ach.0.Note": [
+      "Draw a wall.",
+      "画一面墙。",
+      "壁を描く。",
+      "Zeichne eine Wand."
+    ],
+    "Ach.1": [
+      "Wall apprentice",
+      "墙匠学徒",
+      "壁職人見習い",
+      "Mauerlehrling"
+    ],
+    "Ach.1.Note": [
+      "Draw 300 walls.",
+      "累计画 300 面墙。",
+      "壁を300マス描く。",
+      "Zeichne 300 Wände."
+    ],
+    "Ach.2": [
+      "First page",
+      "第一页",
+      "最初のページ",
+      "Erste Seite"
+    ],
+    "Ach.2.Note": [
+      "Clear page 1-1.",
+      "通关 1-1。",
+      "1-1をクリアする。",
+      "Schaffe Seite 1-1."
+    ],
+    "Ach.3": [
+      "First notebook",
+      "第一本笔记",
+      "最初のノート",
+      "Erstes Heft"
+    ],
+    "Ach.3.Note": [
+      "Clear every page of chapter 1.",
+      "通关第 1 章所有关卡。",
+      "第1章の全ページをクリアする。",
+      "Schaffe alle Seiten von Kapitel 1."
+    ],
+    "Ach.4": [
+      "Full marks",
+      "满分",
+      "満点",
+      "Volle Punktzahl"
+    ],
+    "Ach.4.Note": [
+      "Earn all three stars on a page.",
+      "在一关拿到三颗星。",
+      "1ページで星を3つ取る。",
+      "Hol alle drei Sterne auf einer Seite."
+    ],
+    "Ach.5": [
+      "Nine stars",
+      "九颗星",
+      "九つ星",
+      "Neun Sterne"
+    ],
+    "Ach.5.Note": [
+      "Earn every star of chapter 1.",
+      "拿满第 1 章所有星星。",
+      "第1章の星をすべて取る。",
+      "Hol jeden Stern von Kapitel 1."
+    ],
+    "Ach.6": [
+      "A bit harder",
+      "再难一点",
+      "もう少し難しく",
+      "Etwas härter"
+    ],
+    "Ach.6.Note": [
+      "Clear a page on tier 2 or higher.",
+      "在 2 档或更高难度通关一页。",
+      "難易度2以上でページをクリアする。",
+      "Schaffe eine Seite auf Stufe 2 oder höher."
+    ],
+    "Ach.7": [
+      "Tough cookie",
+      "硬骨头",
+      "手強い",
+      "Harter Brocken"
+    ],
+    "Ach.7.Note": [
+      "Clear a page on tier 3 or higher.",
+      "在 3 档或更高难度通关一页。",
+      "難易度3以上でページをクリアする。",
+      "Schaffe eine Seite auf Stufe 3 oder höher."
+    ],
+    "Ach.8": [
+      "Veteran",
+      "老兵",
+      "ベテラン",
+      "Veteran"
+    ],
+    "Ach.8.Note": [
+      "Clear a page on tier 5.",
+      "在 5 档难度通关一页。",
+      "難易度5でページをクリアする。",
+      "Schaffe eine Seite auf Stufe 5."
+    ],
+    "Ach.9": [
+      "Lift-off",
+      "起飞",
+      "リフトオフ",
+      "Abheben"
+    ],
+    "Ach.9.Note": [
+      "Get thrown by a teammate.",
+      "被队友扔出去一次。",
+      "仲間に投げられる。",
+      "Lass dich von einem Mitspieler werfen."
+    ],
+    "Ach.10": [
+      "Human cannonball",
+      "人体炮弹",
+      "人間大砲",
+      "Menschliche Kanonenkugel"
+    ],
+    "Ach.10.Note": [
+      "Get thrown 25 times.",
+      "被扔出去 25 次。",
+      "25回投げられる。",
+      "Lass dich 25-mal werfen."
+    ],
+    "Ach.11": [
+      "Pitcher",
+      "投手",
+      "ピッチャー",
+      "Werfer"
+    ],
+    "Ach.11.Note": [
+      "Throw teammates 25 times.",
+      "扔出队友 25 次。",
+      "仲間を25回投げる。",
+      "Wirf Mitspieler 25-mal."
+    ],
+    "Ach.12": [
+      "Bait",
+      "诱饵",
+      "おとり",
+      "Köder"
+    ],
+    "Ach.12.Note": [
+      "Hold 10 enemies as bait.",
+      "作为诱饵拖住 10 个敌人。",
+      "おとりとして敵を10体引きつける。",
+      "Halte als Köder 10 Gegner fest."
+    ],
+    "Ach.13": [
+      "Professional bait",
+      "职业诱饵",
+      "プロのおとり",
+      "Profiköder"
+    ],
+    "Ach.13.Note": [
+      "Hold 200 enemies as bait.",
+      "作为诱饵拖住 200 个敌人。",
+      "おとりとして敵を200体引きつける。",
+      "Halte als Köder 200 Gegner fest."
+    ],
+    "Ach.14": [
+      "Bullseye",
+      "正中靶心",
+      "ど真ん中",
+      "Volltreffer"
+    ],
+    "Ach.14.Note": [
+      "Hit the training bullseye with a throw.",
+      "用投掷命中训练靶心。",
+      "投げて訓練用の的の中心に当てる。",
+      "Triff mit einem Wurf das Trainingsziel in der Mitte."
+    ],
+    "Ach.15": [
+      "Sharpshooter",
+      "神投手",
+      "名手",
+      "Meisterschütze"
+    ],
+    "Ach.15.Note": [
+      "Land 25 bullseyes.",
+      "命中靶心 25 次。",
+      "的の中心に25回当てる。",
+      "Lande 25 Volltreffer."
+    ],
+    "Ach.16": [
+      "Good mate",
+      "好队友",
+      "いい仲間",
+      "Guter Kumpel"
+    ],
+    "Ach.16.Note": [
+      "Pour 300 ink to teammates.",
+      "给队友倒 300 墨水。",
+      "仲間にインクを300注ぐ。",
+      "Gieß Mitspielern 300 Tinte ein."
+    ],
+    "Ach.17": [
+      "First study",
+      "初次研究",
+      "初めての研究",
+      "Erste Forschung"
+    ],
+    "Ach.17.Note": [
+      "Buy a research rank.",
+      "购买一级研究。",
+      "研究ランクを1つ買う。",
+      "Kauf einen Forschungsrang."
+    ],
+    "Ach.18": [
+      "Specialist",
+      "专精",
+      "スペシャリスト",
+      "Spezialist"
+    ],
+    "Ach.18.Note": [
+      "Raise an attribute to rank 5.",
+      "把一项属性升到 5 级。",
+      "能力を1つランク5にする。",
+      "Bring ein Attribut auf Rang 5."
+    ],
+    "Ach.19": [
+      "Doctorate",
+      "博士",
+      "博士号",
+      "Doktortitel"
+    ],
+    "Ach.19.Note": [
+      "Raise every attribute to rank 5.",
+      "把所有属性升到 5 级。",
+      "すべての能力をランク5にする。",
+      "Bring jedes Attribut auf Rang 5."
+    ],
+    "Ach.20": [
+      "Armory",
+      "军火库",
+      "武器庫",
+      "Waffenkammer"
+    ],
+    "Ach.20.Note": [
+      "Own every weapon.",
+      "拥有所有武器。",
+      "すべての武器を持つ。",
+      "Besitze jede Waffe."
+    ],
+    "Ach.21": [
+      "Stationery set",
+      "文具全套",
+      "文房具セット",
+      "Schreibwaren"
+    ],
+    "Ach.21.Note": [
+      "Own every pen.",
+      "拥有所有笔。",
+      "すべてのペンを持つ。",
+      "Besitze jeden Stift."
+    ],
+    "Ach.22": [
+      "Hat collector",
+      "帽子收藏家",
+      "帽子コレクター",
+      "Hutsammler"
+    ],
+    "Ach.22.Note": [
+      "Own four hats.",
+      "拥有四顶帽子。",
+      "帽子を4つ持つ。",
+      "Besitze vier Hüte."
+    ],
+    "Ach.23": [
+      "Sticker tycoon",
+      "贴纸大亨",
+      "ステッカー長者",
+      "Sticker-Tycoon"
+    ],
+    "Ach.23.Note": [
+      "Earn 5000 stickers in all.",
+      "累计获得 5000 贴纸。",
+      "ステッカーを累計5000枚獲得する。",
+      "Verdiene insgesamt 5000 Sticker."
+    ],
+    "Ach.24": [
+      "A thousand down",
+      "千人斩",
+      "千体撃破",
+      "Tausend"
+    ],
+    "Ach.24.Note": [
+      "Defeat 1000 enemies.",
+      "击败 1000 个敌人。",
+      "敵を1000体倒す。",
+      "Besiege 1000 Gegner."
+    ],
+    "Ach.25": [
+      "MVP",
+      "MVP",
+      "MVP",
+      "MVP"
+    ],
+    "Ach.25.Note": [
+      "Win the MVP award.",
+      "获得 MVP 奖。",
+      "MVP賞を取る。",
+      "Gewinne die MVP-Auszeichnung."
+    ],
+    "Ach.26": [
+      "Scapegoat",
+      "背锅侠",
+      "戦犯",
+      "Sündenbock"
+    ],
+    "Ach.26.Note": [
+      "Win the scapegoat award.",
+      "获得背锅侠奖。",
+      "戦犯賞を取る。",
+      "Gewinne die Sündenbock-Auszeichnung."
+    ],
+    "Ach.27": [
+      "Party",
+      "派对",
+      "パーティー",
+      "Party"
+    ],
+    "Ach.27.Note": [
+      "Play a mission with four or more players.",
+      "和四名或更多玩家一起完成任务。",
+      "4人以上でミッションをプレイする。",
+      "Spiel eine Mission mit vier oder mehr Spielern."
+    ],
+    "Ach.28": [
+      "Full house",
+      "满员",
+      "満員御礼",
+      "Volles Haus"
+    ],
+    "Ach.28.Note": [
+      "Play a mission with eight players.",
+      "和八名玩家一起完成任务。",
+      "8人でミッションをプレイする。",
+      "Spiel eine Mission mit acht Spielern."
+    ],
+    "Ach.29": [
+      "Lone wolf",
+      "独狼",
+      "一匹狼",
+      "Einzelgänger"
+    ],
+    "Ach.29.Note": [
+      "Clear a page alone, without AI teammates.",
+      "不带 AI 队友独自通关一页。",
+      "AI仲間なしで一人でページをクリアする。",
+      "Schaffe eine Seite allein, ohne KI-Mitspieler."
+    ],
+    "Ach.30": [
+      "Untouched",
+      "毫发无伤",
+      "無傷",
+      "Unberührt"
+    ],
+    "Ach.30.Note": [
+      "Clear chapter 1's last page with the core untouched.",
+      "第 1 章最后一页通关时核心未受伤。",
+      "コア無傷で第1章最後のページをクリアする。",
+      "Schaffe die letzte Seite von Kapitel 1, ohne dass der Kern Schaden nimmt."
+    ],
+    "Ach.31": [
+      "Well supplied",
+      "有备而来",
+      "準備万端",
+      "Gut versorgt"
+    ],
+    "Ach.31.Note": [
+      "Bring two items into a mission.",
+      "带两件道具进入任务。",
+      "アイテムを2つ持ってミッションに入る。",
+      "Nimm zwei Gegenstände mit in eine Mission."
+    ],
+    "Attr.0": [
+      "Health",
+      "生命",
+      "体力",
+      "Leben"
+    ],
+    "Attr.1": [
+      "Damage",
+      "伤害",
+      "攻撃力",
+      "Schaden"
+    ],
+    "Attr.2": [
+      "Ink",
+      "墨水",
+      "インク",
+      "Tinte"
+    ],
+    "Attr.3": [
+      "Throw power",
+      "投掷力",
+      "投てき力",
+      "Wurfkraft"
+    ],
+    "Attr.4": [
+      "Speed",
+      "速度",
+      "速さ",
+      "Tempo"
+    ],
+    "Attr.5": [
+      "Pickup reach",
+      "拾取范围",
+      "拾える範囲",
+      "Reichweite"
+    ],
+    "Hat.0": [
+      "Bare head",
+      "不戴帽子",
+      "帽子なし",
+      "Ohne Hut"
+    ],
+    "Hat.1": [
+      "Paper hat",
+      "纸帽子",
+      "紙の帽子",
+      "Papierhut"
+    ],
+    "Hat.2": [
+      "Beanie",
+      "毛线帽",
+      "ニット帽",
+      "Mütze"
+    ],
+    "Hat.3": [
+      "Cap",
+      "鸭舌帽",
+      "キャップ",
+      "Kappe"
+    ],
+    "Hat.4": [
+      "Top hat",
+      "礼帽",
+      "シルクハット",
+      "Zylinder"
+    ],
+    "Hat.5": [
+      "Antenna",
+      "天线",
+      "アンテナ",
+      "Antenne"
+    ],
+    "Hat.6": [
+      "Pencil",
+      "铅笔",
+      "鉛筆",
+      "Bleistift"
+    ],
+    "Hat.7": [
+      "Crown",
+      "王冠",
+      "王冠",
+      "Krone"
+    ],
+    "Item.0": [
+      "Ink bottle",
+      "墨水瓶",
+      "インク瓶",
+      "Tintenfass"
+    ],
+    "Item.0.Note": [
+      "Ink capacity +40% for one mission.",
+      "本次任务墨水容量 +40%。",
+      "1ミッションの間インク容量+40%。",
+      "Tintenkapazität +40 % für eine Mission."
+    ],
+    "Item.1": [
+      "Tape",
+      "胶带",
+      "テープ",
+      "Klebeband"
+    ],
+    "Item.1.Note": [
+      "The core gets +150 health.",
+      "核心生命 +150。",
+      "コアのHP+150。",
+      "Der Kern bekommt +150 Leben."
+    ],
+    "Item.2": [
+      "Tower kit",
+      "炮塔套件",
+      "タワーキット",
+      "Turmbausatz"
+    ],
+    "Item.2.Note": [
+      "Your first tower in the box costs no ink.",
+      "你在盒子里的第一座炮塔不花墨水。",
+      "箱で建てる最初のタワーがインク不要。",
+      "Dein erster Turm in der Kiste kostet keine Tinte."
+    ],
+    "Item.3": [
+      "Plaster",
+      "创可贴",
+      "絆創膏",
+      "Pflaster"
+    ],
+    "Item.3.Note": [
+      "Your first fall: back up on the spot after 2 s at half health.",
+      "第一次倒下：2 秒后在原地以一半生命爬起来。",
+      "最初に倒れたとき、2秒後にその場でHP半分で起き上がる。",
+      "Dein erster Sturz: nach 2 s an Ort und Stelle mit halber Gesundheit wieder auf."
+    ],
+    "Item.4": [
+      "Ink magnet",
+      "墨水磁铁",
+      "インク磁石",
+      "Tintenmagnet"
+    ],
+    "Item.4.Note": [
+      "Kills pay a quarter more ink, and ink lying around is picked up from three times as far.",
+      "击杀多得四分之一墨水，地上的墨水能从三倍远处吸过来。",
+      "撃破で得るインクが1.25倍、落ちているインクを3倍遠くから拾える。",
+      "Abschüsse bringen ein Viertel mehr Tinte, herumliegende Tinte wird aus dreifacher Entfernung aufgesammelt."
+    ],
+    "Item.5": [
+      "Carbon paper",
+      "复写纸",
+      "カーボン紙",
+      "Kohlepapier"
+    ],
+    "Item.5.Note": [
+      "Blocks cost a quarter less ink.",
+      "方块少花四分之一墨水。",
+      "ブロックのインクが4分の1安くなる。",
+      "Blöcke kosten ein Viertel weniger Tinte."
+    ],
+    "Pen.0": [
+      "Fountain pen",
+      "钢笔",
+      "万年筆",
+      "Füller"
+    ],
+    "Pen.0.Note": [
+      "Draws plain walls (10 ink a cell).",
+      "画普通墙（每格 10 墨水）。",
+      "普通の壁を描く（1マス10インク）。",
+      "Zeichnet einfache Wände (10 Tinte pro Feld)."
+    ],
+    "Pen.0.Wall": [
+      "Plain wall",
+      "普通墙",
+      "普通の壁",
+      "Einfache Wand"
+    ],
+    "Pen.1": [
+      "Marker",
+      "马克笔",
+      "マーカー",
+      "Marker"
+    ],
+    "Pen.1.Note": [
+      "Draws thick walls: every bite takes half as much (16 ink a cell).",
+      "画厚墙：每次啃咬只损失一半（每格 16 墨水）。",
+      "厚い壁を描く：かじられても被害は半分（1マス16インク）。",
+      "Zeichnet dicke Wände: Jeder Biss nimmt nur halb so viel (16 Tinte pro Feld)."
+    ],
+    "Pen.1.Wall": [
+      "Thick wall",
+      "厚墙",
+      "厚い壁",
+      "Dicke Wand"
+    ],
+    "Pen.2": [
+      "Highlighter",
+      "荧光笔",
+      "蛍光ペン",
+      "Textmarker"
+    ],
+    "Pen.2.Note": [
+      "Draws glossy walls that bounce shots back, twice at most (13 ink a cell).",
+      "画光滑的墙，子弹会被弹回去，最多两次（每格 13 墨水）。",
+      "弾を2回まで跳ね返すつるつるの壁を描く（1マス13インク）。",
+      "Zeichnet glänzende Wände, die Schüsse bis zu zweimal abprallen lassen (13 Tinte pro Feld)."
+    ],
+    "Pen.2.Wall": [
+      "Bounce wall",
+      "弹射墙",
+      "跳ね返す壁",
+      "Abprallwand"
+    ],
+    "Shop.Tab.0": [
+      "Weapons",
+      "武器",
+      "武器",
+      "Waffen"
+    ],
+    "Shop.Tab.1": [
+      "Pens",
+      "笔",
+      "ペン",
+      "Stifte"
+    ],
+    "Shop.Tab.2": [
+      "Items",
+      "道具",
+      "アイテム",
+      "Gegenstände"
+    ],
+    "Tier.1.How": [
+      "Open from the start",
+      "一开始就开放",
+      "最初から選べる",
+      "Von Anfang an offen"
+    ],
+    "Tier.2.How": [
+      "Opens with six stars",
+      "累计 6 颗星开放",
+      "星6つで解放",
+      "Öffnet mit sechs Sternen"
+    ],
+    "Tier.3.How": [
+      "Opens with twelve stars across the chapters",
+      "各章累计 12 颗星开放",
+      "全章で星12個集めると解放",
+      "Öffnet mit zwölf Sternen aus allen Kapiteln"
+    ],
+    "Tier.4.How": [
+      "Opens by clearing page 3-3 on tier 3",
+      "在 3 档通关 3-3 开放",
+      "難易度3で3-3をクリアすると解放",
+      "Öffnet, wenn Seite 3-3 auf Stufe 3 geschafft ist"
+    ],
+    "Tier.5.How": [
+      "Opens by clearing page 3-3 on tier 4",
+      "在 4 档通关 3-3 开放",
+      "難易度4で3-3をクリアすると解放",
+      "Öffnet, wenn Seite 3-3 auf Stufe 4 geschafft ist"
+    ],
+    "Title.0": [
+      "No title",
+      "无称号",
+      "称号なし",
+      "Kein Titel"
+    ],
+    "Title.1": [
+      "MVP",
+      "MVP",
+      "MVP",
+      "MVP"
+    ],
+    "Title.2": [
+      "Best bait",
+      "最佳诱饵",
+      "ベストおとり",
+      "Bester Köder"
+    ],
+    "Title.3": [
+      "Human cannonball",
+      "人体炮弹",
+      "人間大砲",
+      "Menschliche Kanonenkugel"
+    ],
+    "Title.4": [
+      "Wall artist",
+      "墙艺大师",
+      "壁の芸術家",
+      "Mauerkünstler"
+    ],
+    "Title.5": [
+      "Scapegoat",
+      "背锅侠",
+      "戦犯",
+      "Sündenbock"
+    ],
+    "Title.6": [
+      "Sharpshooter",
+      "神投手",
+      "名手",
+      "Meisterschütze"
+    ],
+    "Title.7": [
+      "Doctor",
+      "博士",
+      "博士",
+      "Doktor"
+    ],
+    "Title.8": [
+      "Margin keeper",
+      "页边守护者",
+      "余白の守り手",
+      "Randhüter"
+    ],
+    "Title.9": [
+      "Sticker tycoon",
+      "贴纸大亨",
+      "ステッカー長者",
+      "Sticker-Tycoon"
+    ],
+    "Title.10": [
+      "Ink veteran",
+      "墨水老兵",
+      "インクの古参兵",
+      "Tintenveteran"
+    ],
+    "Weapon.0.Note": [
+      "Everyone's from the start: steady and accurate.",
+      "人人都有：稳定、准确。",
+      "最初から全員が持つ：安定して正確。",
+      "Hat jeder von Anfang an: ruhig und genau."
+    ],
+    "Weapon.1.Note": [
+      "Fast rounds with a long reach.",
+      "射速快、射程远。",
+      "速い弾、長い射程。",
+      "Schnelle Schüsse mit großer Reichweite."
+    ],
+    "Weapon.2.Note": [
+      "Six pellets at close range.",
+      "近距离六发霰弹。",
+      "近距離で6発の散弾。",
+      "Sechs Schrotkugeln auf kurze Distanz."
+    ],
+    "Weapon.3.Note": [
+      "Heavy shots that pierce one enemy.",
+      "重弹，可穿透一个敌人。",
+      "敵を1体貫く重い弾。",
+      "Schwere Schüsse, die einen Gegner durchschlagen."
+    ],
+    "Weapon.4.Note": [
+      "A hail of light rounds.",
+      "轻弹如雨。",
+      "軽い弾の雨。",
+      "Ein Hagel leichter Kugeln."
+    ],
+    "Weapon.5.Note": [
+      "Hold to charge, release to lob a shell over walls: it bursts on friend and foe alike.",
+      "按住蓄力、松开抛射，炮弹越过墙落地爆炸——敌我不分。",
+      "長押しでチャージ、離すと壁越しに砲弾を放物線で撃つ：敵味方関係なく爆発する。",
+      "Halten zum Aufladen, loslassen zum Lobben über Wände: Die Granate trifft Freund und Feind."
+    ],
+    "Level.2-1": [
+      "Broken rim",
+      "断开的平台",
+      "途切れた足場",
+      "Gebrochener Rand"
+    ],
+    "Level.2-2": [
+      "Three islands",
+      "三座孤岛",
+      "三つの島",
+      "Drei Inseln"
+    ],
+    "Level.2-3": [
+      "Lookouts",
+      "瞭望台",
+      "見張り台",
+      "Ausgucke"
+    ],
+    "Level.3-1": [
+      "Over the rim",
+      "翻墙而入",
+      "縁を越えて",
+      "Über den Rand"
+    ],
+    "Level.3-2": [
+      "Four hooks",
+      "四个钩爪",
+      "四つの鉤",
+      "Vier Haken"
+    ],
+    "Level.3-3": [
+      "Last page",
+      "最后一页",
+      "最後のページ",
+      "Letzte Seite"
+    ],
+    "Board.ChapterTab": [
+      "Chapter {Index}",
+      "第 {Index} 章",
+      "第{Index}章",
+      "Kapitel {Index}"
+    ],
+    "Defense.RimHint": [
+      "The platform is broken by rock: its pieces join only through the box. Hang a ladder on each side to cross, or split the team between them.",
+      "平台被岩石截断了：各段之间只能经过盒子相连。两边各挂一架梯子才能过去，或者让队伍分头把守。",
+      "足場が岩で途切れている：各部分は箱の中を通ってしかつながらない。両側にはしごを掛けて渡るか、チームで手分けして守ろう。",
+      "Die Plattform ist von Fels unterbrochen: Ihre Stücke verbindet nur die Kiste. Häng auf beiden Seiten eine Leiter ein, oder teilt euch auf."
+    ],
+    "Defense.RaidHint": [
+      "Raiders climb in over the coral ladders on the outer rim: they hunt whoever is up on the platform, then drop into the box.",
+      "袭击者会顺着平台外沿的珊瑚色梯子爬上来：先追打平台上的人，再跳进盒子里。",
+      "襲撃者は外縁のサンゴ色のはしごから登ってくる：足場にいる者を襲い、それから箱へ飛び降りる。",
+      "Plünderer klettern über die korallroten Leitern am Außenrand herein: Sie jagen, wer oben steht, und springen dann in die Kiste."
+    ],
+    "Board.Roll": [
+      "Roll & deploy",
+      "摇号出击",
+      "くじを引いて出撃",
+      "Würfeln & los"
+    ],
+    "Mode.1.Title": [
+      "Expedition",
+      "远征",
+      "遠征",
+      "Expedition"
+    ],
+    "Mode.1.Note": [
+      "A dungeon drawn on paper: four stages of 3, 4, 5 and 6 floors, rooms joined by corridors. Fights lock their doors, shops take the stickers in your pouch, and a boss waits at the end of every stage. Only those who walk out alive keep their pouch.",
+      "画在纸上的地牢：四个大关，分别 3、4、5、6 层，房间由走廊相连。战斗房会锁门，商店收随身贴纸袋里的贴纸，每个大关的尽头都有首领。只有活着走出去的人才能带走贴纸。",
+      "紙に描かれたダンジョン：3・4・5・6フロアの4ステージ、部屋は通路でつながる。戦闘部屋は扉が閉まり、ショップはポーチのステッカーで支払い、各ステージの最後にはボスが待つ。生きて脱出した人だけがポーチを持ち帰れる。",
+      "Ein auf Papier gezeichnetes Verlies: vier Stufen mit 3, 4, 5 und 6 Etagen, Räume durch Gänge verbunden. Kämpfe schließen die Türen, Läden nehmen die Sticker aus deinem Beutel, und am Ende jeder Stufe wartet ein Boss. Nur wer lebend hinausgeht, behält seinen Beutel."
+    ],
+    "Mode.1.Facts": [
+      "18 floors · five slots: 1-5, G drops, Tab for the kit · a fall drops everything, teammates draw you back with ink · a wipe keeps nothing",
+      "共 18 层 · 5 格快捷栏：1-5 切换，G 丢弃，Tab 整理 · 倒下会掉落全部物品，队友可用墨水把你画回来 · 团灭一无所获",
+      "全18フロア · 5スロット：1-5で切替、Gで捨てる、Tabで整理 · 倒れると全部落とし、仲間がインクで描き戻せる · 全滅は何も残らない",
+      "18 Etagen · fünf Plätze: 1-5, G wirft ab, Tab fürs Gepäck · wer fällt, verliert alles, Mitspieler zeichnen dich mit Tinte zurück · ein Wipe behält nichts"
+    ],
+    "Mode.2.Title": [
+      "Party playlist",
+      "派对轮盘",
+      "パーティー・プレイリスト",
+      "Party-Playlist"
+    ],
+    "Mode.2.Note": [
+      "Deploy, and the board rolls the mission for you: any page you have opened, with a party twist on top.",
+      "点出击，任务板替你摇号：你已开放的任意一页，再加上一个派对变奏。",
+      "出撃すると、ボードがミッションを選ぶ：開放済みのどれかのページに、パーティーの仕掛けを一つ乗せて。",
+      "Los geht’s, und die Tafel würfelt die Mission für euch aus: jede geöffnete Seite, dazu ein Party-Dreh."
+    ],
+    "Mode.2.Facts": [
+      "A random open page · one twist: chaos trolling, rocket launchers for everyone, or twice the ink · lighter pay than the pages",
+      "随机一页已开放关卡 · 一个变奏：混乱整活、人手一把火箭筒或双倍墨水 · 奖励比单独打关卡少",
+      "開放済みのページをランダムに · 仕掛けを一つ：カオスないたずら、全員ロケットランチャー、インク2倍 · 報酬はページより控えめ",
+      "Eine zufällige offene Seite · ein Dreh: Chaos-Streiche, Raketenwerfer für alle oder doppelte Tinte · weniger Lohn als die Seiten"
+    ],
+    "Twist.1": [
+      "Chaos trolling",
+      "混乱整活",
+      "カオスないたずら",
+      "Chaos-Streiche"
+    ],
+    "Twist.2": [
+      "Rocket party",
+      "火箭派对",
+      "ロケットパーティー",
+      "Raketenparty"
+    ],
+    "Twist.3": [
+      "Ink rain",
+      "墨水雨",
+      "インクの雨",
+      "Tintenregen"
+    ],
+    "Twist.Tag": [
+      "Party twist: {Name}",
+      "派对变奏：{Name}",
+      "パーティーの仕掛け：{Name}",
+      "Party-Dreh: {Name}"
+    ],
+    "Board.HowItPlays": [
+      "How it plays",
+      "玩法",
+      "遊び方",
+      "So läuft’s"
+    ],
+    "Build.0": [
+      "Bolt tower",
+      "弩炮塔",
+      "ボルトタワー",
+      "Bolzenturm"
+    ],
+    "Build.1": [
+      "Mortar",
+      "迫击炮",
+      "迫撃砲",
+      "Mörser"
+    ],
+    "Build.2": [
+      "Tesla coil",
+      "电塔",
+      "テスラコイル",
+      "Teslaspule"
+    ],
+    "Build.3": [
+      "Barbed wire",
+      "铁丝网",
+      "有刺鉄線",
+      "Stacheldraht"
+    ],
+    "Build.Cost": [
+      "{Ink} ink",
+      "{Ink} 墨水",
+      "{Ink}インク",
+      "{Ink} Tinte"
+    ],
+    "Box.Build": [
+      "{Name} · {Ink} ink",
+      "{Name} · {Ink} 墨水",
+      "{Name} · {Ink}インク",
+      "{Name} · {Ink} Tinte"
+    ],
+    "Key.Dodge": [
+      "Dodge",
+      "闪避",
+      "回避",
+      "Ausweichen"
+    ],
+    "Ring.Upgrade": [
+      "Upgrade",
+      "升级",
+      "強化",
+      "Ausbauen"
+    ],
+    "Ring.Remove": [
+      "Rub out",
+      "拆除",
+      "消す",
+      "Wegradieren"
+    ],
+    "Ring.Refund": [
+      "+{Ink} ink back",
+      "返还 {Ink} 墨水",
+      "インク {Ink} 返却",
+      "+{Ink} Tinte zurück"
+    ],
+    "Ring.Sides": [
+      "To {Sides} sides",
+      "升到 {Sides} 边",
+      "{Sides}辺に",
+      "Auf {Sides} Seiten"
+    ],
+    "Ring.Level": [
+      "To level {Level}",
+      "升到 {Level} 级",
+      "レベル{Level}に",
+      "Auf Stufe {Level}"
+    ],
+    "Ring.WireLeft": [
+      "{Left}% left",
+      "剩 {Left}%",
+      "残り{Left}%",
+      "{Left}% übrig"
+    ],
+    "Ring.Denied.1": [
+      "No ink",
+      "墨水不够",
+      "インク不足",
+      "Zu wenig Tinte"
+    ],
+    "Ring.Denied.2": [
+      "Seals the road",
+      "会堵死通路",
+      "道をふさぐ",
+      "Sperrt den Weg"
+    ],
+    "Ring.Denied.3": [
+      "Someone there",
+      "有人站着",
+      "誰かがいる",
+      "Da steht wer"
+    ],
+    "Ring.Denied.4": [
+      "Ladder foot",
+      "梯子落脚处",
+      "はしごの足元",
+      "Leiterfuß"
+    ],
+    "Ring.Denied.7": [
+      "Fully grown",
+      "已满级",
+      "最大レベル",
+      "Voll ausgebaut"
+    ],
+    "Box.Click": [
+      "Build",
+      "建造",
+      "建てる",
+      "Bauen"
+    ],
+    "Box.ClickTower": [
+      "Upgrade · rub out",
+      "升级 · 拆除",
+      "強化・消す",
+      "Ausbauen · Wegradieren"
+    ],
+    "Key.FireBuild": [
+      "Fire · build",
+      "射击 · 建造",
+      "射撃・建設",
+      "Feuern · Bauen"
+    ],
+    "Menu.Steam": [
+      "Steam: {Name}",
+      "Steam：{Name}",
+      "Steam：{Name}",
+      "Steam: {Name}"
+    ],
+    "Menu.SteamOff": [
+      "Steam offline · you will play solo",
+      "Steam 未连接 · 只能单人游玩",
+      "Steam 未接続・ソロプレイになります",
+      "Steam offline · du spielst allein"
+    ],
+    "Door.FriendRooms": [
+      "Friends in a room now",
+      "正在开房间的好友",
+      "ルームにいるフレンド",
+      "Freunde in einem Raum"
+    ],
+    "Door.NoFriendRooms": [
+      "None of your Steam friends is in a room right now. Once a friend opens the game, their hub shows up here.",
+      "现在没有 Steam 好友开着房间。好友打开游戏后，大厅就会出现在这里。",
+      "今ルームにいるSteamフレンドはいません。フレンドがゲームを開くと、そのロビーがここに出ます。",
+      "Gerade ist keiner deiner Steam-Freunde in einem Raum. Sobald jemand das Spiel öffnet, erscheint die Lobby hier."
+    ],
+    "Door.Join": [
+      "Join",
+      "加入",
+      "参加",
+      "Beitreten"
+    ],
+    "Network.FindingFriend": [
+      "Looking up your friend's room…",
+      "正在查找好友的房间…",
+      "フレンドのルームを確認中…",
+      "Raum wird gesucht…"
+    ],
+    "Network.FriendRoomGone": [
+      "That room has closed or can no longer be joined.",
+      "那个房间已关闭或无法加入。",
+      "そのルームは閉じたか、参加できなくなりました。",
+      "Dieser Raum ist zu oder nicht mehr beitretbar."
+    ],
+    "Board.BotsExpedition": [
+      "The expedition is for people only: no AI teammates come along.",
+      "远征只限真人玩家：不带 AI 队友。",
+      "遠征は人間だけ：AIの仲間は同行しない。",
+      "Die Expedition ist nur für Menschen: keine KI-Mitspieler."
+    ],
+    "Team.Seat": [
+      "Player {Index}",
+      "玩家 {Index}",
+      "プレイヤー {Index}",
+      "Spieler {Index}"
+    ],
+    "Key.Drop": [
+      "Drop",
+      "丢弃",
+      "捨てる",
+      "Abwerfen"
+    ],
+    "Key.Kit": [
+      "Kit",
+      "整理",
+      "持ち物",
+      "Gepäck"
+    ],
+    "Key.Take": [
+      "Take / buy / open",
+      "拾取 / 购买 / 打开",
+      "拾う／買う／開ける",
+      "Nehmen / kaufen / öffnen"
+    ],
+    "Key.Slots": [
+      "Slots",
+      "切换格位",
+      "スロット",
+      "Plätze"
+    ],
+    "Weapon.Fists": [
+      "Bare hands",
+      "空手",
+      "素手",
+      "Bloße Hände"
+    ],
+    "Expedition.Pair": [
+      "Dual {Name}",
+      "双持{Name}",
+      "二丁{Name}",
+      "Doppel-{Name}"
+    ],
+    "Gear.0": [
+      "2B eraser",
+      "2B 橡皮擦",
+      "2B消しゴム",
+      "2B-Radiergummi"
+    ],
+    "Gear.0.Note": [
+      "Click: rubs out the enemy in front; a boss loses a tool, or half its health",
+      "点击：擦掉面前的敌人；首领被擦掉一件工具（没有工具的掉一半血）",
+      "クリック：前の敵を消す。ボスは道具を1つ失う（道具がなければ体力が半分に）",
+      "Klick: radiert den Gegner vorn aus; ein Boss verliert ein Werkzeug oder die Hälfte"
+    ],
+    "Gear.1": [
+      "Paper & pen",
+      "复活纸笔",
+      "紙とペン",
+      "Papier & Stift"
+    ],
+    "Gear.1.Note": [
+      "Click: draw a fallen teammate back with ink",
+      "点击：用墨水把倒下的队友画回来",
+      "クリック：倒れた仲間をインクで描き戻す",
+      "Klick: einen gefallenen Mitspieler mit Tinte zurückzeichnen"
+    ],
+    "Gear.2": [
+      "Sticky note",
+      "便利贴护符",
+      "付箋のお守り",
+      "Haftnotiz"
+    ],
+    "Gear.2.Note": [
+      "Click: the next big hit tears it instead of you",
+      "点击：下一次重击由它替你挡下",
+      "クリック：次の大ダメージを代わりに受ける",
+      "Klick: der nächste schwere Treffer zerreißt sie statt dich"
+    ],
+    "Gear.3": [
+      "Ink capsule",
+      "浓缩墨水囊",
+      "インクカプセル",
+      "Tintenkapsel"
+    ],
+    "Gear.3.Note": [
+      "Click: +60 ink for everyone, pushes enemies back",
+      "点击：全队墨水 +60，并推开敌人",
+      "クリック：全員のインク+60、敵を押し返す",
+      "Klick: +60 Tinte für alle, stößt Gegner zurück"
+    ],
+    "Gear.4": [
+      "Correction fluid",
+      "修正液喷罐",
+      "修正液",
+      "Korrekturflüssigkeit"
+    ],
+    "Gear.4.Note": [
+      "Click: a white patch that heals friends and wipes hazards",
+      "点击：喷出白色区域，治疗队友并抹平危险",
+      "クリック：味方を癒し危険を消す白い場",
+      "Klick: eine weiße Fläche heilt Freunde und löscht Gefahren"
+    ],
+    "Gear.5": [
+      "Paper crane",
+      "千纸鹤诱饵",
+      "折り鶴のおとり",
+      "Papierkranich"
+    ],
+    "Gear.5.Note": [
+      "Click: a decoy that draws enemies for 6 s",
+      "点击：放出诱饵，吸引敌人 6 秒",
+      "クリック：6秒間敵を引きつけるおとり",
+      "Klick: ein Köder lockt Gegner 6 s lang an"
+    ],
+    "Gear.6": [
+      "Red stamp",
+      "红墨大印章",
+      "赤いハンコ",
+      "Roter Stempel"
+    ],
+    "Gear.6.Note": [
+      "Click: stamped enemies take 35% more for 10 s",
+      "点击：被盖章的敌人 10 秒内受伤 +35%",
+      "クリック：押された敵は10秒間被ダメージ+35%",
+      "Klick: gestempelte Gegner nehmen 10 s lang 35 % mehr"
+    ],
+    "Gear.7": [
+      "Tape trap",
+      "双面胶陷阱",
+      "両面テープの罠",
+      "Klebebandfalle"
+    ],
+    "Gear.7.Note": [
+      "Click: a sticky line that holds enemies for 3.5 s",
+      "点击：铺一条粘胶线，粘住敌人 3.5 秒",
+      "クリック：敵を3.5秒くっつける粘着線",
+      "Klick: ein Klebestreifen hält Gegner 3,5 s fest"
+    ],
+    "Gear.8": [
+      "Hair dryer",
+      "速干冷风筒",
+      "ドライヤー",
+      "Föhn"
+    ],
+    "Gear.8.Note": [
+      "Click: blows bolts away and shoves enemies into walls",
+      "点击：吹散弹幕，把敌人吹到墙上",
+      "クリック：弾を吹き飛ばし敵を壁へ押しやる",
+      "Klick: pustet Geschosse weg, drückt Gegner an die Wand"
+    ],
+    "Gear.9": [
+      "Recycling scissors",
+      "回收剪刀",
+      "リサイクルばさみ",
+      "Recyclingschere"
+    ],
+    "Gear.9.Note": [
+      "Click: cuts a spare gun or look on the floor into stickers",
+      "点击：把地上多余的枪或外观剪成贴纸",
+      "クリック：床の余った銃や見た目をステッカーに",
+      "Klick: zerschneidet eine übrige Waffe oder einen Look zu Stickern"
+    ],
+    "Gear.10": [
+      "Bandage box",
+      "急诊创可贴",
+      "救急ばんそうこう",
+      "Pflasterdose"
+    ],
+    "Gear.10.Note": [
+      "Click: heals half your health over 3 s",
+      "点击：3 秒内回复一半生命",
+      "クリック：3秒で体力の半分を回復",
+      "Klick: heilt in 3 s die Hälfte deiner Gesundheit"
+    ],
+    "Gear.11": [
+      "Gold dust",
+      "金粉撒星罐",
+      "金粉の缶",
+      "Goldstaub"
+    ],
+    "Gear.11.Note": [
+      "Click: hits on a gilded enemy shake stickers loose",
+      "点击：被撒上金粉的敌人挨打时会掉贴纸",
+      "クリック：金粉の敵を撃つとステッカーが落ちる",
+      "Klick: Treffer auf vergoldete Gegner lösen Sticker"
+    ],
+    "Gear.12": [
+      "Carbon paper",
+      "自动复写蓝纸",
+      "カーボン紙",
+      "Kohlepapier"
+    ],
+    "Gear.12.Note": [
+      "Every 5th shot fires a half-strength copy",
+      "每第 5 发射出一发半伤复写弹",
+      "5発ごとに半分の威力の写し弾",
+      "Jeder 5. Schuss feuert eine Kopie mit halber Kraft"
+    ],
+    "Gear.13": [
+      "Magnet clips",
+      "吸铁石回形针链",
+      "磁石クリップ",
+      "Magnetklammern"
+    ],
+    "Gear.13.Note": [
+      "Stickers and ink fly to you from far away",
+      "远处的贴纸和墨水会自动飞向你",
+      "遠くのステッカーとインクが飛んでくる",
+      "Sticker und Tinte fliegen von weit her zu dir"
+    ],
+    "Gear.14": [
+      "Tape roll",
+      "透明胶带卷",
+      "テープロール",
+      "Klebebandrolle"
+    ],
+    "Gear.14.Note": [
+      "Click: a 60-point shield on you or a hurt friend",
+      "点击：给自己或残血队友套上 60 点护盾",
+      "クリック：自分か弱った仲間に60の盾",
+      "Klick: ein 60er-Schild für dich oder einen Verletzten"
+    ],
+    "Gear.15": [
+      "Plastic ruler",
+      "塑料直尺盾",
+      "プラ定規の盾",
+      "Plastiklineal"
+    ],
+    "Gear.15.Note": [
+      "In hand: reflects bolts from the front",
+      "拿在手上：反弹正面的子弹",
+      "手に持つと正面の弾を跳ね返す",
+      "In der Hand: wirft Geschosse von vorn zurück"
+    ],
+    "Gear.16": [
+      "Spring refill",
+      "无限弹簧笔芯",
+      "バネ式替え芯",
+      "Federmine"
+    ],
+    "Gear.16.Note": [
+      "Magazines +35%, reloads 20% faster",
+      "弹匣 +35%，换弹快 20%",
+      "弾倉+35%、リロード20%短縮",
+      "Magazine +35 %, 20 % schneller nachladen"
+    ],
+    "Gear.17": [
+      "Pencil sharpener",
+      "便携卷笔刀",
+      "鉛筆削り",
+      "Anspitzer"
+    ],
+    "Gear.17.Note": [
+      "Click: a little turret for 12 s",
+      "点击：部署一个 12 秒的小炮台",
+      "クリック：12秒間の小さな砲台",
+      "Klick: ein kleiner Geschützturm für 12 s"
+    ],
+    "Gear.18": [
+      "Big ink bottle",
+      "高容量墨水瓶",
+      "大きなインク瓶",
+      "Großes Tintenfass"
+    ],
+    "Gear.18.Note": [
+      "Ink holds 180; every kill gives +4 ink",
+      "墨水上限 180；每次击杀额外 +4 墨水",
+      "インク上限180、撃破ごとにインク+4",
+      "Tinte fasst 180; jeder Kill bringt +4 Tinte"
+    ],
+    "Gear.19": [
+      "Kraft liner",
+      "防爆牛皮纸内胆",
+      "クラフト紙の裏地",
+      "Kraftpapierfutter"
+    ],
+    "Gear.19.Note": [
+      "18% less damage; safe for 4 s in a new room",
+      "受到伤害 -18%；进入新房间后 4 秒免疫",
+      "被ダメージ-18%、新しい部屋で4秒間無敵",
+      "18 % weniger Schaden; 4 s sicher in einem neuen Raum"
+    ],
+    "Gear.20": [
+      "Cutting mat",
+      "加厚美工衬垫",
+      "カッターマット",
+      "Schneidematte"
+    ],
+    "Gear.20.Note": [
+      "Your shots push enemies 45% harder",
+      "射击的击退 +45%",
+      "射撃のノックバック+45%",
+      "Deine Schüsse stoßen Gegner 45 % stärker"
+    ],
+    "Gear.21": [
+      "Neon marker",
+      "高光荧光记号笔",
+      "蛍光マーカー",
+      "Neonmarker"
+    ],
+    "Gear.21.Note": [
+      "Hits mark enemies: everyone crits them harder",
+      "命中会标记敌人：全队对其暴击伤害更高",
+      "当てた敵に印：全員の会心ダメージが上がる",
+      "Treffer markieren Gegner: alle treffen sie kritischer"
+    ],
+    "Gear.22": [
+      "Sticker album",
+      "幸运贴纸收集册",
+      "ステッカー帳",
+      "Stickeralbum"
+    ],
+    "Gear.22.Note": [
+      "+25% on the stickers you pick up and bring out",
+      "拾取的贴纸活着带出时 +25%",
+      "拾って持ち帰ったステッカー+25%",
+      "+25 % auf Sticker, die du aufhebst und rausbringst"
+    ],
+    "Gear.23": [
+      "Phoenix charm",
+      "不死鸟折纸符",
+      "不死鳥のお守り",
+      "Phönix-Talisman"
+    ],
+    "Gear.23.Note": [
+      "Once a stage: you stand back up at 30% instead of falling",
+      "每大关一次：不会倒下，以 30% 生命站起",
+      "ステージに1回：倒れずに体力30%で立ち上がる",
+      "Einmal pro Stufe: statt zu fallen stehst du mit 30 % wieder auf"
+    ],
+    "Gear.24": [
+      "Paper stand-in",
+      "替身草稿人",
+      "身代わり紙人形",
+      "Papier-Double"
+    ],
+    "Gear.24.Note": [
+      "Solo: stands you back up once when you fall",
+      "单人：倒下时替你站起来一次",
+      "ソロ：倒れたとき一度だけ身代わりに",
+      "Solo: stellt dich einmal wieder auf, wenn du fällst"
+    ],
+    "GearUse.0": [
+      "Click to use (one time)",
+      "点击使用（一次性）",
+      "クリックで使う（1回）",
+      "Klick zum Benutzen (einmalig)"
+    ],
+    "GearUse.1": [
+      "Works while carried",
+      "携带即生效",
+      "持っているだけで効く",
+      "Wirkt, solange du es trägst"
+    ],
+    "GearUse.2": [
+      "Click to use · ready again in {Seconds} s",
+      "点击使用 · 冷却 {Seconds} 秒",
+      "クリックで使う · {Seconds}秒で再使用",
+      "Klick zum Benutzen · nach {Seconds} s wieder bereit"
+    ],
+    "GearUse.3": [
+      "Hold it in hand",
+      "拿在手上生效",
+      "手に持つと効く",
+      "Wirkt in der Hand"
+    ],
+    "GearUse.4": [
+      "Relic: works from any slot",
+      "遗物：放在任意格都生效",
+      "遺物：どのスロットでも効く",
+      "Relikt: wirkt aus jedem Platz"
+    ],
+    "GearUse.Revive": [
+      "Click: open the emergency sheet",
+      "点击：打开应急复活草稿纸",
+      "クリック：応急の紙を開く",
+      "Klick: das Notfallblatt öffnen"
+    ],
+    "GearUse.Fists": [
+      "a shove, little more",
+      "只能推一推",
+      "押すのがやっと",
+      "ein Schubs, mehr nicht"
+    ],
+    "Hat.8": [
+      "Paper boat",
+      "纸折船",
+      "紙の舟",
+      "Papierschiff"
+    ],
+    "Look.1.1": [
+      "3D glasses",
+      "3D 红蓝眼镜",
+      "3Dメガネ",
+      "3D-Brille"
+    ],
+    "Look.1.2": [
+      "Eye patch",
+      "单边眼罩",
+      "眼帯",
+      "Augenklappe"
+    ],
+    "Look.1.3": [
+      "Scribbled shades",
+      "涂黑墨镜",
+      "塗りつぶしサングラス",
+      "Gekritzelte Sonnenbrille"
+    ],
+    "Look.2.1": [
+      "Crane wings",
+      "千纸鹤纸翼",
+      "折り鶴の翼",
+      "Kranichflügel"
+    ],
+    "Look.2.2": [
+      "Red scarf",
+      "红领巾飘带",
+      "赤いスカーフ",
+      "Roter Schal"
+    ],
+    "Look.2.3": [
+      "Spiral wings",
+      "线圈本弹簧翅",
+      "リングノートの翼",
+      "Spiralflügel"
+    ],
+    "Look.3.1": [
+      "Eraser charm",
+      "小橡皮吊坠",
+      "消しゴムのチャーム",
+      "Radiergummi-Anhänger"
+    ],
+    "Look.3.2": [
+      "Paperclip chain",
+      "回形针链",
+      "クリップのチェーン",
+      "Büroklammerkette"
+    ],
+    "Look.3.3": [
+      "Tiny compass",
+      "迷你圆规挂饰",
+      "ミニコンパス",
+      "Mini-Zirkel"
+    ],
+    "Look.4.1": [
+      "Rainbow prints",
+      "彩虹水彩脚印",
+      "虹色の足あと",
+      "Regenbogenspuren"
+    ],
+    "Look.4.2": [
+      "Pencil scratches",
+      "铅笔沙沙拖痕",
+      "鉛筆のすじ",
+      "Bleistiftkratzer"
+    ],
+    "Look.4.3": [
+      "Bamboo steps",
+      "毛笔墨竹步韵",
+      "墨竹の足どり",
+      "Bambusschritte"
+    ],
+    "Wear.0": [
+      "Hat",
+      "头饰",
+      "帽子",
+      "Hut"
+    ],
+    "Wear.1": [
+      "Mask",
+      "面具 / 眼镜",
+      "マスク",
+      "Maske"
+    ],
+    "Wear.2": [
+      "Cape",
+      "披风 / 纸翼",
+      "マント",
+      "Umhang"
+    ],
+    "Wear.3": [
+      "Charm",
+      "挂件",
+      "チャーム",
+      "Anhänger"
+    ],
+    "Wear.4": [
+      "Trail",
+      "足迹",
+      "足あと",
+      "Spur"
+    ],
+    "Wear.5": [
+      "Title",
+      "头衔",
+      "称号",
+      "Titel"
+    ],
+    "Biome.0": [
+      "Pencil sketch",
+      "铅笔草稿",
+      "鉛筆スケッチ",
+      "Bleistiftskizze"
+    ],
+    "Biome.1": [
+      "Watercolour",
+      "水彩晕染",
+      "水彩",
+      "Aquarell"
+    ],
+    "Biome.2": [
+      "Fountain ink",
+      "钢笔墨线",
+      "万年筆インク",
+      "Füllertinte"
+    ],
+    "Biome.3": [
+      "Ballpoint",
+      "圆珠笔复写",
+      "ボールペン",
+      "Kugelschreiber"
+    ],
+    "Biome.4": [
+      "Brush & ink",
+      "毛笔水墨",
+      "筆と墨",
+      "Pinsel & Tusche"
+    ],
+    "Trait.0": [
+      "Pencil",
+      "铅笔",
+      "鉛筆",
+      "Bleistift"
+    ],
+    "Trait.0.Note": [
+      "Draft rewrite: a graphite shield of 25% that grows back; once a floor a lethal hit leaves 1 health.",
+      "草稿改写：可自动回复的 25% 石墨护盾；每层一次，致命伤只剩 1 点生命。",
+      "下書き直し：回復する25%の黒鉛シールド。各フロア1回、致命傷を体力1で耐える。",
+      "Entwurf: ein nachwachsender Graphitschild von 25 %; einmal pro Etage lässt ein tödlicher Treffer 1 LP übrig."
+    ],
+    "Trait.1": [
+      "Watercolour",
+      "水性笔",
+      "水性ペン",
+      "Aquarellstift"
+    ],
+    "Trait.1.Note": [
+      "Wash: heals 1.5% a second; the trail slows and wets enemies.",
+      "水彩濡染：每秒回复 1.5% 生命；拖尾会减速并打湿敌人。",
+      "にじみ：毎秒1.5%回復。軌跡が敵を遅くし、濡らす。",
+      "Lasur: heilt 1,5 % pro Sekunde; die Spur bremst und nässt Gegner."
+    ],
+    "Trait.2": [
+      "Fountain pen",
+      "钢笔",
+      "万年筆",
+      "Füller"
+    ],
+    "Trait.2.Note": [
+      "Sharp nib: 20% more crits and shots pierce one more; heals 15% less.",
+      "硬锋刺破：暴击率 +20%，子弹多穿透 1 个；受治疗 -15%。",
+      "鋭いペン先：会心率+20%、貫通+1。回復量-15%。",
+      "Spitze Feder: 20 % mehr Kritische, Schüsse durchdringen einen mehr; 15 % weniger Heilung."
+    ],
+    "Trait.3": [
+      "Ballpoint",
+      "圆珠笔",
+      "ボールペン",
+      "Kugelschreiber"
+    ],
+    "Trait.3.Note": [
+      "Carbon copy: fires and reloads 15% faster; every 8th shot sends a seeking copy.",
+      "蓝墨复写：攻速与换弹 +15%；每 8 发追加一发追踪复写弹。",
+      "複写：射撃とリロードが15%速い。8発ごとに追尾する写し弾。",
+      "Durchschlag: 15 % schneller schießen und nachladen; jeder 8. Schuss schickt eine Suchkopie."
+    ],
+    "Trait.4": [
+      "Brush",
+      "毛笔",
+      "筆",
+      "Pinsel"
+    ],
+    "Trait.4.Note": [
+      "Mountain of ink: 40% less knockback, an ink wave every 4 s, and the party gains 15% more ink.",
+      "墨山镇岳：击退抗性 40%，每 4 秒震出一次墨浪，全队墨水获取 +15%。",
+      "墨の山：ノックバック40%軽減、4秒ごとに墨の波、全員のインク獲得+15%。",
+      "Tuscheberg: 40 % weniger Rückstoß, alle 4 s eine Tuschewelle, und das Team bekommt 15 % mehr Tinte."
+    ],
+    "Boss.0": [
+      "The Drafting Machine",
+      "自动化制图台",
+      "自動製図台",
+      "Die Zeichenmaschine"
+    ],
+    "Boss.1": [
+      "The Rainbow Wash",
+      "虹彩晕染妖灵",
+      "虹色にじみの精",
+      "Der Regenbogengeist"
+    ],
+    "Boss.2": [
+      "The Iron Editor",
+      "铁血总编",
+      "鉄血の編集長",
+      "Der eiserne Chefredakteur"
+    ],
+    "Boss.3": [
+      "The Clockwork Warlord",
+      "复写齿轮督军",
+      "複写歯車の督軍",
+      "Der Zahnrad-Kriegsherr"
+    ],
+    "Boss.4": [
+      "The Ink Sage",
+      "墨渊宗师",
+      "墨淵の宗師",
+      "Der Tuschemeister"
+    ],
+    "Room.0": [
+      "Start",
+      "起点",
+      "スタート",
+      "Start"
+    ],
+    "Room.1": [
+      "Fight",
+      "战斗房",
+      "戦闘部屋",
+      "Kampfraum"
+    ],
+    "Room.2": [
+      "Portal room",
+      "传送门房",
+      "ポータル部屋",
+      "Portalraum"
+    ],
+    "Room.3": [
+      "Boss room",
+      "首领房",
+      "ボス部屋",
+      "Bossraum"
+    ],
+    "Room.4": [
+      "Shop",
+      "商店",
+      "ショップ",
+      "Laden"
+    ],
+    "Room.5": [
+      "Treasure",
+      "宝箱房",
+      "宝箱部屋",
+      "Schatzkammer"
+    ],
+    "Room.6": [
+      "Event",
+      "事件房",
+      "イベント部屋",
+      "Ereignisraum"
+    ],
+    "Event.0": [
+      "The weighing scale",
+      "天平回收",
+      "はかり",
+      "Die Waage"
+    ],
+    "Event.1": [
+      "Wishing well",
+      "许愿井",
+      "願いの井戸",
+      "Wunschbrunnen"
+    ],
+    "Event.2": [
+      "Nib forge",
+      "笔尖重铸",
+      "ペン先の鍛冶",
+      "Federschmiede"
+    ],
+    "Event.3": [
+      "Prank vote",
+      "整蛊投票",
+      "いたずら投票",
+      "Streich-Abstimmung"
+    ],
+    "Event.4": [
+      "Chained chest",
+      "锁链宝箱",
+      "鎖の宝箱",
+      "Angekettete Truhe"
+    ],
+    "Event.5": [
+      "Sticker wheel",
+      "贴纸转盘",
+      "ステッカールーレット",
+      "Stickerrad"
+    ],
+    "Event.6": [
+      "Pen rack",
+      "笔架",
+      "ペン立て",
+      "Stiftständer"
+    ],
+    "Event.7": [
+      "Paper arena",
+      "纸怪擂台",
+      "紙の闘技場",
+      "Papierarena"
+    ],
+    "Event.8": [
+      "Copier",
+      "复印机",
+      "コピー機",
+      "Kopierer"
+    ],
+    "Event.9": [
+      "Clinic",
+      "急诊室",
+      "診療所",
+      "Ambulanz"
+    ],
+    "Event.10": [
+      "Blind box",
+      "盲盒机",
+      "ブラインドボックス",
+      "Überraschungsbox"
+    ],
+    "Event.11": [
+      "Rubbing table",
+      "拓印台",
+      "拓本台",
+      "Abreibtisch"
+    ],
+    "Event.12": [
+      "Early exit",
+      "折纸撤离门",
+      "早期脱出口",
+      "Früher Ausgang"
+    ],
+    "Service.0": [
+      "Heal everyone",
+      "全员治疗",
+      "全員回復",
+      "Alle heilen"
+    ],
+    "Service.1": [
+      "Health for ink",
+      "以血换墨",
+      "体力をインクに",
+      "Gesundheit gegen Tinte"
+    ],
+    "Service.2": [
+      "Spin",
+      "转一次",
+      "回す",
+      "Drehen"
+    ],
+    "Service.3": [
+      "Big spin",
+      "大转一次",
+      "大きく回す",
+      "Großer Dreh"
+    ],
+    "Service.4": [
+      "Make a wish",
+      "许个愿",
+      "願う",
+      "Wünschen"
+    ],
+    "Service.5": [
+      "Copy the item",
+      "复印道具",
+      "道具をコピー",
+      "Gegenstand kopieren"
+    ],
+    "Service.6": [
+      "Rub a twin",
+      "拓出一把",
+      "双子を拓く",
+      "Zwilling abreiben"
+    ],
+    "Service.7": [
+      "Weigh & sell",
+      "称重回收",
+      "量って売る",
+      "Wiegen & verkaufen"
+    ],
+    "Service.8": [
+      "Start the arena",
+      "开始擂台",
+      "闘技場を始める",
+      "Arena starten"
+    ],
+    "Service.9": [
+      "Blind draw",
+      "抽一个",
+      "1回引く",
+      "Blind ziehen"
+    ],
+    "Expedition.Pick": [
+      "Pick up {Name}",
+      "拾取{Name}",
+      "{Name}を拾う",
+      "{Name} aufheben"
+    ],
+    "Expedition.PickPair": [
+      "Pick up {Name}: one in each hand!",
+      "拾取{Name}：左右手双持！",
+      "{Name}を拾う：二丁持ち！",
+      "{Name} aufheben: in jeder Hand eine!"
+    ],
+    "Expedition.PickStack": [
+      "Pick up {Name} (stacks)",
+      "拾取{Name}（叠放）",
+      "{Name}を拾う（重ねる）",
+      "{Name} aufheben (stapelt)"
+    ],
+    "Expedition.Full": [
+      "No room for {Name}: the bag is full (Tab sorts the kit, G drops what is in hand)",
+      "放不下{Name}：背包满了（按 Tab 整理，或按 G 丢下手中物品）",
+      "{Name}が入らない：バッグがいっぱい（Tabで整理、Gで手の物を捨てる）",
+      "Kein Platz für {Name}: Tasche voll (Tab sortiert, G lässt fallen)"
+    ],
+    "Expedition.WearLook": [
+      "Wear {Name}",
+      "穿戴{Name}",
+      "{Name}を着ける",
+      "{Name} anziehen"
+    ],
+    "Expedition.SwapLook": [
+      "Swap {Worn} for {Name} (or leave it for a friend)",
+      "同类外观已穿戴：把{Worn}换成{Name}（或留给队友）",
+      "同じ種類を着用中：{Worn}を{Name}に替える（仲間に残してもいい）",
+      "{Worn} gegen {Name} tauschen (oder für Freunde liegen lassen)"
+    ],
+    "Expedition.Buy": [
+      "Buy {Name} · {Price} stickers (coins first)",
+      "购买{Name} · {Price} 贴纸（先扣远征币）",
+      "{Name}を買う · ステッカー{Price}枚（コイン優先）",
+      "{Name} kaufen · {Price} Sticker (Münzen zuerst)"
+    ],
+    "Expedition.Machine": [
+      "{Name} · {Price} stickers",
+      "{Name} · {Price} 贴纸",
+      "{Name} · ステッカー{Price}枚",
+      "{Name} · {Price} Sticker"
+    ],
+    "Expedition.MachineFree": [
+      "{Name} · free",
+      "{Name} · 免费",
+      "{Name} · 無料",
+      "{Name} · gratis"
+    ],
+    "Expedition.OpenChest": [
+      "Open the chest",
+      "打开宝箱",
+      "宝箱を開ける",
+      "Truhe öffnen"
+    ],
+    "Expedition.ExitHold": [
+      "Hold E: leave now with {Count} stickers",
+      "按住 E：带着 {Count} 张贴纸提前撤离",
+      "Eを長押し：ステッカー{Count}枚を持って脱出",
+      "E halten: jetzt mit {Count} Stickern gehen"
+    ],
+    "Expedition.ChainHold": [
+      "Hold E in the ring to break the chains",
+      "在圈内按住 E 解开锁链",
+      "輪の中でEを長押しして鎖を外す",
+      "E im Ring halten, um die Ketten zu lösen"
+    ],
+    "Expedition.Arming": [
+      "Doors shut in {Seconds}",
+      "{Seconds} 秒后关门",
+      "{Seconds}秒で扉が閉まる",
+      "Türen schließen in {Seconds}"
+    ],
+    "Expedition.Wave": [
+      "Wave {Wave} / {Waves}",
+      "第 {Wave} / {Waves} 波",
+      "ウェーブ {Wave}/{Waves}",
+      "Welle {Wave} / {Waves}"
+    ],
+    "Expedition.PortalOpen": [
+      "Portal open",
+      "传送门已开启",
+      "ポータルが開いた",
+      "Portal offen"
+    ],
+    "Expedition.Cleared": [
+      "Cleared",
+      "已清空",
+      "制圧済み",
+      "Geräumt"
+    ],
+    "Expedition.Pouch": [
+      "in the pouch · banked only if you walk out",
+      "随身贴纸 · 活着出去才算数",
+      "ポーチ · 生きて出れば確定",
+      "im Beutel · zählt nur, wenn du rauskommst"
+    ],
+    "Expedition.Tag.Out": [
+      "Out",
+      "通关撤离",
+      "脱出",
+      "Draußen"
+    ],
+    "Expedition.Tag.Early": [
+      "Left early",
+      "提前撤离",
+      "早期脱出",
+      "Früh raus"
+    ],
+    "Expedition.Tag.Ghost": [
+      "Ghost",
+      "灵魂",
+      "ゴースト",
+      "Geist"
+    ],
+    "Expedition.Tag.Lost": [
+      "Lost",
+      "未能撤离",
+      "脱出失敗",
+      "Verloren"
+    ],
+    "Expedition.LookOf": [
+      "{Owner}'s {Name}",
+      "{Owner}的{Name}",
+      "{Owner}の{Name}",
+      "{Name} von {Owner}"
+    ],
+    "Expedition.FinalDoor": [
+      "The way out",
+      "终局撤离门",
+      "最後の出口",
+      "Der Ausgang"
+    ],
+    "Expedition.EarlyDoor": [
+      "Early exit · hold E",
+      "提前撤离门 · 长按 E",
+      "早期脱出口 · E長押し",
+      "Früher Ausgang · E halten"
+    ],
+    "Expedition.Portal": [
+      "Portal",
+      "传送门",
+      "ポータル",
+      "Portal"
+    ],
+    "Expedition.PortalCount": [
+      "Portal: {In} / {Count} in",
+      "传送门：{In} / {Count} 人已进入",
+      "ポータル：{In}/{Count}人",
+      "Portal: {In} / {Count} drin"
+    ],
+    "Expedition.PortalLeaves": [
+      "leaves in {Seconds}",
+      "{Seconds} 秒后出发",
+      "{Seconds}秒後に出発",
+      "geht in {Seconds} los"
+    ],
+    "Expedition.GhostTag": [
+      "{Name} · ghost",
+      "{Name} · 灵魂",
+      "{Name} · ゴースト",
+      "{Name} · Geist"
+    ],
+    "Expedition.Denied.20": [
+      "Hotbar and bag are full",
+      "快捷栏和背包都满了",
+      "ホットバーもバッグも満杯",
+      "Leiste und Tasche sind voll"
+    ],
+    "Expedition.Denied.21": [
+      "Not enough stickers and coins",
+      "贴纸和远征币不够",
+      "ステッカーとコインが足りない",
+      "Nicht genug Sticker und Münzen"
+    ],
+    "Expedition.Denied.22": [
+      "Not enough ink",
+      "墨水不够",
+      "インクが足りない",
+      "Nicht genug Tinte"
+    ],
+    "Expedition.Denied.23": [
+      "Nothing to do that with",
+      "没有可用的东西",
+      "使えるものがない",
+      "Nichts, womit das ginge"
+    ],
+    "Expedition.Denied.24": [
+      "That drawing does not close",
+      "画的形状没有闭合",
+      "絵が閉じていない",
+      "Die Zeichnung ist nicht geschlossen"
+    ],
+    "Expedition.Denied.25": [
+      "Already used",
+      "已经用过了",
+      "使用済み",
+      "Schon benutzt"
+    ],
+    "Expedition.Denied.26": [
+      "Not now",
+      "现在不行",
+      "今はできない",
+      "Nicht jetzt"
+    ],
+    "Expedition.Floor": [
+      "Floor {Stage}-{Floor} · {Pen}",
+      "第 {Stage}-{Floor} 层 · {Pen}",
+      "フロア {Stage}-{Floor} · {Pen}",
+      "Etage {Stage}-{Floor} · {Pen}"
+    ],
+    "Expedition.FloorBoss": [
+      "Boss floor {Stage}-{Floor} · {Pen}",
+      "首领层 {Stage}-{Floor} · {Pen}",
+      "ボスフロア {Stage}-{Floor} · {Pen}",
+      "Boss-Etage {Stage}-{Floor} · {Pen}"
+    ],
+    "Expedition.DoorsShut": [
+      "Doors shut!",
+      "门关上了！",
+      "扉が閉まった！",
+      "Türen zu!"
+    ],
+    "Expedition.WaveCall": [
+      "Wave {Wave}!",
+      "第 {Wave} 波！",
+      "ウェーブ{Wave}！",
+      "Welle {Wave}!"
+    ],
+    "Expedition.RoomClear": [
+      "Room cleared · everyone heals 20%",
+      "房间已清空 · 全员回复 20% 生命",
+      "部屋を制圧・全員HP20%回復",
+      "Raum geräumt · alle heilen 20 %"
+    ],
+    "Expedition.PortalBanner": [
+      "The portal is open",
+      "传送门开启了",
+      "ポータルが開いた",
+      "Das Portal ist offen"
+    ],
+    "Expedition.WayOut": [
+      "The way out is open",
+      "撤离门开启了",
+      "出口が開いた",
+      "Der Ausgang ist offen"
+    ],
+    "Expedition.OutTitle": [
+      "Out with {Count} stickers",
+      "带着 {Count} 张贴纸撤离成功",
+      "ステッカー{Count}枚を持って脱出",
+      "Draußen mit {Count} Stickern"
+    ],
+    "Expedition.OutNote": [
+      "Safely banked. Watch the others make their way out.",
+      "已安全入账。看看队友能不能也走出来。",
+      "無事に確定。仲間の脱出を見守ろう。",
+      "Sicher verbucht. Schau zu, ob die anderen es hinaus schaffen."
+    ],
+    "Expedition.OutLast": [
+      "Everyone else is out or down: the run ends.",
+      "其他人都已撤离或倒下：本局结束。",
+      "ほかは全員脱出したか倒れた：ラン終了。",
+      "Alle anderen sind draußen oder gefallen: der Lauf endet."
+    ],
+    "Expedition.GhostTitle": [
+      "You fell",
+      "你倒下了",
+      "倒れた",
+      "Du bist gefallen"
+    ],
+    "Expedition.GhostNote": [
+      "Your kit lies where you fell. A teammate can draw you back with ink, or you return on the next floor at half health.",
+      "装备散落在倒下的地方。队友能用墨水把你画回来；否则到下一层，你会带着一半生命回来。",
+      "装備は倒れた場所に散らばった。仲間がインクで描き戻せる。でなければ次の階で体力半分で戻る。",
+      "Deine Ausrüstung liegt, wo du gefallen bist. Ein Mitspieler kann dich mit Tinte zurückzeichnen, sonst kommst du im nächsten Stock mit halbem Leben zurück."
+    ],
+    "Expedition.GhostAlone": [
+      "Nobody is left standing.",
+      "已经没有人站着了。",
+      "立っている者はもういない。",
+      "Niemand steht mehr."
+    ],
+    "Kit.Title": [
+      "Kit & bag",
+      "随身背包",
+      "持ち物とバッグ",
+      "Gepäck & Tasche"
+    ],
+    "Kit.Note": [
+      "Drop what a teammate needs. Tab or Esc closes.",
+      "把队友需要的东西丢给他们。按 Tab 或 Esc 关闭。",
+      "仲間に必要なものを落とそう。TabかEscで閉じる。",
+      "Wirf ab, was ein Mitspieler braucht. Tab oder Esc schließt."
+    ],
+    "Kit.Pouch": [
+      "Sticker pouch",
+      "随身贴纸袋",
+      "ステッカーポーチ",
+      "Stickerbeutel"
+    ],
+    "Kit.PouchNote": [
+      "Not banked yet: spend it in shops, drop it for a friend, or carry it out alive.",
+      "尚未入账：可以在商店花掉、丢给队友，或活着带出去。",
+      "未確定：ショップで使うか、仲間に落とすか、生きて持ち帰る。",
+      "Noch nicht verbucht: im Laden ausgeben, für Freunde fallen lassen oder lebend hinausbringen."
+    ],
+    "Kit.Trait": [
+      "Drawn with: {Name}",
+      "复活笔画：{Name}",
+      "描いたペン：{Name}",
+      "Gezeichnet mit: {Name}"
+    ],
+    "Kit.Drop25": [
+      "Drop 25",
+      "丢出 25 张",
+      "25枚落とす",
+      "25 abwerfen"
+    ],
+    "Kit.DropAll": [
+      "Drop all",
+      "全部丢出",
+      "全部落とす",
+      "Alle abwerfen"
+    ],
+    "Kit.Looks": [
+      "Looks worn",
+      "穿戴外观",
+      "着ている見た目",
+      "Getragene Looks"
+    ],
+    "Kit.DropLook": [
+      "Drop",
+      "丢下",
+      "落とす",
+      "Ablegen"
+    ],
+    "Kit.Hotbar": [
+      "Hotbar",
+      "快捷栏",
+      "ホットバー",
+      "Schnellleiste"
+    ],
+    "Kit.GunNote": [
+      "A pistol takes one hand: a second one in the other hand fires with it.",
+      "手枪只占一只手：另一只手再拿一把就能双持。",
+      "拳銃は片手：もう片方の手にも持てば二丁持ち。",
+      "Eine Pistole braucht eine Hand: eine zweite in der anderen feuert mit."
+    ],
+    "Revive.Hint.Slot": [
+      "{Name} fell: press {Slot}, then click to draw them back",
+      "{Name} 倒下了：按 {Slot} 拿起复活纸笔，再点击画回来",
+      "{Name}が倒れた：{Slot}を押してクリックで描き戻す",
+      "{Name} ist gefallen: {Slot} drücken, dann klicken und zurückzeichnen"
+    ],
+    "Revive.NoGhost": [
+      "Nobody to draw back",
+      "没有需要复活的队友",
+      "描き戻す仲間がいない",
+      "Niemand zum Zurückzeichnen"
+    ],
+    "Revive.Sent": [
+      "Drawing sent",
+      "图稿已提交",
+      "絵を送った",
+      "Zeichnung gesendet"
+    ],
+    "Revive.Danger": [
+      "{Count} enemies close by!",
+      "附近有 {Count} 个敌人！",
+      "近くに敵が{Count}体！",
+      "{Count} Gegner in der Nähe!"
+    ],
+    "Revive.Title": [
+      "Emergency sheet",
+      "应急复活草稿纸",
+      "応急の紙",
+      "Notfallblatt"
+    ],
+    "Revive.Note": [
+      "Draw one closed shape. The bigger it is, the bigger and tougher they stand up, and the more ink it costs.",
+      "画一个闭合图形。画得越大，复活的人越大越耐打，也越费墨水。",
+      "閉じた形を一つ描こう。大きいほど大きく丈夫に立ち上がるが、インクも多く使う。",
+      "Zeichne eine geschlossene Form. Je größer sie ist, desto größer und zäher steht er auf, und desto mehr Tinte kostet es."
+    ],
+    "Revive.Empty": [
+      "Hold the left button and draw a loop",
+      "按住左键画一个圈",
+      "左ボタンを押したまま輪を描く",
+      "Linke Taste halten und eine Schleife zeichnen"
+    ],
+    "Revive.Who": [
+      "Who",
+      "复活谁",
+      "誰を",
+      "Wen"
+    ],
+    "Revive.Pen": [
+      "Pen",
+      "笔画",
+      "ペン",
+      "Stift"
+    ],
+    "Revive.Open": [
+      "Not closed: draw it again (nothing is spent)",
+      "笔迹未封闭，请重新描闭！（不耗材料）",
+      "閉じていない：描き直そう（何も消費しない）",
+      "Nicht geschlossen: noch einmal zeichnen (nichts verbraucht)"
+    ],
+    "Revive.Area": [
+      "Area {Percent}% · {Ink} ink (you have {Have})",
+      "面积 {Percent}% · 耗墨 {Ink}（现有 {Have}）",
+      "面積 {Percent}% · インク{Ink}（所持{Have}）",
+      "Fläche {Percent} % · {Ink} Tinte (du hast {Have})"
+    ],
+    "Revive.Body": [
+      "Size ×{Size} · health ×{Health} · speed ×{Speed}",
+      "体型 ×{Size} · 生命 ×{Health} · 移速 ×{Speed}",
+      "体格×{Size} · 体力×{Health} · 速さ×{Speed}",
+      "Größe ×{Size} · Gesundheit ×{Health} · Tempo ×{Speed}"
+    ],
+    "Revive.Small": [
+      "Too small to hold anyone",
+      "太小了，装不下一个人",
+      "小さすぎて誰も入らない",
+      "Zu klein für irgendwen"
+    ],
+    "Revive.NoInk": [
+      "Needs {Ink} ink, you have {Have}",
+      "需要 {Ink} 墨水，你只有 {Have}",
+      "インク{Ink}が必要、所持{Have}",
+      "Braucht {Ink} Tinte, du hast {Have}"
+    ],
+    "Revive.Bonus.1": [
+      "A circle: +5% speed",
+      "规整圆形：移速 +5%",
+      "円：速さ+5%",
+      "Ein Kreis: +5 % Tempo"
+    ],
+    "Revive.Bonus.2": [
+      "A triangle: +8% damage",
+      "规整三角形：攻击 +8%",
+      "三角形：攻撃+8%",
+      "Ein Dreieck: +8 % Schaden"
+    ],
+    "Revive.Bonus.3": [
+      "A rectangle: +10% armour",
+      "规整矩形：减伤 +10%",
+      "四角形：被ダメージ-10%",
+      "Ein Rechteck: +10 % Rüstung"
+    ],
+    "Revive.Hint": [
+      "Draw a closed loop on the sheet",
+      "在草稿纸上画一个闭合图形",
+      "紙に閉じた輪を描こう",
+      "Zeichne eine geschlossene Schleife aufs Blatt"
+    ],
+    "Revive.Submit": [
+      "Bring them back",
+      "确认复活",
+      "描き戻す",
+      "Zurückholen"
+    ],
+    "Revive.Redraw": [
+      "Redraw",
+      "重画",
+      "描き直す",
+      "Neu zeichnen"
+    ],
+    "Revive.Cancel": [
+      "Cancel · Esc",
+      "取消 · Esc",
+      "やめる · Esc",
+      "Abbrechen · Esc"
+    ],
+    "Expedition.Result.Final": [
+      "ESCAPED",
+      "成功撤离",
+      "脱出成功",
+      "ENTKOMMEN"
+    ],
+    "Expedition.Result.Early": [
+      "OUT EARLY",
+      "提前撤离",
+      "早期脱出",
+      "FRÜH RAUS"
+    ],
+    "Expedition.Result.Lost": [
+      "LOST",
+      "全部遗失",
+      "全損",
+      "VERLOREN"
+    ],
+    "Expedition.Banked": [
+      "{Count} stickers banked",
+      "入账 {Count} 张贴纸",
+      "ステッカー{Count}枚を確定",
+      "{Count} Sticker verbucht"
+    ],
+    "Expedition.LostAll": [
+      "The pouch stayed behind: nothing banked",
+      "贴纸袋留在了地牢里：一无所获",
+      "ポーチは置き去り：何も確定せず",
+      "Der Beutel blieb zurück: nichts verbucht"
+    ],
+    "Expedition.Reached": [
+      "Reached floor {Stage}-{Floor} · {Floors} floors cleared",
+      "到达第 {Stage}-{Floor} 层 · 通过 {Floors} 层",
+      "フロア{Stage}-{Floor}まで到達 · {Floors}フロア突破",
+      "Bis Etage {Stage}-{Floor} · {Floors} Etagen geschafft"
+    ],
+    "Expedition.Tally": [
+      "{Kills} enemies · {Elites} elites · {Chests} chests · {Fights} fights won",
+      "击败 {Kills} 个敌人 · {Elites} 个精英 · 开启 {Chests} 个宝箱 · 赢下 {Fights} 场战斗",
+      "敵{Kills}体 · エリート{Elites}体 · 宝箱{Chests}個 · 戦闘{Fights}勝",
+      "{Kills} Gegner · {Elites} Eliten · {Chests} Truhen · {Fights} Kämpfe gewonnen"
+    ],
+    "Foe.0": [
+      "Scribble Ball",
+      "涂鸦线球怪",
+      "落書き毛玉",
+      "Kritzelknäuel"
+    ],
+    "Foe.1": [
+      "Dashed Phantom",
+      "虚线幽灵三角",
+      "点線の幽霊",
+      "Strichelgespenst"
+    ],
+    "Foe.2": [
+      "Shaving Darter",
+      "木屑飞镖手",
+      "削りかす投げ",
+      "Spanschleuderer"
+    ],
+    "Foe.3": [
+      "Draft Shield",
+      "草稿方块盾卫",
+      "下書きの盾番",
+      "Entwurfsschild"
+    ],
+    "Foe.4": [
+      "Pencil Stub",
+      "折断小铅笔头",
+      "ちびた鉛筆",
+      "Bleistiftstummel"
+    ],
+    "Foe.5": [
+      "Drop Slime",
+      "水滴史莱姆",
+      "しずくスライム",
+      "Tropfenschleim"
+    ],
+    "Foe.6": [
+      "Two-Tone Striker",
+      "双色混流刺客",
+      "二色の刺客",
+      "Zweifarbenstürmer"
+    ],
+    "Foe.7": [
+      "Paint Sprayer",
+      "颜料喷壶怪",
+      "絵の具スプレー",
+      "Farbsprüher"
+    ],
+    "Foe.8": [
+      "Bubble Zapper",
+      "冒泡电泳球",
+      "泡のビリビリ球",
+      "Blasenblitzer"
+    ],
+    "Foe.9": [
+      "Thirsty Sponge",
+      "吸水海绵方块",
+      "吸水スポンジ",
+      "Saugschwamm"
+    ],
+    "Foe.10": [
+      "Nib Lancer",
+      "钢笔铱尖刺客",
+      "ペン先の槍兵",
+      "Federlanzer"
+    ],
+    "Foe.11": [
+      "Ink Bug",
+      "墨囊自爆虫",
+      "墨袋虫",
+      "Tintenkäfer"
+    ],
+    "Foe.12": [
+      "Hatch Crab",
+      "排线铁甲蟹",
+      "ハッチング蟹",
+      "Schraffurkrabbe"
+    ],
+    "Foe.13": [
+      "Inkwell Sniper",
+      "墨水瓶射手",
+      "インク瓶の狙撃手",
+      "Tintenfass-Schütze"
+    ],
+    "Foe.14": [
+      "Paper Saw",
+      "裁纸飞轮刀",
+      "紙切り手裏剣",
+      "Papiersäge"
+    ],
+    "Foe.15": [
+      "Bead Shooter",
+      "蓝黑滚珠射手",
+      "ボール玉の射手",
+      "Kugelschütze"
+    ],
+    "Foe.16": [
+      "Red Marker",
+      "红笔纠察官",
+      "赤ペン先生",
+      "Rotstift"
+    ],
+    "Foe.17": [
+      "Carbon Twin",
+      "复写双子星",
+      "複写の双子",
+      "Durchschlagzwilling"
+    ],
+    "Foe.18": [
+      "Roller Tank",
+      "弹珠滚轮坦克",
+      "ボール戦車",
+      "Rollpanzer"
+    ],
+    "Foe.19": [
+      "Abacus Gunner",
+      "算盘连珠炮手",
+      "そろばん砲手",
+      "Abakusschütze"
+    ],
+    "Foe.20": [
+      "Ink Wisp",
+      "墨迹游魂",
+      "墨の魂",
+      "Tuschgeist"
+    ],
+    "Foe.21": [
+      "Paper Parasol",
+      "宣纸伞妖",
+      "和紙傘のあやかし",
+      "Papierschirm"
+    ],
+    "Foe.22": [
+      "Seal Stone",
+      "篆刻印章石墩",
+      "篆刻の印石",
+      "Siegelstein"
+    ],
+    "Foe.23": [
+      "Brush Column",
+      "飞白墨柱炮",
+      "飛白の墨柱",
+      "Pinselsäule"
+    ],
+    "Foe.24": [
+      "Dry-Brush Pinwheel",
+      "枯笔风车侍",
+      "かすれ筆の風車",
+      "Trockenpinsel-Windrad"
+    ],
+    "Foe.25": [
+      "Lead Cannon King",
+      "自动铅笔重炮王",
+      "シャープ大砲王",
+      "Minenkanonen-König"
+    ],
+    "Foe.26": [
+      "Eraser Giant",
+      "橡皮屑巨人",
+      "消しゴム巨人",
+      "Radiergummiriese"
+    ],
+    "Foe.27": [
+      "Palette Lord",
+      "虹吸调色盘主",
+      "パレットの主",
+      "Palettenfürst"
+    ],
+    "Foe.28": [
+      "Wet Pen Eel",
+      "湿笔游龙鳗",
+      "水性ペンの竜うなぎ",
+      "Nassstift-Aal"
+    ],
+    "Foe.29": [
+      "Twin-Nib Swordsaint",
+      "双头蘸水剑圣",
+      "双頭ペンの剣聖",
+      "Doppelfeder-Schwertmeister"
+    ],
+    "Foe.30": [
+      "Iron Inkwell Inspector",
+      "钢铁墨瓶督查",
+      "鉄のインク瓶監督",
+      "Eisentintenfass-Inspektor"
+    ],
+    "Foe.31": [
+      "Four-Color Clicker",
+      "四色按动炮台兽",
+      "四色ノック砲台",
+      "Vierfarb-Klicker"
+    ],
+    "Foe.32": [
+      "Carbon Mirror",
+      "双面复写镜魔",
+      "複写鏡の魔",
+      "Durchschlagspiegel"
+    ],
+    "Foe.33": [
+      "Wild Script Beast",
+      "狂草舞墨太岁",
+      "狂草の墨獣",
+      "Wildschrift-Bestie"
+    ],
+    "Foe.34": [
+      "Twin-Seal Judge",
+      "御用双印大判官",
+      "双印の大判官",
+      "Doppelsiegel-Richter"
+    ],
+    "Foe.35": [
+      "Sticker Thief",
+      "偷贴纸的折纸小偷",
+      "ステッカー泥棒",
+      "Stickerdieb"
+    ],
+    "Foe.36": [
+      "Spoiled Draft",
+      "被污染的废稿聚合体",
+      "汚れた反故紙の塊",
+      "Verdorbener Entwurf"
+    ],
+    "Foe.37": [
+      "The Drafting Machine",
+      "自动化制图台",
+      "自動製図台",
+      "Die Zeichenmaschine"
+    ],
+    "Foe.38": [
+      "The Rainbow Wash",
+      "虹彩晕染妖灵",
+      "虹色にじみの精",
+      "Der Regenbogengeist"
+    ],
+    "Foe.39": [
+      "The Iron Editor",
+      "铁血总编",
+      "鉄血の編集長",
+      "Der eiserne Chefredakteur"
+    ],
+    "Foe.40": [
+      "The Clockwork Warlord",
+      "复写齿轮督军",
+      "複写歯車の督軍",
+      "Der Zahnrad-Kriegsherr"
+    ],
+    "Foe.41": [
+      "The Ink Sage",
+      "墨渊宗师",
+      "墨淵の宗師",
+      "Der Tuschemeister"
+    ],
+    "Foe.42": [
+      "Red Spirit",
+      "红色水彩灵",
+      "赤の水彩精",
+      "Roter Geist"
+    ],
+    "Foe.43": [
+      "Yellow Spirit",
+      "黄色水彩灵",
+      "黄の水彩精",
+      "Gelber Geist"
+    ],
+    "Foe.44": [
+      "Blue Spirit",
+      "蓝色水彩灵",
+      "青の水彩精",
+      "Blauer Geist"
+    ],
+    "Foe.45": [
+      "Written Soldier",
+      "书法兵",
+      "書の兵",
+      "Schriftsoldat"
+    ],
+    "Foe.46": [
+      "Written Shield",
+      "书法盾",
+      "書の盾",
+      "Schriftschild"
+    ],
+    "Boss.Dragon": [
+      "The Wild-Script Dragon",
+      "狂草真龙",
+      "狂草の真竜",
+      "Der Wildschrift-Drache"
+    ],
+    "Part.37.0": [
+      "Pencil gatling",
+      "削笔加特林",
+      "鉛筆ガトリング",
+      "Bleistift-Gatling"
+    ],
+    "Part.37.1": [
+      "Gold compass",
+      "黄金圆规",
+      "黄金コンパス",
+      "Goldzirkel"
+    ],
+    "Part.39.0": [
+      "Gilded revolver",
+      "镀金左轮",
+      "金のリボルバー",
+      "Goldrevolver"
+    ],
+    "Part.39.1": [
+      "Paper blade",
+      "裁纸长刀",
+      "紙切り長刀",
+      "Papierklinge"
+    ],
+    "Part.40.0": [
+      "Four-color gatling",
+      "四色转轮加特林",
+      "四色ガトリング",
+      "Vierfarb-Gatling"
+    ],
+    "Part.40.1": [
+      "Carbon shield",
+      "复写反射盾",
+      "複写の盾",
+      "Durchschlagschild"
+    ],
+    "Part.41.0": [
+      "Brass paperweight",
+      "黄铜镇纸印",
+      "真鍮の文鎮印",
+      "Messing-Briefbeschwerer"
+    ],
+    "BossPhase.Dragon": [
+      "The sage becomes a dragon!",
+      "宗师化身狂草真龙！",
+      "宗師が狂草の竜に！",
+      "Der Meister wird zum Drachen!"
+    ],
+    "BossPhase.Split": [
+      "It splits into three spirits!",
+      "三原色分流！",
+      "三原色に分裂！",
+      "Er zerfällt in drei Geister!"
+    ],
+    "BossPhase.Merge": [
+      "The colors run back together",
+      "水彩重新汇聚",
+      "色がまた混ざり合う",
+      "Die Farben fließen wieder zusammen"
+    ],
+    "Service.10": [
+      "Reforge the nib",
+      "重铸笔尖",
+      "ペン先を鍛え直す",
+      "Feder umschmieden"
+    ],
+    "Service.11": [
+      "Ballot box",
+      "投票箱",
+      "投票箱",
+      "Wahlurne"
+    ],
+    "Service.12": [
+      "Borrow a pen",
+      "借用画笔",
+      "ペンを借りる",
+      "Stift ausleihen"
+    ],
+    "Service.VoteFor": [
+      "Vote: {Name}",
+      "投给：{Name}",
+      "投票：{Name}",
+      "Stimme: {Name}"
+    ],
+    "Service.BorrowPen": [
+      "Borrow: {Name}",
+      "借用：{Name}",
+      "借りる：{Name}",
+      "Ausleihen: {Name}"
+    ],
+    "Expedition.PrankChip": [
+      "Floor prank: {Name}",
+      "本层整蛊：{Name}",
+      "この階のいたずら：{Name}",
+      "Etagenstreich: {Name}"
+    ],
+    "Expedition.PrankBanner": [
+      "Prank: {Name}!",
+      "整蛊生效：{Name}！",
+      "いたずら発動：{Name}！",
+      "Streich: {Name}!"
+    ],
+    "Expedition.Ballot": [
+      "Vote with E · {Seconds} s left",
+      "按 E 投票 · 剩余 {Seconds} 秒",
+      "Eで投票 · 残り{Seconds}秒",
+      "Mit E abstimmen · noch {Seconds} s"
+    ],
+    "Nib.0": [
+      "Pencil nib: hits now and then smudge an enemy still for half a second.",
+      "铅笔笔头：命中有几率让敌人僵住半秒。",
+      "鉛筆のペン先：命中でときどき敵を0.5秒止める。",
+      "Bleistiftfeder: Treffer lassen Gegner manchmal eine halbe Sekunde erstarren."
+    ],
+    "Nib.1": [
+      "Watercolor nib: hits slow and soak the enemy.",
+      "水性笔头：命中减速并浸湿敌人。",
+      "水性のペン先：命中で敵を遅くし濡らす。",
+      "Aquarellfeder: Treffer verlangsamen und durchnässen."
+    ],
+    "Nib.2": [
+      "Fountain-pen nib: shots pierce one more enemy.",
+      "钢笔笔头：子弹多穿透一个敌人。",
+      "万年筆のペン先：弾がもう1体貫通する。",
+      "Füllerfeder: Schüsse durchdringen einen Gegner mehr."
+    ],
+    "Nib.3": [
+      "Ballpoint nib: every fourth shot fires a carbon copy.",
+      "圆珠笔头：每第 4 发射出一发复写弹。",
+      "ボールペンのペン先：4発ごとに複写弾。",
+      "Kulifeder: Jeder vierte Schuss feuert eine Durchschlagkopie."
+    ],
+    "Nib.4": [
+      "Brush nib: shots hit 10% harder and shove.",
+      "毛笔笔头：子弹伤害 +10% 并带击退。",
+      "筆のペン先：ダメージ+10%、押し返す。",
+      "Pinselfeder: Schüsse treffen 10 % härter und stoßen zurück."
+    ],
+    "Afflict.Bleeding": [
+      "Bleeding",
+      "流血",
+      "出血",
+      "Blutet"
+    ],
+    "Afflict.Circled": [
+      "Red circle: +20% hurt",
+      "红圈：受伤 +20%",
+      "赤丸：被ダメ+20%",
+      "Rot umkreist: +20 %"
+    ],
+    "Afflict.Sealed": [
+      "Sealed: no items",
+      "封印：不能用道具",
+      "封印：アイテム不可",
+      "Versiegelt: keine Items"
+    ],
+    "Afflict.Smeared": [
+      "Ink in your eyes",
+      "墨污遮眼",
+      "目に墨",
+      "Tinte im Auge"
+    ],
+    "Afflict.Dragged": [
+      "Slowed",
+      "减速",
+      "減速",
+      "Verlangsamt"
+    ],
+    "Afflict.Fogged": [
+      "Hidden in dust",
+      "粉尘掩护",
+      "粉塵に隠れる",
+      "Im Staub verborgen"
+    ],
+    "Afflict.Streak": [
+      "Cinnabar crits",
+      "朱砂暴击",
+      "朱の会心",
+      "Zinnober-Krits"
+    ],
+    "Afflict.DryBrush": [
+      "Dry brush +15%",
+      "飞白 +15% 伤害",
+      "飛白 +15%",
+      "Trockenpinsel +15 %"
+    ],
+    "Wall.Page.0": [
+      "Pages & room · {Count}/32",
+      "关卡与房间 · {Count}/32",
+      "ページと部屋 · {Count}/32",
+      "Seiten & Raum · {Count}/32"
+    ],
+    "Wall.Page.1": [
+      "Expedition · {Count}/32",
+      "远征 · {Count}/32",
+      "遠征 · {Count}/32",
+      "Expedition · {Count}/32"
+    ],
+    "Ach.32": [
+      "First floor down",
+      "初入地牢",
+      "初めての階",
+      "Erste Etage"
+    ],
+    "Ach.32.Note": [
+      "Clear a floor of the expedition.",
+      "在远征中通过一层。",
+      "遠征で1つの階を突破する。",
+      "Schaffe eine Etage der Expedition."
+    ],
+    "Ach.33": [
+      "Drafting table down",
+      "拆掉制图台",
+      "製図台を倒せ",
+      "Zeichenmaschine besiegt"
+    ],
+    "Ach.33.Note": [
+      "Fell the Drafting Machine, the pencil sketchbook's boss.",
+      "击败铅笔群系首领自动化制图台。",
+      "鉛筆の主・自動製図台を倒す。",
+      "Besiege die Zeichenmaschine, den Boss des Bleistiftskizzenbuchs."
+    ],
+    "Ach.34": [
+      "All the way out",
+      "活着通关",
+      "生きて脱出",
+      "Ganz hinaus"
+    ],
+    "Ach.34.Note": [
+      "Walk out through the last boss's exit door.",
+      "从最终首领后的撤离门走出去。",
+      "最後のボスの脱出口から出る。",
+      "Geh durch die Tür nach dem letzten Boss hinaus."
+    ],
+    "Ach.35": [
+      "Quit while ahead",
+      "见好就收",
+      "勝ち逃げ",
+      "Aufhören, wenn's am schönsten ist"
+    ],
+    "Ach.35.Note": [
+      "Leave by an early exit door with 500 stickers or more.",
+      "带着至少 500 张贴纸从提前撤离门离开。",
+      "早期脱出口からステッカー500枚以上を持ち出す。",
+      "Verlasse eine frühe Ausgangstür mit mindestens 500 Stickern."
+    ],
+    "Ach.36": [
+      "Heavy pouch",
+      "满载而归",
+      "ずっしり袋",
+      "Schwerer Beutel"
+    ],
+    "Ach.36.Note": [
+      "Bank 1000 stickers or more from one run.",
+      "单局带出至少 1000 张贴纸。",
+      "1回の遠征でステッカー1000枚以上を持ち帰る。",
+      "Bringe aus einem Lauf mindestens 1000 Sticker heim."
+    ],
+    "Ach.37": [
+      "Five pens tamed",
+      "五笔皆服",
+      "五本のペンを制す",
+      "Fünf Stifte gezähmt"
+    ],
+    "Ach.37.Note": [
+      "Fell the boss of every pen biome.",
+      "击败全部五个群系的首领。",
+      "5つの群系すべてのボスを倒す。",
+      "Besiege den Boss jedes Stift-Bioms."
+    ],
+    "Ach.38": [
+      "Dragon slayer",
+      "屠龙者",
+      "竜殺し",
+      "Drachentöter"
+    ],
+    "Ach.38.Note": [
+      "Fell the Ink Sage in its dragon form.",
+      "击败化身狂草真龙的墨渊宗师。",
+      "竜となった墨淵の宗師を倒す。",
+      "Besiege den Tuschemeister in Drachengestalt."
+    ],
+    "Ach.39": [
+      "Rubbed out",
+      "擦掉武器",
+      "道具を消す",
+      "Wegradiert"
+    ],
+    "Ach.39.Note": [
+      "Rub out a boss's tool with an eraser.",
+      "用橡皮擦擦掉首领的一件工具。",
+      "消しゴムでボスの道具を1つ消す。",
+      "Radiere ein Werkzeug eines Bosses weg."
+    ],
+    "Ach.40": [
+      "Bare-handed editor",
+      "徒手总编",
+      "素手の編集長",
+      "Mit leeren Händen"
+    ],
+    "Ach.40.Note": [
+      "Rub out both of the Iron Editor's weapons.",
+      "把铁血总编的左轮和长刀都擦掉。",
+      "鉄血の編集長の武器を両方消す。",
+      "Radiere beide Waffen des eisernen Chefredakteurs weg."
+    ],
+    "Ach.41": [
+      "Half a boss",
+      "一擦半血",
+      "半分消し",
+      "Ein halber Boss"
+    ],
+    "Ach.41.Note": [
+      "Rub out half of a skill boss in one swipe.",
+      "一擦擦掉技能型首领一半生命。",
+      "スキル型ボスの体力を一撃で半分消す。",
+      "Radiere mit einem Wisch die Hälfte eines Fähigkeiten-Bosses weg."
+    ],
+    "Ach.42": [
+      "Clean page",
+      "擦得干净",
+      "きれいなページ",
+      "Saubere Seite"
+    ],
+    "Ach.42.Note": [
+      "Rub out 10 enemies with erasers.",
+      "用橡皮擦擦掉 10 个敌人。",
+      "消しゴムで敵を10体消す。",
+      "Radiere 10 Gegner weg."
+    ],
+    "Ach.43": [
+      "Drawn back",
+      "画回来",
+      "描き戻し",
+      "Zurückgezeichnet"
+    ],
+    "Ach.43.Note": [
+      "Draw a fallen teammate back with paper and pen.",
+      "用纸笔画回一位倒下的队友。",
+      "倒れた仲間を紙とペンで描き戻す。",
+      "Zeichne einen gefallenen Mitspieler mit Papier und Stift zurück."
+    ],
+    "Ach.44": [
+      "Just a scribble",
+      "一笔小圈",
+      "ちょこっと丸",
+      "Nur ein Kritzel"
+    ],
+    "Ach.44.Note": [
+      "Draw a teammate back with a shape under a tenth of the sheet.",
+      "用不到纸面十分之一的图形救回队友。",
+      "紙の1割未満の図形で仲間を描き戻す。",
+      "Zeichne einen Mitspieler mit einer Form unter einem Zehntel des Blatts zurück."
+    ],
+    "Ach.45": [
+      "Geometry class",
+      "几何课满分",
+      "幾何の授業",
+      "Geometriestunde"
+    ],
+    "Ach.45.Note": [
+      "Earn the circle, triangle and rectangle bonuses in revive drawings.",
+      "在复活绘图中拿到圆形、三角形和矩形三种加成。",
+      "復活の絵で円・三角・四角のボーナスをすべて得る。",
+      "Hol dir in Wiederbelebungszeichnungen Kreis-, Dreieck- und Rechteckbonus."
+    ],
+    "Ach.46": [
+      "Borrowed brilliance",
+      "借笔生花",
+      "借りたペンで",
+      "Geliehener Glanz"
+    ],
+    "Ach.46.Note": [
+      "Draw a teammate back with a pen borrowed from a pen rack.",
+      "用笔架借来的笔救回队友。",
+      "ペン立てで借りたペンで仲間を描き戻す。",
+      "Zeichne einen Mitspieler mit einem geliehenen Stift zurück."
+    ],
+    "Ach.47": [
+      "Left and right",
+      "左右开弓",
+      "二丁拳銃",
+      "Links und rechts"
+    ],
+    "Ach.47.Note": [
+      "Hold a pistol in each hand.",
+      "左右手各拿一把手枪。",
+      "左右の手に1丁ずつ拳銃を持つ。",
+      "Halte in jeder Hand eine Pistole."
+    ],
+    "Ach.48": [
+      "Staple storm",
+      "订书机二刀流",
+      "ホチキス二丁",
+      "Klammersturm"
+    ],
+    "Ach.48.Note": [
+      "Hold a stapler pistol in each hand.",
+      "左右手各拿一把订书机手枪。",
+      "左右の手に1丁ずつホチキスピストルを持つ。",
+      "Halte in jeder Hand eine Tacker-Pistole."
+    ],
+    "Ach.49": [
+      "Dressed to the nines",
+      "全套行头",
+      "フル装備",
+      "Herausgeputzt"
+    ],
+    "Ach.49.Note": [
+      "Wear a look in all six categories at once.",
+      "同时穿戴全部六类外观。",
+      "6部位すべての見た目を同時に身につける。",
+      "Trage in allen sechs Kategorien zugleich ein Aussehen."
+    ],
+    "Ach.50": [
+      "Elite hunter",
+      "精英猎手",
+      "精鋭狩り",
+      "Elitejäger"
+    ],
+    "Ach.50.Note": [
+      "Fell 25 elites.",
+      "击败 25 个精英怪。",
+      "精鋭を25体倒す。",
+      "Besiege 25 Eliten."
+    ],
+    "Ach.51": [
+      "Stop, thief!",
+      "抓住小偷",
+      "泥棒をつかまえろ",
+      "Haltet den Dieb!"
+    ],
+    "Ach.51.Note": [
+      "Catch the sticker thief before it gets away.",
+      "在贴纸小偷逃走前抓住它。",
+      "逃げられる前にステッカー泥棒を捕まえる。",
+      "Fang den Stickerdieb, bevor er entkommt."
+    ],
+    "Ach.52": [
+      "Thirty in thirty",
+      "三十秒擂台",
+      "30秒の勝負",
+      "Dreißig in dreißig"
+    ],
+    "Ach.52.Note": [
+      "Clear the thirty-second arena in time.",
+      "在 30 秒内清空擂台。",
+      "30秒の勝負を時間内に制す。",
+      "Schaffe die Dreißig-Sekunden-Arena rechtzeitig."
+    ],
+    "Ach.53": [
+      "Unchained",
+      "解开锁链",
+      "鎖を解け",
+      "Entfesselt"
+    ],
+    "Ach.53.Note": [
+      "Hold a chained chest open.",
+      "按住打开一只锁链宝箱。",
+      "鎖の宝箱を開け切る。",
+      "Halte eine verkettete Truhe offen."
+    ],
+    "Ach.54": [
+      "Copy that",
+      "复印成功",
+      "コピー完了",
+      "Kopie erstellt"
+    ],
+    "Ach.54.Note": [
+      "Copy an eraser at the copier.",
+      "在复印机上成功复印一块橡皮擦。",
+      "コピー機で消しゴムを複製する。",
+      "Kopiere am Kopierer einen Radiergummi."
+    ],
+    "Ach.55": [
+      "High roller",
+      "豪赌一把",
+      "大勝負",
+      "Großer Einsatz"
+    ],
+    "Ach.55.Note": [
+      "Spin the big sticker wheel.",
+      "转一次 60 贴纸的大转盘。",
+      "60枚のルーレットを回す。",
+      "Dreh das große Stickerrad."
+    ],
+    "Ach.56": [
+      "Double nib",
+      "两次重铸",
+      "二度鍛え",
+      "Doppelt geschmiedet"
+    ],
+    "Ach.56.Note": [
+      "Reforge two nibs in one run.",
+      "一局内重铸两次笔尖。",
+      "1回の遠征でペン先を2回鍛え直す。",
+      "Schmiede in einem Lauf zwei Federn um."
+    ],
+    "Ach.57": [
+      "Democracy",
+      "少数服从多数",
+      "多数決",
+      "Demokratie"
+    ],
+    "Ach.57.Note": [
+      "Finish a prank ballot with four or more players voting.",
+      "四人以上参与并完成一次整蛊投票。",
+      "4人以上でいたずら投票をやり遂げる。",
+      "Bringe mit mindestens vier Stimmen eine Streich-Abstimmung zu Ende."
+    ],
+    "Ach.58": [
+      "Sharing is caring",
+      "慷慨解囊",
+      "おすそわけ",
+      "Teilen macht Freude"
+    ],
+    "Ach.58.Note": [
+      "Drop 200 stickers that your teammates pick up.",
+      "丢出 200 张被队友捡走的贴纸。",
+      "仲間が拾うステッカーを200枚落とす。",
+      "Lass 200 Sticker fallen, die deine Mitspieler aufheben."
+    ],
+    "Ach.59": [
+      "Not a scratch",
+      "零伤亡首领战",
+      "犠牲ゼロ",
+      "Ohne Verluste"
+    ],
+    "Ach.59.Note": [
+      "Fell a boss with nobody falling in the fight.",
+      "无人倒下地击败一位首领。",
+      "誰も倒れずにボスを倒す。",
+      "Besiege einen Boss, ohne dass jemand fällt."
+    ],
+    "Ach.60": [
+      "Party of four",
+      "四人同行",
+      "4人で脱出",
+      "Zu viert hinaus"
+    ],
+    "Ach.60.Note": [
+      "Walk out of the last door in a run of four or more.",
+      "在四人以上的队伍中从最终撤离门走出。",
+      "4人以上の遠征で最後の扉から出る。",
+      "Geh in einem Lauf mit vier oder mehr durch die letzte Tür hinaus."
+    ],
+    "Ach.61": [
+      "Hard copy",
+      "高难通关",
+      "高難度の写し",
+      "Harte Ausgabe"
+    ],
+    "Ach.61.Note": [
+      "Walk out of the last door on tier 3 or higher.",
+      "在难度 3 或更高时从最终撤离门走出。",
+      "難度3以上で最後の扉から出る。",
+      "Geh auf Stufe 3 oder höher durch die letzte Tür hinaus."
+    ],
+    "Ach.62": [
+      "Sticker baron",
+      "贴纸大亨",
+      "ステッカー長者",
+      "Stickerbaron"
+    ],
+    "Ach.62.Note": [
+      "Bank 10,000 stickers from expeditions in all.",
+      "累计从远征中带出 10000 张贴纸。",
+      "遠征で合計ステッカー10000枚を持ち帰る。",
+      "Bringe aus Expeditionen insgesamt 10.000 Sticker heim."
+    ],
+    "Ach.63": [
+      "So close",
+      "功亏一篑",
+      "あと一歩",
+      "So knapp"
+    ],
+    "Ach.63.Note": [
+      "Lose 300 stickers or more in a wipe.",
+      "团灭时丢掉至少 300 张贴纸。",
+      "全滅でステッカー300枚以上を失う。",
+      "Verliere bei einer Niederlage mindestens 300 Sticker."
+    ],
+    "Quality.0": [
+      "Plain",
+      "无品质",
+      "品質なし",
+      "Ohne"
+    ],
+    "Quality.1": [
+      "Green",
+      "绿色",
+      "緑",
+      "Grün"
+    ],
+    "Quality.2": [
+      "Blue",
+      "蓝色",
+      "青",
+      "Blau"
+    ],
+    "Quality.3": [
+      "Purple",
+      "紫色",
+      "紫",
+      "Lila"
+    ],
+    "Quality.4": [
+      "Orange",
+      "橙色",
+      "橙",
+      "Orange"
+    ],
+    "Quality.5": [
+      "Red",
+      "红色",
+      "赤",
+      "Rot"
+    ],
+    "Gun.0": [
+      "Stapler Pistol",
+      "订书机手枪",
+      "ホチキス拳銃",
+      "Tacker-Pistole"
+    ],
+    "Gun.0.Note": [
+      "Faster shots, 14 rounds; its staples go through one enemy, and a quarter of hits leave it bleeding (1 a second for 10 s).",
+      "射得更快、弹匣 14 发，订书钉能穿透 1 个敌人；尖刺弹：命中有 25% 几率让敌人流血（每秒 1 点，持续 10 秒）。",
+      "連射が速く装弾数14。ホチキスの針は敵1体を貫通し、25%の確率で出血させる（毎秒1、10秒）。",
+      "Schneller, 14 Schuss; Klammern durchschlagen einen Gegner, jeder vierte Treffer lässt ihn bluten (1 pro Sekunde, 10 s)."
+    ],
+    "Gun.1": [
+      "Thumbtack Shotgun",
+      "图钉霰弹枪",
+      "画鋲ショットガン",
+      "Reißzwecken-Flinte"
+    ],
+    "Gun.1.Note": [
+      "Eight tacks a shot; each may pin an enemy for 0.4 s (not bosses), and a quarter of hits leave it bleeding (1 a second for 10 s).",
+      "每发 8 枚图钉，每枚都有机会把敌人钉住 0.4 秒（首领除外）；尖刺弹：命中有 25% 几率让敌人流血（每秒 1 点，持续 10 秒）。",
+      "1発で画鋲8本。0.4秒釘付けにすることがあり（ボス除く）、25%の確率で出血させる（毎秒1、10秒）。",
+      "Acht Reißzwecken pro Schuss; jede kann einen Gegner 0,4 s festnageln (keine Bosse), jeder vierte Treffer lässt bluten (1 pro Sekunde, 10 s)."
+    ],
+    "Gun.2": [
+      "Ice-Ink Rifle",
+      "冰蓝墨水步枪",
+      "氷青インクライフル",
+      "Eistinten-Gewehr"
+    ],
+    "Gun.2.Note": [
+      "Hits slow enemies and soak them (wet ones are slower still).",
+      "命中会减速并浸湿敌人（湿了更慢）。",
+      "命中した敵を減速させて濡らす（濡れるとさらに遅い）。",
+      "Treffer bremsen Gegner und durchnässen sie (nass sind sie noch langsamer)."
+    ],
+    "Gun.3": [
+      "Rubber-Band Gun",
+      "橡皮筋机枪",
+      "輪ゴム機関銃",
+      "Gummiband-MG"
+    ],
+    "Gun.3.Note": [
+      "Its rounds bounce off walls twice.",
+      "子弹会在墙上反弹 2 次。",
+      "弾が壁で2回跳ね返る。",
+      "Die Kugeln prallen zweimal von Wänden ab."
+    ],
+    "Gun.4": [
+      "Neon Bolt Sniper",
+      "荧光闪电狙击枪",
+      "蛍光イナズマ狙撃銃",
+      "Neonblitz-Präzisionsgewehr"
+    ],
+    "Gun.4.Note": [
+      "A hit arcs on to 3 enemies nearby for 45% each.",
+      "命中后电弧跳向附近 3 个敌人，各造成 45% 伤害。",
+      "命中すると近くの敵3体に電撃が跳ぶ（各45%）。",
+      "Ein Treffer springt auf 3 Gegner in der Nähe über (je 45%)."
+    ],
+    "Gun.5": [
+      "Blotting-Paper Rifle",
+      "朱砂吸墨步枪",
+      "朱砂の吸い取りライフル",
+      "Löschpapier-Gewehr"
+    ],
+    "Gun.5.Note": [
+      "A tenth of the damage you deal soaks into a shield, up to a fifth of your max health.",
+      "造成伤害的 10% 转为护盾，护盾最多为生命上限的 20%。",
+      "与えたダメージの10%がシールドになる（最大HPの20%まで）。",
+      "Ein Zehntel deines Schadens wird zum Schild, bis zu einem Fünftel deiner max. Gesundheit."
+    ],
+    "Gun.6": [
+      "Wax-Seal Launcher",
+      "火漆封缄火箭筒",
+      "封蝋ロケットランチャー",
+      "Siegelwachs-Werfer"
+    ],
+    "Gun.6.Note": [
+      "A wider blast that leaves enemies burning for 3 s.",
+      "爆炸范围更大，被炸到的敌人会燃烧 3 秒。",
+      "爆発範囲が広く、巻き込んだ敵を3秒燃やす。",
+      "Eine größere Explosion; getroffene Gegner brennen 3 s."
+    ],
+    "Gun.7": [
+      "Rainbow Crayon Gatling",
+      "七彩蜡笔机枪",
+      "七色クレヨン機関銃",
+      "Regenbogen-Kreide-MG"
+    ],
+    "Gun.7.Note": [
+      "Rounds take turns: red burns, blue slows, yellow arcs, green pierces.",
+      "子弹轮流变色：红色灼烧、蓝色减速、黄色跳电、绿色穿透。",
+      "弾が順に変わる：赤は燃焼、青は減速、黄は電撃、緑は貫通。",
+      "Die Kugeln wechseln sich ab: Rot brennt, Blau bremst, Gelb springt über, Grün durchschlägt."
+    ],
+    "Expedition.OpenChestQ": [
+      "Open the chest ({Quality})",
+      "打开{Quality}宝箱",
+      "宝箱を開ける（{Quality}）",
+      "Truhe öffnen ({Quality})"
+    ],
+    "Expedition.ChestTag": [
+      "{Quality} chest",
+      "{Quality}宝箱",
+      "{Quality}の宝箱",
+      "Truhe · {Quality}"
+    ],
+    "Expedition.Trade": [
+      "Sell for expedition coins",
+      "出售换远征币",
+      "売って遠征コインに換える",
+      "Gegen Expeditionsmünzen verkaufen"
+    ],
+    "Service.13": [
+      "The buyer",
+      "收购商",
+      "買取屋",
+      "Ankäufer"
+    ],
+    "Expedition.Denied.27": [
+      "No buyer in reach",
+      "附近没有收购商",
+      "近くに買取屋がいない",
+      "Kein Ankäufer in Reichweite"
+    ],
+    "Revive.Hint.Bag": [
+      "{Name} fell: your paper & pen is in the bag; Tab moves it to the hotbar",
+      "{Name} 倒下了：复活纸笔在背包里，按 Tab 把它挪到快捷栏",
+      "{Name}が倒れた：復活の紙とペンはバッグの中。Tabでホットバーへ",
+      "{Name} ist gefallen: Papier & Stift sind in der Tasche; Tab legt sie in die Leiste"
+    ],
+    "Kit.BagNote": [
+      "Slots 1–2 are your hands, for guns: a long gun takes both, a pistol one. Slots 3–5 hold items, which only work there; the bag only stores.",
+      "1、2 号格是双手，只放枪：长枪占两格，手枪各占一格，两把即双持。3–5 号格放道具，放这里才生效；背包只存放。",
+      "1・2番は両手で銃専用：長物は両手、拳銃は片手（2丁で二丁持ち）。3〜5番はアイテム用でここでのみ効果、バッグは保管のみ。",
+      "Plätze 1–2 sind die Hände (Waffen: Langwaffen beide, Pistolen eine). Plätze 3–5 für Gegenstände, die nur dort wirken; die Tasche lagert."
+    ],
+    "Kit.TabBag": [
+      "Bag",
+      "背包",
+      "バッグ",
+      "Tasche"
+    ],
+    "Kit.TabLooks": [
+      "Looks",
+      "外观",
+      "見た目",
+      "Looks"
+    ],
+    "Kit.Coins": [
+      "Expedition coins",
+      "远征币",
+      "遠征コイン",
+      "Expeditionsmünzen"
+    ],
+    "Kit.CoinNote": [
+      "Coins are for this run only: shops take coins first (10 = 1 sticker); a fall scatters them, and they never leave the dungeon.",
+      "远征币只在本局有效：买东西先扣远征币（10 枚抵 1 张贴纸），倒下会散落，带不出地牢。",
+      "遠征コインはこの遠征だけ：買い物はコインから払う（10枚でステッカー1枚）。倒れると散らばり、持ち帰れない。",
+      "Münzen gelten nur in diesem Lauf: Läden nehmen zuerst Münzen (10 = 1 Sticker); ein Sturz verstreut sie, und sie verlassen den Dungeon nie."
+    ],
+    "Kit.Coins100": [
+      "Drop 100",
+      "丢出 100 枚",
+      "100枚落とす",
+      "100 abwerfen"
+    ],
+    "Kit.CoinsAll": [
+      "Drop all",
+      "全部丢出",
+      "全部落とす",
+      "Alle abwerfen"
+    ],
+    "Kit.Locked": [
+      "Research desk",
+      "研究台扩容",
+      "研究台で拡張",
+      "Forschung"
+    ],
+    "Kit.Bag": [
+      "Bag · {Open} of {Count} slots",
+      "背包 · {Open} / {Count} 格",
+      "バッグ · {Open} / {Count} マス",
+      "Tasche · {Open} von {Count} Plätzen"
+    ],
+    "Kit.MoveHint": [
+      "Click another slot to move it there; click it again to let go.",
+      "再点一格就移过去；点原来那格取消。",
+      "別のマスをクリックで移動、同じマスで取り消し。",
+      "Ein anderes Feld anklicken, um es dorthin zu legen; nochmal anklicken zum Loslassen."
+    ],
+    "Kit.PickHint": [
+      "Click a slot to pick it.",
+      "点一格选中它。",
+      "マスをクリックして選ぶ。",
+      "Ein Feld anklicken, um es zu wählen."
+    ],
+    "Kit.Picked": [
+      "Picked",
+      "选中的",
+      "選択中",
+      "Gewählt"
+    ],
+    "Kit.InHand": [
+      "In hand",
+      "手上的",
+      "手に持っている",
+      "In der Hand"
+    ],
+    "Kit.EmptySlot": [
+      "An empty slot.",
+      "空格子。",
+      "空きマス。",
+      "Ein leerer Platz."
+    ],
+    "Kit.QualityTag": [
+      "{Quality} quality",
+      "{Quality}品质",
+      "品質：{Quality}",
+      "Qualität: {Quality}"
+    ],
+    "Kit.NoQuality": [
+      "Plain · an armoury gun",
+      "无品质 · 军械库武器",
+      "品質なし · 武器庫の銃",
+      "Ohne Qualität · Arsenalwaffe"
+    ],
+    "Kit.BagIdle": [
+      "In the bag it does nothing: move it to slots 3–5.",
+      "放在背包里不生效：挪到 3–5 号格。",
+      "バッグの中では効果なし：3〜5番へ移す。",
+      "In der Tasche wirkungslos: auf Platz 3–5 legen."
+    ],
+    "Kit.Fetch": [
+      "The buyer pays {Coins} coins",
+      "收购价：{Coins} 远征币",
+      "買取価格：コイン{Coins}枚",
+      "Ankäufer zahlt {Coins} Münzen"
+    ],
+    "Kit.DropSlot": [
+      "Drop it",
+      "丢到地上",
+      "地面に置く",
+      "Ablegen"
+    ],
+    "Trade.Title": [
+      "The buyer",
+      "收购商",
+      "買取屋",
+      "Der Ankäufer"
+    ],
+    "Trade.Note": [
+      "Pick a gun or an item and sell it for expedition coins (never stickers). Shops take coins first, 10 to a sticker. Walk away to close.",
+      "选中一件武器或道具卖给他，换成远征币（不会换成贴纸）。买东西时先扣远征币，10 枚抵 1 张贴纸。走开就会关闭。",
+      "武器か道具を選んで売り、遠征コインに換える（ステッカーにはならない）。買い物はコインが先、10枚でステッカー1枚。離れると閉じる。",
+      "Wähle eine Waffe oder einen Gegenstand und verkaufe sie gegen Expeditionsmünzen (nie Sticker). Läden nehmen zuerst Münzen, 10 pro Sticker. Weggehen schließt."
+    ],
+    "Trade.Sell": [
+      "Sell · {Coins} coins",
+      "卖出 · {Coins} 币",
+      "売る · コイン{Coins}枚",
+      "Verkaufen · {Coins} Münzen"
+    ],
+    "Research.Whole": [
+      "Research is yours: every rank counts in any room, and each player counts their own.",
+      "研究永久属于你：任何房间都全额生效，多人时每人按自己的研究算。",
+      "研究はあなたのもの：どのルームでも全ランク有効。マルチでは各自の研究が効く。",
+      "Forschung gehört dir: Jeder Rang zählt in jedem Raum, jeder Spieler zählt seine eigene."
+    ],
+    "Research.BagTotal": [
+      "Bag: {Count} slots",
+      "背包 {Count} 格",
+      "バッグ {Count} マス",
+      "Tasche: {Count} Plätze"
+    ],
+    "Attr.6": [
+      "Backpack",
+      "背包扩容",
+      "バッグ拡張",
+      "Rucksack"
+    ],
+    "Attr.StepSlot": [
+      "+1 slot per rank",
+      "每级 +1 格",
+      "ランクごとに+1マス",
+      "+1 Platz je Rang"
+    ],
+    "Kit.LongNote": [
+      "A long gun takes both hands (slots 1 and 2).",
+      "长枪要用两只手（占 1、2 号格）。",
+      "長物は両手持ち（1・2番を使う）。",
+      "Eine Langwaffe braucht beide Hände (Plätze 1 und 2)."
+    ],
+    "Kit.BagGun": [
+      "Move it to slot 1 or 2 to hold it.",
+      "挪到 1、2 号格才能拿在手上。",
+      "1・2番へ移すと手に持てる。",
+      "Auf Platz 1 oder 2 legen, um sie zu halten."
+    ],
+    "Kit.Hands": [
+      "1–2 · Hands (guns)",
+      "1–2 · 双手（只放枪）",
+      "1–2・両手（銃）",
+      "1–2 · Hände (Waffen)"
+    ],
+    "Kit.Belt": [
+      "3–5 · Items (work here)",
+      "3–5 · 道具（放这里才生效）",
+      "3–5・アイテム（ここで効果）",
+      "3–5 · Gegenstände"
+    ],
+    "Kit.LeftHand": [
+      "Left hand",
+      "左手",
+      "左手",
+      "Links"
+    ],
+    "Kit.RightHand": [
+      "Right hand",
+      "右手",
+      "右手",
+      "Rechts"
+    ],
+    "Expedition.PickBag": [
+      "Pick up {Name} (into the bag)",
+      "拾取{Name}（放进背包）",
+      "{Name}を拾う（バッグへ）",
+      "{Name} aufheben (in die Tasche)"
+    ],
+    "Expedition.PairOf": [
+      "Dual: {Left} + {Right}",
+      "双持：{Left} + {Right}",
+      "二丁：{Left}＋{Right}",
+      "Doppelt: {Left} + {Right}"
+    ],
+    "Expedition.Denied.28": [
+      "Slots 1 and 2 are your hands: guns only",
+      "1、2 号格是双手，只能放枪",
+      "1・2番は両手：銃のみ",
+      "Plätze 1 und 2 sind die Hände: nur Waffen"
+    ],
+    "Expedition.Denied.29": [
+      "Slots 3–5 hold items; guns go in your hands or the bag",
+      "3–5 号格只放道具，枪放在 1、2 号格或背包",
+      "3〜5番はアイテム専用。銃は両手かバッグへ",
+      "Plätze 3–5 nur für Gegenstände; Waffen in die Hände oder Tasche"
+    ],
+    "Expedition.Denied.30": [
+      "No free bag slot for the other pistol",
+      "背包没有空位放另一把手枪",
+      "もう1丁の拳銃を入れる空きがない",
+      "Kein Taschenplatz für die zweite Pistole"
+    ],
+    "Key.Mend": [
+      "Ink mend",
+      "墨水回血",
+      "インクで回復",
+      "Tinte heilt"
+    ],
+    "Mend.Self": [
+      "Mending with ink · 1 ink = 1 health",
+      "墨水疗伤 · 1 墨 = 1 血",
+      "インクで回復中・インク1＝HP1",
+      "Tinte heilt · 1 Tinte = 1 Leben"
+    ],
+    "Revive.Prompt": [
+      "Draw {Name} back",
+      "把{Name}画回来",
+      "{Name}を描き戻す",
+      "{Name} zurückzeichnen"
+    ],
+    "Revive.PromptNoKit": [
+      "Draw {Name} back · ink ×2 without paper & pen",
+      "把{Name}画回来 · 没有复活纸笔，墨水×2",
+      "{Name}を描き戻す・紙とペンなしはインク×2",
+      "{Name} zurückzeichnen · ohne Papier & Stift Tinte ×2"
+    ],
+    "Revive.NoteNoKit": [
+      "No paper & pen: you can still draw them back, for twice the ink. One closed shape; bigger means tougher and costlier.",
+      "没有复活纸笔：照样能画回来，墨水消耗×2。画一个闭合图形，越大越耐打，也越费墨水。",
+      "紙とペンなし：描き戻せるがインクは2倍。閉じた形を一つ、大きいほど丈夫で高くつく。",
+      "Ohne Papier & Stift geht es trotzdem, für doppelte Tinte. Eine geschlossene Form; größer heißt zäher und teurer."
+    ],
+    "Mend.Area": [
+      "Mending with ink · shared by {Count}",
+      "墨水疗伤 · 圈内 {Count} 人均分",
+      "インクで手当て・円の中の{Count}人で分け合う",
+      "Tinte heilt · auf {Count} verteilt"
+    ],
+    "Spectate.Watching": [
+      "Watching {Name}",
+      "正在观战：{Name}",
+      "{Name}を観戦中",
+      "Du siehst {Name} zu"
+    ],
+    "Spectate.Switch": [
+      "Left / right click: switch teammate",
+      "左键 / 右键 切换队友",
+      "左／右クリックで仲間を切り替え",
+      "Links-/Rechtsklick: Mitspieler wechseln"
+    ],
+    "Attr.7": [
+      "Dodge cooldown",
+      "冲刺冷却",
+      "回避クールダウン",
+      "Ausweich-Abklingzeit"
+    ],
+    "Attr.8": [
+      "Dodge speed",
+      "冲刺速度",
+      "回避の速さ",
+      "Ausweich-Tempo"
+    ],
+    "Attr.StepCut": [
+      "-{Percent}% per rank",
+      "每级 -{Percent}%",
+      "1ランクごと -{Percent}%",
+      "-{Percent}% je Stufe"
+    ],
+    "Research.TotalCut": [
+      "Total -{Percent}%",
+      "合计 -{Percent}%",
+      "合計 -{Percent}%",
+      "Gesamt -{Percent}%"
+    ],
+    "Revive.Hint.NoKit": [
+      "{Name} fell: walk to the outline and press E to draw them back (ink ×2)",
+      "{Name} 倒下了：走到轮廓旁按 E 就能画回来（墨水×2）",
+      "{Name}が倒れた：輪郭のそばでEを押して描き戻す（インク×2）",
+      "{Name} ist gefallen: zum Umriss gehen und E drücken (Tinte ×2)"
+    ],
+    "Mend.Mate": [
+      "Mending {Name} with ink · 1 ink = 1 health",
+      "墨水疗伤 · 给 {Name} 回血 · 1 墨 = 1 血",
+      "{Name}をインクで回復中・インク1＝HP1",
+      "{Name} mit Tinte heilen · 1 Tinte = 1 Leben"
     ]
   }
 }
